@@ -17,7 +17,7 @@ class GeneralController < ApplicationController
     medium_cache
     @locale = AlaveteliLocalization.locale
     successful_query = InfoRequestEvent.make_query_from_params( latest_status: ['successful'] )
-    @request_events, @request_events_all_successful = InfoRequest.recent_requests
+    @request_events, @request_events_all_successful = recent_request_events
     @track_thing = TrackThing.create_track_for_search_query(successful_query)
     @number_of_requests = InfoRequest.is_searchable.count
     @number_of_authorities = PublicBody.visible.count
@@ -185,5 +185,21 @@ class GeneralController < ApplicationController
     if feature_enabled?(:alaveteli_pro) && current_user && current_user.is_pro?
       redirect_to alaveteli_pro_dashboard_path
     end
+  end
+
+  def recent_request_events
+    ids, all_successful = Rails.cache.fetch(
+      'frontpage/recent_requests', expires_in: 10.minutes, skip_nil: true
+    ) do
+      events, all_successful = InfoRequest.recent_requests
+      events.empty? ? nil : [events.map(&:id), all_successful]
+    end || [[], false]
+
+    events = InfoRequestEvent.where(id: ids).
+      joins(:info_request).merge(InfoRequest.is_searchable).
+      includes(info_request: :public_body).
+      order(created_at: :desc).
+      to_a
+    [events, all_successful]
   end
 end

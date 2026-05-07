@@ -12,6 +12,7 @@
 * Add explicit Referrer-Policy header (Graeme Porteous)
 * Use Regexp rule when anonymising users to catch common name variants (Gareth
   Rees)
+* Cache recent request events on the front page for 10 minutes (Chris Mytton)
 * Fix email change confirmation which wasn't bound to confirmed target address
   (Graeme Porteous)
 * Ensure only readable requests can be added to a Project (Gareth Rees)
