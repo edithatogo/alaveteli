@@ -627,7 +627,6 @@ class InfoRequest < ApplicationRecord
 
   def self.recent_requests
     request_events = []
-    request_events_all_successful = false
     # Get some successful requests
     begin
       query = 'variety:response (status:successful OR status:partially_successful)'
@@ -651,14 +650,12 @@ class InfoRequest < ApplicationRecord
         request_events += more_events
         # Overall we still want the list sorted with the newest first
         request_events.sort! { |e1,e2| e2.created_at <=> e1.created_at }
-      else
-        request_events_all_successful = true
       end
     rescue
       request_events = []
     end
 
-    [request_events, request_events_all_successful]
+    request_events
   end
 
   def self.find_in_state(state)

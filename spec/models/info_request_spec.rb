@@ -3804,23 +3804,21 @@ RSpec.describe InfoRequest do
       allow(ActsAsXapian::Search).to receive(:new).
         and_return(successful_result, sent_result)
 
-      events, all_successful = InfoRequest.recent_requests
+      events = InfoRequest.recent_requests
 
       expect(events).to match_array([successful_event, sent_event])
-      expect(all_successful).to be false
     end
 
-    it 'sets all_successful flag for five or more successful responses' do
+    it 'returns five events when there are five or more successful responses' do
       events = Array.new(5) do
         FactoryBot.build(:info_request_event, event_type: 'response')
       end
 
       stub_search_results(items: events)
 
-      result_events, all_successful = InfoRequest.recent_requests
+      result_events = InfoRequest.recent_requests
 
       expect(result_events.size).to eq(5)
-      expect(all_successful).to be true
     end
   end
 

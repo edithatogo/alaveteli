@@ -205,7 +205,7 @@ RSpec.describe GeneralController, "when showing the frontpage" do
       call_count = 0
       allow(InfoRequest).to receive(:recent_requests) do
         call_count += 1
-        [[], false]
+        []
       end
 
       get :frontpage
@@ -220,7 +220,7 @@ RSpec.describe GeneralController, "when showing the frontpage" do
       hidden_event.info_request.update!(prominence: 'hidden')
 
       allow(InfoRequest).to receive(:recent_requests).
-        and_return([[visible_event, hidden_event], true])
+        and_return([visible_event, hidden_event])
 
       get :frontpage
 

@@ -17,7 +17,8 @@ class GeneralController < ApplicationController
     medium_cache
     @locale = AlaveteliLocalization.locale
     successful_query = InfoRequestEvent.make_query_from_params( latest_status: ['successful'] )
-    @request_events, @request_events_all_successful = recent_request_events
+    @request_events = recent_request_events
+    @request_events_all_successful = all_successful_requests?(@request_events)
     @track_thing = TrackThing.create_track_for_search_query(successful_query)
     @number_of_requests = InfoRequest.is_searchable.count
     @number_of_authorities = PublicBody.visible.count
@@ -188,18 +189,25 @@ class GeneralController < ApplicationController
   end
 
   def recent_request_events
-    ids, all_successful = Rails.cache.fetch(
+    ids = Rails.cache.fetch(
       'frontpage/recent_requests', expires_in: 10.minutes, skip_nil: true
     ) do
-      events, all_successful = InfoRequest.recent_requests
-      events.empty? ? nil : [events.map(&:id), all_successful]
-    end || [[], false]
+      events = InfoRequest.recent_requests
+      events.empty? ? nil : events.map(&:id)
+    end || []
 
-    events = InfoRequestEvent.where(id: ids).
+    InfoRequestEvent.where(id: ids).
       joins(:info_request).merge(InfoRequest.is_searchable).
       includes(info_request: :public_body).
       order(created_at: :desc).
       to_a
-    [events, all_successful]
+  end
+
+  def all_successful_requests?(events)
+    events.any? && events.all? do |event|
+      %w[successful partially_successful].include?(
+        event.info_request.calculate_status
+      )
+    end
   end
 end
