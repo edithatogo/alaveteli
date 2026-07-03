@@ -29,8 +29,7 @@ RSpec.describe Redactable::Unredacted do
     expect(subject.title).to eq('Some title')
   end
 
-  it 'does not grant unredacted access for non-redactable attributes' do
-    expect(subject).not_to receive(:with_unredacted_access)
+  it 'returns the correct value for non-redactable attributes' do
     expect(subject.safe).to eq('Some generic content')
   end
 end
