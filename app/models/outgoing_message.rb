@@ -28,6 +28,7 @@ class OutgoingMessage < ApplicationRecord
   include MessageProminence
   include Rails.application.routes.url_helpers
   include LinkToHelper
+  include Redactable
   include Taggable
 
   include OutgoingMessage::DeliveryStatus
@@ -75,6 +76,8 @@ class OutgoingMessage < ApplicationRecord
   after_update :xapian_reindex_after_update
 
   strip_attributes allow_empty: true
+
+  redactable :from, :from_name, :body
 
   admin_columns include: [:to, :from, :subject]
 
@@ -187,11 +190,11 @@ class OutgoingMessage < ApplicationRecord
 
     # Use the given censor_rules; otherwise fetch them from the associated
     # info_request
-    censor_rules = options.fetch(:censor_rules) do
-      info_request.try(:applicable_censor_rules) or []
-    end
+    #censor_rules = options.fetch(:censor_rules) do
+      #info_request.try(:applicable_censor_rules) or []
+    #end
 
-    censor_rules.reduce(text) { |t, rule| rule.apply_to_text(t) }
+    #censor_rules.reduce(text) { |t, rule| rule.apply_to_text(t) }
   end
 
   def raw_body
