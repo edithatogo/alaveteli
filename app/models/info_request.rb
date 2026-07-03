@@ -48,7 +48,6 @@ class InfoRequest < ApplicationRecord
   include Taggable
   include Notable
   include RateLimited
-  include Redactable
 
   include AlaveteliPro::RequestSummaries
   include AlaveteliFeatures::Helpers
@@ -71,8 +70,6 @@ class InfoRequest < ApplicationRecord
   strip_attributes allow_empty: true
   strip_attributes only: [:title],
                    replace_newlines: true, collapse_spaces: true
-
-  redactable :title
 
   belongs_to :user,
              inverse_of: :info_requests,
