@@ -228,7 +228,7 @@ class AdminRequestController < AdminController
   end
 
   def set_info_request
-    @info_request = InfoRequest.find(params[:id].to_i)
+    @info_request = InfoRequest.find(params[:id].to_i).unredacted
   end
 
   def check_info_request

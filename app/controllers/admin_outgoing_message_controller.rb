@@ -79,11 +79,11 @@ class AdminOutgoingMessageController < AdminController
   end
 
   def set_outgoing_message
-    @outgoing_message = OutgoingMessage.find(params[:id])
+    @outgoing_message = OutgoingMessage.find(params[:id]).unredacted
   end
 
   def set_info_request
-    @info_request = @outgoing_message.info_request
+    @info_request = @outgoing_message.info_request.unredacted
   end
 
   def check_info_request
