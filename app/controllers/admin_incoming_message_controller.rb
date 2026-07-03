@@ -97,7 +97,7 @@ class AdminIncomingMessageController < AdminController
   def set_info_request
     @info_request = @incoming_message&.info_request || InfoRequest.find(
       params[:request_id]
-    ).unredacted
+    )
   end
 
   def check_info_request

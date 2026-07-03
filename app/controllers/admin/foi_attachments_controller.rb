@@ -19,7 +19,7 @@ class Admin::FoiAttachmentsController < AdminController
   end
 
   def set_info_request
-    @info_request = @incoming_message&.info_request.unredacted
+    @info_request = @incoming_message&.info_request
   end
 
   def check_info_request

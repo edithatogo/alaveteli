@@ -83,7 +83,7 @@ class AdminOutgoingMessageController < AdminController
   end
 
   def set_info_request
-    @info_request = @outgoing_message.info_request.unredacted
+    @info_request = @outgoing_message.info_request
   end
 
   def check_info_request
