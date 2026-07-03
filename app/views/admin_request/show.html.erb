@@ -295,7 +295,7 @@
         </span>
 
         <blockquote>
-          <%= truncate(outgoing_message.body, length: 400) %>
+          <%= truncate(outgoing_message.unredacted.body, length: 400) %>
         </blockquote>
       </div>
 
