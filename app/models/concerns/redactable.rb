@@ -18,7 +18,7 @@ module Redactable
       prepend(Module.new do
         attrs.each do |attr|
           define_method(attr) do
-            return super() if unredacted_access
+            return super() if unredacted_access || new_record? || !info_request
             apply_masks_to(attr)
           end
         end
