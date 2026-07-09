@@ -1,0 +1,20 @@
+Task: GitHub Issue Decomposition and PR Standards
+
+Summary:
+- Added issue-led delivery rules to Conductor workflow and contributor guidance.
+- Added stricter pull request template fields for linked issues, scope boundaries, no-risk evidence, harness guides/sensors, verification, and rollback.
+- Added GitHub issue templates for bot-resilience parent issues and small PR subissues.
+- Created conductor issue map with live GitHub issue numbers #1 through #13.
+- Created GitHub labels for bot-resilience, harness-engineering, no-risk, small-pr, and conductor.
+
+Files changed:
+- .github/CONTRIBUTING.md
+- .github/PULL_REQUEST_TEMPLATE.md
+- .github/ISSUE_TEMPLATE/bot_resilience_parent.md
+- .github/ISSUE_TEMPLATE/small_pr_subissue.md
+- conductor/tracks/bot_resilience_modernization_20260709/issues.md
+- conductor/tracks/bot_resilience_modernization_20260709/metadata.json
+- conductor/tracks/bot_resilience_modernization_20260709/plan.md
+
+Why:
+This makes the modernization track executable as parent issue -> PR-sized subissue -> small high-standard PR, while preserving the no-accepted-known-risk and harness-engineering operating model.
