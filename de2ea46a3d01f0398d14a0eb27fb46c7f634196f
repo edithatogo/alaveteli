@@ -1,0 +1,3 @@
+Task: Bot Challenge and Contract Boundaries
+
+Summary: Implemented TurnstileValidator service and TurnstileChallenge controller concern. Added dry-validation parameter contracts for rate-limit and bulk-export endpoints. Wrote specs and challenge_operations.md.
