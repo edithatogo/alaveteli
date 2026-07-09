@@ -1,0 +1,1 @@
+Follow-up to #19 command execution hardening. The first CI run exposed that the new analyzer regression constructed a bare double and triggered an unrelated PStore initialization. Reused the gem's fake_blob helper to keep the test at the real analyzer boundary. Local Ruby/RSpec remains unavailable; CI nested gem specs are the required sensor.
