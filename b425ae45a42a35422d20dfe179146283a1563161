@@ -1,0 +1,3 @@
+Task: Runtime and Profiling Modernization
+
+Summary: Added Vernier profiling dependency to Gemfile, created scripts/profile_runner.rb to capture workload traces, and documented JIT and rollback options in runtime_operations.md.
