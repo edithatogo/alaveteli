@@ -1,0 +1,3 @@
+Task: Settings Controller and Actions
+
+Summary: Created RESTful notification preferences controller and registered its show/edit/update routes in config/routes.rb. Wrote controller specs to test authentication, validation, and redirect behaviors.
