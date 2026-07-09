@@ -1,0 +1,3 @@
+Task: Conductor Scripts and Task Simulation
+
+Summary: Configured service depends_on conditions and healthcheck on Redis in docker-compose.yml. Added scripts/simulate_attack.sh to query requests from shell and registered the simulate-attack task in conductor.json.
