@@ -1,0 +1,3 @@
+Task: Database Migration for Notification Preferences
+
+Summary: Added send_daily_summary and send_immediate_request_alerts boolean fields to users table and model validations.
