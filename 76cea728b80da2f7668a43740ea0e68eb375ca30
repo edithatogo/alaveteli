@@ -1,0 +1,3 @@
+Task: Integrate Preferences with Mailers and Jobs
+
+Summary: Updated self.send_daily_notifications and self.send_instant_notifications in NotificationMailer to skip sending notifications if the target user has opted out. Wrote unit tests in spec/mailers/notification_mailer_spec.rb to verify this suppression logic.
