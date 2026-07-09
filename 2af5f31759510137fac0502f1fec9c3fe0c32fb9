@@ -1,0 +1,1 @@
+Conductor task: export_optimization_20260710 Phase 3 regression gate CI unblock. Added missing Gemfile.lock entries for dry-validation, rack-attack, vernier, and dry-rb transitive dependencies so frozen Bundler installs can run. Validation: git diff --check passed; dependency metadata checked against RubyGems API; local bundle unavailable.
