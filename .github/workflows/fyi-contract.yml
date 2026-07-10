@@ -49,8 +49,10 @@ jobs:
           bundler-cache: true
 
       - name: Setup database
+        env:
+          PGPASSWORD: postgres
         run: |
-          psql postgres://postgres:postgres <<-EOSQL
+          psql -h localhost -U postgres -d postgres <<-EOSQL
             CREATE DATABASE template_utf8 TEMPLATE template0 ENCODING "UTF-8";
             UPDATE pg_database SET datistemplate=true WHERE datname='template_utf8';
             CREATE DATABASE alaveteli_test TEMPLATE template_utf8;
