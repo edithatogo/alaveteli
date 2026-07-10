@@ -35,6 +35,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
 
         expect(response.status).to eq(200)
         expect(response.headers['Content-Type']).to eq('application/x-ndjson')
+        expect(response.headers['Last-Modified']).to match(/GMT\z/)
         lines = response.body.split("\n")
         expect(lines.size).to eq(1)
         json = JSON.parse(lines.first)
@@ -49,6 +50,21 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
           'public_body_name',
           'public_body_url_name'
         )
+      end
+
+      it 'returns 304 when the export validators match' do
+        get :bulk_export, params: { limit: 1 }
+        etag = response.headers['ETag']
+        last_modified = response.headers['Last-Modified']
+        expect(etag).to be_present
+        expect(last_modified).to be_present
+
+        request.headers['If-None-Match'] = etag
+        request.headers['If-Modified-Since'] = last_modified
+        get :bulk_export, params: { limit: 1 }
+
+        expect(response.status).to eq(304)
+        expect(response.body).to be_empty
       end
 
       it 'rejects invalid limit values' do

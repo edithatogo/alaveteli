@@ -68,9 +68,17 @@ class Api::V1::SustainabilityController < ApplicationController
 
     BotTrafficMetrics.increment(:bulk_export_requests)
 
+    latest_change = InfoRequest.maximum(:updated_at)&.utc || Time.current.utc
+    fresh_when(
+      etag: ['bulk_export', latest_change.to_i, contract.to_h[:limit], contract.to_h[:since]],
+      last_modified: latest_change,
+      public: true
+    )
+    return if performed?
+
     response.headers['Content-Type'] = 'application/x-ndjson'
     response.headers['Content-Disposition'] = 'attachment; filename="requests_export.ndjson"'
-    response.headers['Last-Modified'] = Time.zone.now.ctime
+    response.headers['Last-Modified'] = latest_change.httpdate
 
     self.response_body = Enumerator.new do |y|
       BulkExportStreamer.new(
