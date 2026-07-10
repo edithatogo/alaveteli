@@ -1,0 +1,1 @@
+Issue #21. Addressed fork-local PR #22 upstream checks: added the required user-facing changelog entry, documented the controller, and formatted all newly introduced Ruby/spec lines to upstream RuboCop conventions. git diff --check passed; CI rerun required.
