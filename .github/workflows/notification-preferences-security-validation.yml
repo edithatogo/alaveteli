@@ -29,8 +29,14 @@ jobs:
         run: |
           gem install brakeman
           git worktree add ../upstream-baseline origin/upstream-develop-baseline
-          brakeman -q -f json -o baseline-brakeman.json -p ../upstream-baseline
-          brakeman -q -f json -o candidate-brakeman.json -p .
+          brakeman -q -f json -o baseline-brakeman.json -p ../upstream-baseline || {
+            status=$?
+            test "$status" -eq 3
+          }
+          brakeman -q -f json -o candidate-brakeman.json -p . || {
+            status=$?
+            test "$status" -eq 3
+          }
           jq -r '.warnings[].fingerprint' baseline-brakeman.json | sort -u > baseline-fingerprints
           jq -r '.warnings[].fingerprint' candidate-brakeman.json | sort -u > candidate-fingerprints
           comm -13 baseline-fingerprints candidate-fingerprints > new-fingerprints
