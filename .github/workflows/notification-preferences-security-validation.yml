@@ -1,0 +1,41 @@
+name: Notification Preferences Security Validation
+
+on:
+  push:
+    branches:
+      - notification-preferences-security-validation
+
+permissions:
+  contents: read
+
+jobs:
+  brakeman-delta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+
+      - name: Verify dependency manifests are unchanged
+        run: |
+          git fetch origin upstream-develop-baseline
+          git diff --exit-code origin/upstream-develop-baseline -- Gemfile Gemfile.lock
+
+      - name: Compare Brakeman findings with upstream baseline
+        run: |
+          gem install brakeman
+          git worktree add ../upstream-baseline origin/upstream-develop-baseline
+          brakeman -q -f json -o baseline-brakeman.json -p ../upstream-baseline
+          brakeman -q -f json -o candidate-brakeman.json -p .
+          jq -r '.warnings[].fingerprint' baseline-brakeman.json | sort -u > baseline-fingerprints
+          jq -r '.warnings[].fingerprint' candidate-brakeman.json | sort -u > candidate-fingerprints
+          comm -13 baseline-fingerprints candidate-fingerprints > new-fingerprints
+          if test -s new-fingerprints; then
+            echo 'Candidate introduced new Brakeman findings:'
+            cat new-fingerprints
+            exit 1
+          fi
