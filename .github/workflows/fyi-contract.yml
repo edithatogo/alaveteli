@@ -1,0 +1,75 @@
+name: fyi-cli Contract Verification
+
+on:
+  push:
+    branches: [feat/fyi-contract-cache-validators]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    name: Contract specs / Ruby 3.4 / PostgreSQL 13.5
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: fixmystreet/postgres:13.5
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/alaveteli_test
+      RAILS_ENV: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install packages
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install --no-install-recommends \
+            exim4-daemon-light \
+            $(cut -d ' ' -f 1 config/packages | grep -Ev '(^#|wkhtml|bundler|^ruby|^rake)')
+
+      - name: Install Ruby 3.4
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Setup database
+        run: |
+          psql postgres://postgres:postgres <<-EOSQL
+            CREATE DATABASE template_utf8 TEMPLATE template0 ENCODING "UTF-8";
+            UPDATE pg_database SET datistemplate=true WHERE datname='template_utf8';
+            CREATE DATABASE alaveteli_test TEMPLATE template_utf8;
+          EOSQL
+
+      - name: Configure application and storage
+        run: |
+          cp config/general.yml-example config/general.yml
+          cp config/storage.yml-example config/storage.yml
+
+      - name: Install theme and migrate
+        run: |
+          bundle exec rake themes:install
+          bundle exec rails db:migrate
+
+      - name: Run focused fyi-cli contract specs
+        run: >-
+          bundle exec rspec
+          spec/services/bulk_export_streamer_spec.rb
+          spec/controllers/concerns/traffic_control_spec.rb
+          spec/requests/contracts_validation_spec.rb
+          --format Fivemat
