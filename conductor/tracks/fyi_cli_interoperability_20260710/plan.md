@@ -23,6 +23,7 @@
   `rackup`/Rack migration needed to remove the vulnerable transitive `webrick`
   path. The isolated resolver failure is decomposed into Alaveteli #31 for the
   Sprockets/Rack asset-pipeline migration; no scanner suppression is permitted.
+- Migration assessment: `conductor/tracks/export_optimization_20260710/rack_sprockets_migration_assessment.md`.
 - [ ] Run RuboCop, Brakeman, dependency audit, and focused tests with zero untriaged findings.
 
 ## Phase 3: Identity and operations
