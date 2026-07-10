@@ -1,0 +1,1 @@
+PR #22 CI remediation. The repository intentionally raises ActionController::UnpermittedParameters for unknown fields; corrected the regression to require that strict rejection and verify the persisted user name remains unchanged. The prior full run had 9,439 examples with this single expectation mismatch. Full CI rerun required.
