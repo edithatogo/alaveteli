@@ -91,6 +91,25 @@ RSpec.describe UserProfile::NotificationPreferencesController do
         expect(user.send_immediate_request_alerts).to be(false)
       end
 
+      it 'preserves an omitted preference during a partial update' do
+        put :update, params: { user: { send_daily_summary: 'false' } }
+
+        user.reload
+        expect(user.send_daily_summary).to be(false)
+        expect(user.send_immediate_request_alerts).to be(true)
+      end
+
+      it 'ignores attributes outside the notification preference contract' do
+        put :update, params: {
+          user: {
+            send_daily_summary: 'false',
+            name: 'Changed by preference update'
+          }
+        }
+
+        expect(user.reload.name).not_to eq('Changed by preference update')
+      end
+
       it 'sets a success flash message' do
         put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
         expect(flash[:notice]).to eq("Your notification preferences have been updated.")
