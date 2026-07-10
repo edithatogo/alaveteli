@@ -1,3 +1,5 @@
+##
+# Allow authenticated users to manage notification delivery preferences.
 class UserProfile::NotificationPreferencesController < ApplicationController
   before_action :set_title
   before_action :check_user_logged_in
@@ -27,7 +29,10 @@ class UserProfile::NotificationPreferencesController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:send_daily_summary, :send_immediate_request_alerts)
+    params.require(:user).permit(
+      :send_daily_summary,
+      :send_immediate_request_alerts
+    )
   end
 
   def check_user_logged_in

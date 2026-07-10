@@ -2720,7 +2720,7 @@ RSpec.describe User do
       expect(user).not_to be_valid
     end
 
-    it 'validates inclusion of send_immediate_request_alerts in [true, false]' do
+    it 'requires send_immediate_request_alerts to be a boolean' do
       user.send_immediate_request_alerts = nil
       expect(user).not_to be_valid
     end

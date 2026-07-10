@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe UserProfile::NotificationPreferencesController do
+  let(:disabled_preferences) do
+    {
+      send_daily_summary: 'false',
+      send_immediate_request_alerts: 'false'
+    }
+  end
+
   describe 'GET edit' do
     it 'sets the title' do
       get :edit
@@ -41,7 +48,7 @@ RSpec.describe UserProfile::NotificationPreferencesController do
 
   describe 'PUT update' do
     it 'sets the title' do
-      put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
+      put :update, params: { user: disabled_preferences }
       expect(assigns[:title]).
         to eq("Change your notification preferences at #{ site_name }")
     end
@@ -49,7 +56,7 @@ RSpec.describe UserProfile::NotificationPreferencesController do
     context 'without a logged in user' do
       it 'redirects to the home page' do
         sign_in nil
-        put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
+        put :update, params: { user: disabled_preferences }
         expect(response).to redirect_to(frontpage_path)
       end
     end
@@ -62,13 +69,14 @@ RSpec.describe UserProfile::NotificationPreferencesController do
       end
 
       it 'displays an error' do
-        put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
+        put :update, params: { user: disabled_preferences }
         expect(flash[:error]).to eq('Suspended users cannot edit their profile')
       end
 
       it 'redirects to edit' do
-        put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
-        expect(response).to redirect_to(edit_profile_notification_preferences_path)
+        put :update, params: { user: disabled_preferences }
+        expect(response).
+          to redirect_to(edit_profile_notification_preferences_path)
       end
     end
 
@@ -80,12 +88,12 @@ RSpec.describe UserProfile::NotificationPreferencesController do
       end
 
       it 'assigns the currently logged in user' do
-        put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
+        put :update, params: { user: disabled_preferences }
         expect(assigns[:user]).to eq(user)
       end
 
       it 'updates the notification preferences' do
-        put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
+        put :update, params: { user: disabled_preferences }
         user.reload
         expect(user.send_daily_summary).to be(false)
         expect(user.send_immediate_request_alerts).to be(false)
@@ -111,13 +119,15 @@ RSpec.describe UserProfile::NotificationPreferencesController do
       end
 
       it 'sets a success flash message' do
-        put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
-        expect(flash[:notice]).to eq("Your notification preferences have been updated.")
+        put :update, params: { user: disabled_preferences }
+        expect(flash[:notice]).
+          to eq("Your notification preferences have been updated.")
       end
 
       it 'redirects back to edit' do
-        put :update, params: { user: { send_daily_summary: 'false', send_immediate_request_alerts: 'false' } }
-        expect(response).to redirect_to(edit_profile_notification_preferences_path)
+        put :update, params: { user: disabled_preferences }
+        expect(response).
+          to redirect_to(edit_profile_notification_preferences_path)
       end
     end
 
@@ -130,7 +140,8 @@ RSpec.describe UserProfile::NotificationPreferencesController do
 
       it 'redirects to the edit page' do
         put :update
-        expect(response).to redirect_to(edit_profile_notification_preferences_path)
+        expect(response).
+          to redirect_to(edit_profile_notification_preferences_path)
       end
     end
   end

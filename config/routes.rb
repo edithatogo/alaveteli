@@ -353,7 +353,9 @@ Rails.application.routes.draw do
 
   namespace :profile, :module => 'user_profile' do
     resource :about_me, :only => [:edit, :update], :controller => 'about_me'
-    resource :notification_preferences, :only => [:edit, :update], :controller => 'notification_preferences'
+    resource :notification_preferences,
+             :only => [:edit, :update],
+             :controller => 'notification_preferences'
   end
 
   # Legacy route for setting about_me
