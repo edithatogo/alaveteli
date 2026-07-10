@@ -36,7 +36,8 @@ class UserProfile::NotificationPreferencesController < ApplicationController
   end
 
   def check_user_logged_in
-    return if authenticated?
+    @user = authenticated_user
+    return if @user
 
     msg = _('You need to be logged in to change your notification preferences.')
     redirect_to frontpage_url, error: msg
