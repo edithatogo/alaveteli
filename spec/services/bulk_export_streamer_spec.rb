@@ -10,20 +10,23 @@ RSpec.describe BulkExportStreamer do
   end
 
   let!(:old_request) do
-    FactoryBot.create(
+    request = FactoryBot.create(
       :info_request,
-      title: 'Older request',
-      created_at: window_start,
-      updated_at: window_start
+      title: 'Older request'
     )
+    request.update_columns(created_at: window_start, updated_at: window_start)
+    request
   end
   let!(:new_request) do
-    FactoryBot.create(
+    request = FactoryBot.create(
       :info_request,
-      title: 'Newer request',
+      title: 'Newer request'
+    )
+    request.update_columns(
       created_at: window_start + 1.day,
       updated_at: window_start + 1.day
     )
+    request
   end
 
   it 'streams selected rows in deterministic id order' do
