@@ -3,6 +3,12 @@ require 'spec_helper'
 RSpec.describe BulkExportStreamer do
   let(:window_start) { Time.zone.local(2040, 1, 1) }
 
+  around do |example|
+    AlaveteliLocalization.with_locale(AlaveteliLocalization.default_locale) do
+      example.run
+    end
+  end
+
   let!(:old_request) do
     FactoryBot.create(
       :info_request,
