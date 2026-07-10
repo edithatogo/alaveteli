@@ -40,7 +40,7 @@ RSpec.describe TrafficControl, type: :controller do
 
       expect(response.headers['RateLimit-Limit']).to eq('10')
       expect(response.headers['RateLimit-Remaining']).to eq('7') # limit - count (10 - 3)
-      expect(response.headers['RateLimit-Reset']).to eq('18') # 60 - (12345678 % 60)
+      expect(response.headers['RateLimit-Reset']).to eq('42') # 60 - (12345678 % 60)
     end
 
     it 'does not inject headers if throttle data is missing' do

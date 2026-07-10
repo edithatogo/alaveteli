@@ -45,7 +45,8 @@ class BulkExportStreamer
   def fetch_rows(last_id, remaining)
     page_limit = [remaining || batch_size, batch_size].min
     relation = InfoRequest.
-      joins(:public_body).
+      joins(public_body: :translations).
+      where(public_body_translations: { locale: AlaveteliLocalization.locale }).
       where('info_requests.id > ?', last_id).
       order('info_requests.id ASC').
       limit(page_limit)
@@ -64,8 +65,8 @@ class BulkExportStreamer
       'info_requests.created_at',
       'info_requests.updated_at',
       "#{status_expression} AS status",
-      'public_bodies.name AS public_body_name',
-      'public_bodies.url_name AS public_body_url_name'
+      'public_body_translations.name AS public_body_name',
+      'public_body_translations.url_name AS public_body_url_name'
     ]
   end
 
