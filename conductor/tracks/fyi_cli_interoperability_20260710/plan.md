@@ -15,6 +15,10 @@
 - [ ] Test absent, malformed, degraded, throttled, conditional, and bounded cases.
 - Paired fyi-cli cache/bulk issue: https://github.com/edithatogo/fyi-cli/issues/143
 - Paired fyi-cli bounded bulk draft PR: https://github.com/edithatogo/fyi-cli/pull/152
+- Paired Alaveteli validator draft PR: https://github.com/edithatogo/alaveteli/pull/29
+- Validator PR syntax checks pass; focused Rails/RuboCop/Brakeman gates remain
+  blocked by the locked native `xapian-full-alaveteli` dependency on this
+  Windows workstation.
 - [ ] Run RuboCop, Brakeman, dependency audit, and focused tests with zero untriaged findings.
 
 ## Phase 3: Identity and operations
