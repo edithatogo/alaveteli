@@ -21,7 +21,8 @@
   Windows workstation.
 - Dependency audit also has a blocking child issue, Alaveteli #30, for the
   `rackup`/Rack migration needed to remove the vulnerable transitive `webrick`
-  path; no scanner suppression is permitted.
+  path. The isolated resolver failure is decomposed into Alaveteli #31 for the
+  Sprockets/Rack asset-pipeline migration; no scanner suppression is permitted.
 - [ ] Run RuboCop, Brakeman, dependency audit, and focused tests with zero untriaged findings.
 
 ## Phase 3: Identity and operations

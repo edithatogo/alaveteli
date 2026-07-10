@@ -31,7 +31,7 @@
     - [~] Run scoped RSpec, RuboCop, Brakeman, and benchmark command where available
     - [~] Document unavailable local gates and CI follow-up without accepting risk
     - [ ] Confirm no known security, quality, correctness, availability, or operator risk remains
-    - [ ] Blocking follow-up: remediate dependency audit advisories tracked in `#18`, with the focused `rackup`/Rack migration child issue `#30`
+    - [ ] Blocking follow-up: remediate dependency audit advisories tracked in `#18`, with focused Rack migration issues `#30` and `#31`
     - [ ] Blocking follow-up: remediate Brakeman security findings tracked in `#19`
 - [ ] Task: Archive track and synchronize docs
     - [ ] Update Conductor track status and issue map
