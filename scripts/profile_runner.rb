@@ -34,9 +34,14 @@ def profile_block(name, output_dir)
       100.times { { id: rand(100), title: "FOI Request", body: "Metadata text info" }.to_json }
     end
   end
-  
+
   output_file = File.join(output_dir, "#{name}_profile.json")
-  File.write(output_file, JSON.dump(result.to_h rescue {}))
+  profile_data = begin
+    result.to_h
+  rescue StandardError
+    {}
+  end
+  File.write(output_file, JSON.dump(profile_data))
   puts "Saved profile to #{output_file}"
 end
 
