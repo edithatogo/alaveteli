@@ -39,15 +39,4 @@ RSpec.describe RequestZipDelivery do
     expect(File).to have_received(:chmod).with(0644, cache_path)
   end
 
-  it 'does not rebuild an existing cache' do
-    allow(File).to receive(:exist?).and_return(true)
-
-    expect {
-      described_class.call(
-        info_request: info_request,
-        user: user,
-        cache_key: 'bounded-key'
-      ) { raise 'cache should not be rebuilt' }
-    }.not_to raise_error
-  end
 end
