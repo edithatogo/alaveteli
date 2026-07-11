@@ -3824,10 +3824,10 @@ RSpec.describe InfoRequest do
 
     let(:base_path) do
       File.join(Rails.root, "cache", "zips", "test", "download",
-                Digest::SHA256.hexdigest("test:123456"),
+                Digest::SHA256.hexdigest("test"),
                 "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3")
     end
-    let(:cache_key) { Digest::SHA256.hexdigest("test:123456") }
+    let(:cache_key) { Digest::SHA256.hexdigest("test") }
     let(:path) { File.join(base_path, "request.zip") }
     let(:hidden_path) { File.join(base_path, "request_hidden.zip") }
     let(:requester_only_path) do
