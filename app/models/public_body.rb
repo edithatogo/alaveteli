@@ -29,6 +29,12 @@ require 'securerandom'
 require 'set'
 
 class PublicBody < ApplicationRecord
+  STATISTIC_COLUMNS = %w[
+    info_requests_count
+    info_requests_successful_count
+    info_requests_overdue_count
+    info_requests_not_held_count
+  ].freeze
   include Rails.application.routes.url_helpers
   include LinkToHelper
 
@@ -536,6 +542,10 @@ class PublicBody < ApplicationRecord
   # percentage.  This only returns data for those public bodies with
   # at least 'minimum_requests' requests.
   def self.get_request_percentages(column, n, highest, minimum_requests)
+    column = column.to_s
+    unless STATISTIC_COLUMNS.include?(column)
+      raise ArgumentError, "Unsupported public body statistic column: #{column}"
+    end
     total_column = "info_requests_visible_classified_count"
     ordering = "y_value"
     ordering += " DESC" if highest
