@@ -502,6 +502,14 @@ class InfoRequest < ApplicationRecord
     File.join(Rails.root, "cache", "zips", Rails.env)
   end
 
+  def self.zip_cache_path(cache_key:, last_update_hash:, cache_file_suffix:)
+    File.join(download_zip_dir,
+              "download",
+              cache_key,
+              last_update_hash,
+              "request#{cache_file_suffix}.zip")
+  end
+
   def self.reject_incoming_at_mta(options)
     query = InfoRequest.where(
       updated_at: ...options[:age_in_months].months.ago,
@@ -1369,12 +1377,12 @@ class InfoRequest < ApplicationRecord
     # messages depending on whether the user can access hidden or
     # requester_only messages. We name it appropriately, so that every user
     # with the right permissions gets a file with only the right things in.
-    cache_file_dir = File.join(InfoRequest.download_zip_dir,
-                               "download",
-                               cache_key,
-                               last_update_hash)
     cache_file_suffix = zip_cache_file_suffix(user)
-    File.join(cache_file_dir, "request#{cache_file_suffix}.zip")
+    InfoRequest.zip_cache_path(
+      cache_key: cache_key,
+      last_update_hash: last_update_hash,
+      cache_file_suffix: cache_file_suffix
+    )
   end
 
   def zip_cache_file_suffix(user)
