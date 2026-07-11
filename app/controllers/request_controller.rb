@@ -372,35 +372,17 @@ class RequestController < ApplicationController
         # url_title is the unique lookup key used above; hash it before using
         # it in a filesystem path so the route value cannot add path segments.
         cache_key = Digest::SHA256.hexdigest(params[:url_title].to_s)
-        version_key = Digest::SHA256.hexdigest(
-          @info_request.last_update_hash.to_s
-        )
-        cache_file_suffix = safe_zip_cache_suffix(
-          @info_request.zip_cache_file_suffix(@user)
-        )
-        cache_file_path = RequestZipCachePath.call(
-          cache_key: cache_key,
-          last_update_hash: version_key,
-          cache_file_suffix: cache_file_suffix
-        )
-        unless File.exist?(cache_file_path)
-          FileUtils.mkdir_p(File.dirname(cache_file_path.to_s))
-          make_request_zip(@info_request, cache_file_path)
-          File.chmod(0644, cache_file_path)
-        end
-        send_file(cache_file_path.to_s, filename: 'request.zip')
+        delivery = RequestZipDelivery.call(
+          info_request: @info_request,
+          user: @user,
+          cache_key: cache_key
+        ) { |path| make_request_zip(@info_request, path) }
+        send_file(delivery.path, filename: delivery.filename)
       end
     end
   end
 
   private
-
-  def safe_zip_cache_suffix(suffix)
-    return '_hidden' if suffix == '_hidden'
-    return '_requester_only' if suffix == '_requester_only'
-
-    ''
-  end
 
   def info_request_params
     params.require(:info_request).permit(:title, :public_body_id, :tag_string)
