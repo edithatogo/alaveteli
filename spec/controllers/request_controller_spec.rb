@@ -1980,6 +1980,8 @@ RSpec.describe RequestController do
           get :download_entire_request,
               params: { url_title: info_request.url_title }
           expect(response).to be_successful
+          expect(response.headers['Content-Disposition']).
+            to include('filename="request.zip"')
         end
       end
     end

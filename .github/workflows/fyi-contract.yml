@@ -73,7 +73,6 @@ jobs:
           bundle exec rspec
           spec/controllers/request_controller_spec.rb:1944
           spec/models/info_request_spec.rb:3820
-          spec/integration/download_request_spec.rb
           spec/services/bulk_export_streamer_spec.rb
           spec/controllers/concerns/traffic_control_spec.rb
           spec/requests/contracts_validation_spec.rb
