@@ -546,6 +546,7 @@ class PublicBody < ApplicationRecord
     unless STATISTIC_COLUMNS.include?(column)
       raise ArgumentError, "Unsupported public body statistic column: #{column}"
     end
+
     total_column = "info_requests_visible_classified_count"
     ordering = "y_value"
     ordering += " DESC" if highest

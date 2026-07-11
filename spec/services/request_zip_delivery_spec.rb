@@ -20,7 +20,7 @@ RSpec.describe RequestZipDelivery do
     allow(File).to receive(:exist?).and_call_original
     allow(File).to receive(:exist?).with(cache_path).and_return(false, true)
     allow(File).to receive(:chmod).and_call_original
-    allow(File).to receive(:chmod).with(0644, anything)
+    allow(File).to receive(:chmod).with(0o644, anything)
     allow(File).to receive(:rename).and_call_original
     allow(File).to receive(:rename).
       with("#{cache_path}.part", cache_path)
@@ -62,5 +62,4 @@ RSpec.describe RequestZipDelivery do
     expect(FileUtils).to have_received(:rm_f).
       with("#{cache_path}.part").twice
   end
-
 end

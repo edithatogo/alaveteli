@@ -27,7 +27,8 @@ RSpec.shared_examples 'concerns/taggable' do |factory_opts|
     end
 
     it 'treats SQL metacharacters in a tag as data' do
-      expect(described_class.with_tag("tag'); DROP TABLE users; --")).to be_empty
+      malicious_tag = "tag'); DROP TABLE users; --"
+      expect(described_class.with_tag(malicious_tag)).to be_empty
     end
   end
 

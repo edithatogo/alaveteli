@@ -2108,7 +2108,9 @@ RSpec.describe PublicBody, "when calculating statistics" do
 
   it "rejects unapproved statistic columns" do
     expect {
-      PublicBody.get_request_percentages("info_requests_count, pg_sleep(1)", 3, false, 1)
+      PublicBody.get_request_percentages(
+        "info_requests_count, pg_sleep(1)", 3, false, 1
+      )
     }.to raise_error(ArgumentError, /Unsupported public body statistic column/)
   end
 
