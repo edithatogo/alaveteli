@@ -21,7 +21,7 @@ class RequestZipDelivery
 
     File.open(lock_path(cache_path), File::CREAT) do |lock_file|
       lock_file.flock(File::LOCK_EX)
-      yield cache_path unless File.exist?(cache_path)
+      write_cache(cache_path) unless File.exist?(cache_path)
       File.chmod(0644, cache_path) if File.exist?(cache_path)
     end
 
@@ -34,5 +34,15 @@ class RequestZipDelivery
 
   def lock_path(cache_path)
     "#{cache_path}.lock"
+  end
+
+  def write_cache(cache_path)
+    partial_path = "#{cache_path}.part"
+    FileUtils.rm_f(partial_path)
+    yield partial_path
+    File.chmod(0644, partial_path)
+    File.rename(partial_path, cache_path)
+  ensure
+    FileUtils.rm_f(partial_path)
   end
 end

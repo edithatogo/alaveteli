@@ -10,6 +10,8 @@ RSpec.describe RequestZipDelivery do
       with(user, cache_key: 'bounded-key').and_return(cache_path)
     allow(FileUtils).to receive(:mkdir_p).and_call_original
     allow(FileUtils).to receive(:mkdir_p).with(cache_path.dirname.to_s)
+    allow(FileUtils).to receive(:rm_f).and_call_original
+    allow(FileUtils).to receive(:rm_f).with("#{cache_path}.part")
     lock_file = instance_double(File, flock: true)
     allow(File).to receive(:open).and_call_original
     allow(File).to receive(:open).
@@ -17,7 +19,10 @@ RSpec.describe RequestZipDelivery do
     allow(File).to receive(:exist?).and_call_original
     allow(File).to receive(:exist?).with(cache_path).and_return(false, true)
     allow(File).to receive(:chmod).and_call_original
-    allow(File).to receive(:chmod).with(0644, cache_path)
+    allow(File).to receive(:chmod).with(0644, anything)
+    allow(File).to receive(:rename).and_call_original
+    allow(File).to receive(:rename).
+      with("#{cache_path}.part", cache_path)
   end
 
   it 'builds the cache once under the model-provided cache boundary' do
@@ -29,14 +34,17 @@ RSpec.describe RequestZipDelivery do
       cache_key: 'bounded-key'
     ) { |path| generated_path = path }
 
-    expect(generated_path).to eq(cache_path)
+    expect(generated_path).to eq("#{cache_path}.part")
     expect(delivery).to have_attributes(
       path: cache_path.to_s,
       filename: 'request.zip'
     )
     expect(FileUtils).to have_received(:mkdir_p).
       with(cache_path.dirname.to_s)
-    expect(File).to have_received(:chmod).with(0644, cache_path)
+    expect(File).to have_received(:rename).
+      with("#{cache_path}.part", cache_path)
+    expect(FileUtils).to have_received(:rm_f).
+      with("#{cache_path}.part").twice
   end
 
 end
