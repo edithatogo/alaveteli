@@ -3840,11 +3840,6 @@ RSpec.describe InfoRequest do
       allow(request).to receive(:last_update_hash).and_return(test_hash)
     end
 
-    it 'keeps the cache path below the download directory' do
-      expect(request.make_zip_cache_path(nil)).
-        to start_with(InfoRequest.download_zip_dir)
-    end
-
     shared_examples_for "a situation when everything is public" do
       it "doesn't add a suffix for anyone" do
         expect(request.make_zip_cache_path(nil)).to eq(path)
@@ -3928,6 +3923,11 @@ RSpec.describe InfoRequest do
       let(:request) do
         FactoryBot.create(:info_request_with_incoming, id: 123_456,
                                                        title: "Test")
+      end
+
+      it 'keeps the cache path below the download directory' do
+        expect(request.make_zip_cache_path(nil)).
+          to start_with(InfoRequest.download_zip_dir)
       end
 
       context "when all correspondence is public" do
