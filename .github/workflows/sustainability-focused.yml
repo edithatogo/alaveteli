@@ -1,0 +1,75 @@
+name: Focused Sustainability Endpoint
+
+on:
+  push:
+    branches:
+      - test/sustainability-rate-limit-focused
+
+permissions:
+  contents: read
+
+concurrency:
+  group: focused-sustainability-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  controller-spec:
+    name: Sustainability controller spec / Ruby 3.4 / PostgreSQL 13.5
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: fixmystreet/postgres:13.5
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/alaveteli_test
+      RAILS_ENV: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system packages
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install --no-install-recommends \
+            exim4-daemon-light \
+            $(cut -d ' ' -f 1 config/packages | grep -Ev '(^#|wkhtml|bundler|^ruby|^rake)')
+
+      - name: Install Ruby 3.4
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Setup database
+        run: |
+          psql postgres://postgres:postgres@localhost:5432 <<-EOSQL
+            CREATE DATABASE template_utf8 TEMPLATE template0 ENCODING "UTF-8";
+            UPDATE pg_database SET datistemplate=true WHERE datname='template_utf8';
+            CREATE DATABASE alaveteli_test TEMPLATE template_utf8;
+          EOSQL
+
+      - name: Configure application and storage
+        run: |
+          cp config/general.yml-example config/general.yml
+          cp config/storage.yml-example config/storage.yml
+
+      - name: Install theme
+        run: bundle exec rake themes:install
+
+      - name: Migrate database
+        run: bundle exec rails db:migrate
+
+      - name: Run focused controller spec
+        run: bundle exec rspec spec/controllers/api/v1/sustainability_controller_spec.rb --format progress
