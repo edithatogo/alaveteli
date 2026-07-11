@@ -36,8 +36,12 @@ def profile_block(name, output_dir)
   end
   
   output_file = File.join(output_dir, "#{name}_profile.json")
-  File.write(output_file, JSON.dump(result.to_h rescue {}))
+  File.write(output_file, JSON.dump(profile_result_hash(result)))
   puts "Saved profile to #{output_file}"
+end
+
+def profile_result_hash(result)
+  result.respond_to?(:to_h) ? result.to_h : {}
 end
 
 if workload == 'all'
