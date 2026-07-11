@@ -8,11 +8,16 @@ RSpec.describe RequestZipDelivery do
   before do
     allow(info_request).to receive(:make_zip_cache_path).
       with(user, cache_key: 'bounded-key').and_return(cache_path)
-    allow(FileUtils).to receive(:mkdir_p)
+    allow(FileUtils).to receive(:mkdir_p).and_call_original
+    allow(FileUtils).to receive(:mkdir_p).with(cache_path.dirname.to_s)
     lock_file = instance_double(File, flock: true)
-    allow(File).to receive(:open).and_yield(lock_file)
-    allow(File).to receive(:exist?).and_return(false, true)
-    allow(File).to receive(:chmod)
+    allow(File).to receive(:open).and_call_original
+    allow(File).to receive(:open).
+      with("#{cache_path}.lock", File::CREAT).and_yield(lock_file)
+    allow(File).to receive(:exist?).and_call_original
+    allow(File).to receive(:exist?).with(cache_path).and_return(false, true)
+    allow(File).to receive(:chmod).and_call_original
+    allow(File).to receive(:chmod).with(0644, cache_path)
   end
 
   it 'builds the cache once under the model-provided cache boundary' do
