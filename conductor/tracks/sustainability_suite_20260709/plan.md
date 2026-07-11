@@ -130,6 +130,15 @@
       request-controller warnings remain open. Further work requires a larger
       delivery redesign or explicitly reviewed proof; no scanner suppression
       or false-positive reclassification was made.
+    - [ ] Child issue #53 is the next delivery-boundary gate, linked to #51
+      and stacked PR #52. It must move filesystem ownership out of the
+      model-derived controller flow or provide an explicitly reviewed proof
+      that the scanner's dataflow is bounded. The gate stays open until
+      Brakeman reports zero request-controller FileAccess and SendFile
+      warnings without ignores, while focused authorization, visibility,
+      cache-invalidation, and path-boundary tests remain green. No upstream
+      submission or closure of #51/#52 is permitted before this evidence is
+      complete.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
