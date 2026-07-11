@@ -13,13 +13,13 @@ class RequestZipDelivery
     @cache_key = cache_key
   end
 
-  def call
+  def call(&block)
     cache_path = info_request.make_zip_cache_path(user, cache_key: cache_key)
     FileUtils.mkdir_p(File.dirname(cache_path.to_s))
 
     File.open(lock_path(cache_path), File::CREAT) do |lock_file|
       lock_file.flock(File::LOCK_EX)
-      write_cache(cache_path) unless File.exist?(cache_path)
+      write_cache(cache_path, &block) unless File.exist?(cache_path)
       File.chmod(0644, cache_path) if File.exist?(cache_path)
     end
 
@@ -34,10 +34,10 @@ class RequestZipDelivery
     "#{cache_path}.lock"
   end
 
-  def write_cache(cache_path)
+  def write_cache(cache_path, &block)
     partial_path = "#{cache_path}.part"
     FileUtils.rm_f(partial_path)
-    yield partial_path
+    block.call(partial_path)
     File.chmod(0644, partial_path)
     File.rename(partial_path, cache_path)
   ensure
