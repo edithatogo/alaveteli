@@ -56,7 +56,7 @@ class DatabaseCollation
     sql = <<-EOF.strip_heredoc.squish
     SELECT collname FROM pg_collation
     WHERE collencoding = '-1'
-    OR collencoding = '#{ database_encoding }';
+    OR collencoding = #{ connection.quote(database_encoding) };
     EOF
 
     @supported_collations ||=
@@ -66,7 +66,7 @@ class DatabaseCollation
   def database_encoding
     sql = <<-EOF.strip_heredoc.squish
     SELECT encoding FROM pg_database
-    WHERE datname = '#{ connection.current_database }';
+    WHERE datname = #{ connection.quote(connection.current_database) };
     EOF
 
     @database_encoding ||= connection.execute(sql).first["encoding"]
