@@ -25,6 +25,10 @@ RSpec.shared_examples 'concerns/taggable' do |factory_opts|
       scope = described_class.with_tag('myothercategory')
       expect(scope).to be_empty
     end
+
+    it 'treats SQL metacharacters in a tag as data' do
+      expect(described_class.with_tag("tag'); DROP TABLE users; --")).to be_empty
+    end
   end
 
   describe '.without_tag' do
