@@ -253,15 +253,17 @@ class AdminPublicBodyController < AdminController
          LIKE lower('%'||?||'%')
          OR lower(public_body_translations.request_email)
          LIKE lower('%'||?||'%' ))
-         AND (public_body_translations.locale = '#{@locale}')
+         AND (public_body_translations.locale = ?)
         EOF
 
-        [query_str, @query, @query, @query]
+        [query_str, @query, @query, @query, @locale]
       else
         <<-EOF.strip_heredoc
-        public_body_translations.locale = '#{@locale}'
+        public_body_translations.locale = ?
         EOF
       end
+
+      query = [query, @locale] unless query.is_a?(Array)
 
       @public_bodies =
         PublicBody.
