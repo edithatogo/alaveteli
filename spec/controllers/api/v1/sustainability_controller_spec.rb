@@ -75,7 +75,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
     end
 
     it 'rejects an invalid client address without querying the limiter' do
-      allow(request).to receive(:remote_ip).and_return('not-an-ip')
+      allow(controller.request).to receive(:remote_ip).and_return('not-an-ip')
       expect(limiter).not_to receive(:rule)
       expect(limiter).not_to receive(:records)
 
