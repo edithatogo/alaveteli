@@ -1,11 +1,19 @@
 # Implementation Plan: fyi-cli Interoperability
 
-## Phase 1: Contract evidence
+## Phase 1: Contract evidence [checkpoint: 13ec754f0]
 
-- [ ] Issue #24: Audit and publish the exact server/client contract.
-- [ ] Record the paired fyi-cli issue and contract version in this plan.
-- [ ] Add a drift sensor for every documented header and endpoint behavior.
-- [ ] Verify no live network is required by the contract suite.
+- [x] Issue #24: Audit and publish the exact server/client contract [13ec754f0].
+  - Fork-only draft PR: https://github.com/edithatogo/alaveteli/pull/46
+- [x] Record the paired fyi-cli issue and contract version in this plan.
+  - Paired issue: https://github.com/edithatogo/fyi-cli/issues/142 (closed)
+  - Paired PR: https://github.com/edithatogo/fyi-cli/pull/150 (merged)
+  - Contract version: `doc/fyi_cli_contract.md` version `0.1`
+- [x] Add a drift sensor for every documented header and endpoint behavior.
+  - The fork-owned workflow runs the rate-limit, back-pressure, cache,
+    bulk-export, and parameter-contract specs.
+- [x] Verify no live network is required by the contract suite.
+  - Hosted run: https://github.com/edithatogo/alaveteli/actions/runs/29148244853
+  - Result: Ruby 3.4/PostgreSQL 13.5, 19 examples, 0 failures.
 
 ## Phase 2: Server conformance fixtures
 
@@ -37,6 +45,14 @@
 - [ ] Issue #27: Reconcile the paired fyi-cli implementation evidence.
 - [ ] Run the shared offline contract suite and only an explicitly enabled bounded smoke test.
 - [ ] Close this track only when every known risk is fixed, verified false positive, or blocked by a dated disabled follow-up.
+
+## Current blockers
+
+- PR #46 remains draft until the repository-wide Brakeman, dependency-audit,
+  Dependency Review, and preview-Ruby baseline findings are resolved or have
+  explicit dated child issues. No finding is suppressed.
+- Issue #25 remains open for the server-side conformance fixture slice; this
+  Phase 1 contract artifact does not close production behavior gaps.
 
 ## Paired endorsed-route proposal
 
