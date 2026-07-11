@@ -96,6 +96,6 @@
 - [x] Task: Run the focused sustainability controller suite in a hosted Linux
   environment [3e63d8506]
     - Focused harness run: https://github.com/edithatogo/alaveteli/actions/runs/29146357879
-    - Ruby 3.4 / PostgreSQL 13.5: 5 examples, 0 failures.
+    - Ruby 3.4 / PostgreSQL 13.5: 6 examples, 0 failures.
     - The disposable harness initializes the existing `commonlib` submodule;
       this setup correction is not part of the endpoint PR.
