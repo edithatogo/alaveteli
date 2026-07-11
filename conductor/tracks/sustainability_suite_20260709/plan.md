@@ -141,13 +141,14 @@
       complete. Design invariants and rejected shortcuts are recorded in
       `zip_delivery_boundary.md`.
     - [~] Implementation slice in stacked PR #52 (`66c25de49` through
-      `658e2f166`) moves cache creation, locking, permissions, and atomic
+      `81e135a30`) moves cache creation, locking, permissions, and atomic
       publication into `RequestZipDelivery`, adds a focused service sensor,
       and initializes the disposable rate-limiter store in the focused
       workflow. Hosted contract run
-      https://github.com/edithatogo/alaveteli/actions/runs/29152038527
-      passes with 76 examples and 0 failures. Latest Brakeman run
-      https://github.com/edithatogo/alaveteli/actions/runs/29152040886
+      https://github.com/edithatogo/alaveteli/actions/runs/29152191955
+      passes with 77 examples and 0 failures, including exclusive-lock and
+      partial-artifact cleanup coverage. Latest Brakeman run
+      https://github.com/edithatogo/alaveteli/actions/runs/29152193570
       reports 29 baseline warnings and no request-controller or
       `request_zip_delivery.rb` FileAccess/SendFile finding. Full repository
       security and dependency gates remain red; Ruby 3.4 core CI is still in
