@@ -369,7 +369,9 @@ class RequestController < ApplicationController
         # Test for whole request being hidden or requester-only
         return render_hidden if cannot?(:read, @info_request)
 
-        cache_key = Digest::SHA256.hexdigest(params[:url_title].to_s)
+        cache_key = Digest::SHA256.hexdigest(
+          "#{params[:url_title]}:#{@info_request.id}"
+        )
         cache_file_path = @info_request.make_zip_cache_path(
           @user,
           cache_key: cache_key
