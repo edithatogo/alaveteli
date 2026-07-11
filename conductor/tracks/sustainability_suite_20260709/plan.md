@@ -103,6 +103,10 @@
       #44 and upstream issue #9379 for a compatibility-first cookie serializer
       migration. No one-line `:hybrid` replacement is permitted without
       session, authentication, CSRF, migration, and rollback evidence.
+    - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
+      session and direct unsigned consumers for locale, request/body IDs, and
+      widget votes. No direct signed/encrypted cookie call sites were found;
+      key rotation and legacy-cookie behavior remain design gates.
     - Do not suppress or reclassify these baseline findings in the endpoint PR.
 - [x] Task: Run the focused sustainability controller suite in a hosted Linux
   environment [3e63d8506]
