@@ -3,10 +3,8 @@
 class RequestZipDelivery
   Delivery = Struct.new(:path, :filename, keyword_init: true)
 
-  def self.call(info_request:, user:, cache_key:)
-    new(info_request: info_request, user: user, cache_key: cache_key).call do |path|
-      yield path
-    end
+  def self.call(info_request:, user:, cache_key:, &block)
+    new(info_request: info_request, user: user, cache_key: cache_key).call(&block)
   end
 
   def initialize(info_request:, user:, cache_key:)
