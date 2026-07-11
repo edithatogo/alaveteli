@@ -138,7 +138,8 @@
       warnings without ignores, while focused authorization, visibility,
       cache-invalidation, and path-boundary tests remain green. No upstream
       submission or closure of #51/#52 is permitted before this evidence is
-      complete.
+      complete. Design invariants and rejected shortcuts are recorded in
+      `zip_delivery_boundary.md`.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
