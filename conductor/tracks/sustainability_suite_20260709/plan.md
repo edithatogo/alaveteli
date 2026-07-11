@@ -114,6 +114,12 @@
       https://github.com/edithatogo/alaveteli/actions/runs/29148478030 drops
       from 31 to 30 warnings and reports no remaining warning for
       `traffic_control.rb`. The parent security gate remains open.
+    - Brakeman child issue #49 and draft PR #50 isolate request ZIP cache
+      filenames from URL titles and use a fixed response filename. Focused
+      run https://github.com/edithatogo/alaveteli/actions/runs/29148912185
+      passes; full Brakeman still reports the model-derived cache path through
+      `send_file`. Follow-up issue #51 owns that remaining path-flow warning;
+      no suppression is permitted.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
