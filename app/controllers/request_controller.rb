@@ -375,7 +375,7 @@ class RequestController < ApplicationController
           make_request_zip(@info_request, cache_file_path)
           File.chmod(0644, cache_file_path)
         end
-        send_file(cache_file_path, filename: "#{@info_request.url_title}.zip")
+        send_file(cache_file_path, filename: "request-#{@info_request.id}.zip")
       end
     end
   end

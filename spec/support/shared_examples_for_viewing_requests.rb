@@ -80,7 +80,7 @@ shared_examples_for 'a request with response' do
     using_pro_session(pro_user_session) do
       browse_pro_request(info_request.url_title)
       first(:link, "Download a zip file of all correspondence").click
-      expected = /attachment; filename="example_title_.*\.zip"/
+      expected = /attachment; filename="request-#{info_request.id}\.zip"/
       expect(page.response_headers["Content-Disposition"]).
         to match(expected)
     end

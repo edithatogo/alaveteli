@@ -1374,7 +1374,7 @@ class InfoRequest < ApplicationRecord
                                request_dirs,
                                last_update_hash)
     cache_file_suffix = zip_cache_file_suffix(user)
-    File.join(cache_file_dir, "#{url_title}#{cache_file_suffix}.zip")
+    File.join(cache_file_dir, "#{id}#{cache_file_suffix}.zip")
   end
 
   def zip_cache_file_suffix(user)
