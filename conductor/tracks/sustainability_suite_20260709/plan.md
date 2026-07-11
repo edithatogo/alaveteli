@@ -141,18 +141,19 @@
       complete. Design invariants and rejected shortcuts are recorded in
       `zip_delivery_boundary.md`.
     - [~] Implementation slice in stacked PR #52 (`66c25de49` through
-      `ec263997f`) moves cache creation, locking, and permissions into
-      `RequestZipDelivery`, adds a focused service sensor, and initializes the
-      disposable rate-limiter store in the focused workflow. Hosted contract
-      run https://github.com/edithatogo/alaveteli/actions/runs/29150943046
-      passes with 77 examples and 0 failures. Latest Brakeman run
-      https://github.com/edithatogo/alaveteli/actions/runs/29150944253
-      reports 29 baseline warnings and no request-controller FileAccess or
-      SendFile finding. Full repository security and dependency gates remain
-      red; Ruby 3.4 core CI is still in progress and Ruby 4 preview fails at
-      toolchain installation. Keep #52 draft and do not close #53 until the
-      remaining delivery, concurrency, integration, and repository-wide gates
-      are evidenced.
+      `658e2f166`) moves cache creation, locking, permissions, and atomic
+      publication into `RequestZipDelivery`, adds a focused service sensor,
+      and initializes the disposable rate-limiter store in the focused
+      workflow. Hosted contract run
+      https://github.com/edithatogo/alaveteli/actions/runs/29152038527
+      passes with 76 examples and 0 failures. Latest Brakeman run
+      https://github.com/edithatogo/alaveteli/actions/runs/29152040886
+      reports 29 baseline warnings and no request-controller or
+      `request_zip_delivery.rb` FileAccess/SendFile finding. Full repository
+      security and dependency gates remain red; Ruby 3.4 core CI is still in
+      progress and Ruby 4 preview fails at toolchain installation. Keep #52
+      draft and do not close #53 until integration, failure-cleanup,
+      concurrency, and repository-wide gates are evidenced.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
