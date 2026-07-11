@@ -377,12 +377,16 @@ class RequestController < ApplicationController
           user: @user,
           cache_key: cache_key
         ) { |path| make_request_zip(@info_request, path) }
-        send_file(delivery.path, filename: delivery.filename)
+        send_request_zip(delivery)
       end
     end
   end
 
   private
+
+  def send_request_zip(delivery)
+    send_file(delivery.path, filename: delivery.filename)
+  end
 
   def info_request_params
     params.require(:info_request).permit(:title, :public_body_id, :tag_string)
