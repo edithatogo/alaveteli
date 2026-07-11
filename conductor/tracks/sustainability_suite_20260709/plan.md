@@ -84,3 +84,12 @@
 - [ ] Task: Run the focused RSpec locally after the native
   `xapian-full-alaveteli` dependency is available in the user-local bundle.
     - Ruby 3.4.9 syntax checks and `git diff --check` pass.
+- [~] Task: Establish fork-owned manual GitHub validation dispatch
+    - Harness PR: https://github.com/edithatogo/alaveteli/pull/41
+    - The existing CI, RuboCop, Security & DevSecOps, and Changelog workflows
+      now support manual dispatch without changing their validation commands.
+    - Fork evidence: Ruby 3.4 gem specs pass; Ruby 3.4 core specs remain in
+      progress. Ruby 4 preview jobs fail, while Brakeman and dependency audit
+      expose pre-existing baseline findings. Dependency Review is unavailable
+      because dependency graph is disabled in the fork.
+    - Do not suppress or reclassify these baseline findings in the endpoint PR.
