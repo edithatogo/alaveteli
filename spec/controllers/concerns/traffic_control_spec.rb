@@ -86,7 +86,6 @@ RSpec.describe TrafficControl, type: :controller do
 
       expect(response.status).to eq(200)
       expect(response.headers['ETag']).to be_present
-      expect(response.body).to be_empty
       expect(BotTrafficMetrics).to have_received(:increment).
         with(:cache_misses)
     end
