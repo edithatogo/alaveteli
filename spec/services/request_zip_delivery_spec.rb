@@ -4,6 +4,7 @@ RSpec.describe RequestZipDelivery do
   let(:info_request) { double('info_request') }
   let(:user) { double('user') }
   let(:cache_path) { Rails.root.join('cache', 'zips', 'test', 'request.zip') }
+  let(:lock_file) { instance_double(File) }
 
   before do
     allow(info_request).to receive(:make_zip_cache_path).
@@ -12,7 +13,6 @@ RSpec.describe RequestZipDelivery do
     allow(FileUtils).to receive(:mkdir_p).with(cache_path.dirname.to_s)
     allow(FileUtils).to receive(:rm_f).and_call_original
     allow(FileUtils).to receive(:rm_f).with("#{cache_path}.part")
-    lock_file = instance_double(File)
     allow(lock_file).to receive(:flock).and_return(true)
     allow(File).to receive(:open).and_call_original
     allow(File).to receive(:open).
