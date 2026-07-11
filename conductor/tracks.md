@@ -9,7 +9,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [x] **Track: Implement Sustainability Suite for Scraper Traffic**
+- [~] **Track: Implement Sustainability Suite for Scraper Traffic**
   *Link: [./tracks/sustainability_suite_20260709/](./tracks/sustainability_suite_20260709/)*
 
 ---

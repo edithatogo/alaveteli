@@ -62,3 +62,22 @@
     - [x] Add Redis service health-check script in Docker Compose startup sequence
     - [x] Add `simulate-attack` script task to `conductor.json`
 - [x] Task: Conductor - User Manual Verification 'Phase 6: Orchestration Updates' (Protocol in workflow.md) [b97b9f3]
+
+## Phase 7: Upstream endpoint reconciliation
+
+- [~] Task: Establish the upstream read-only sustainability endpoint foundation
+    - Fork issue: https://github.com/edithatogo/alaveteli/issues/39
+    - Upstream issue: https://github.com/mysociety/alaveteli/issues/9377
+    - Fork PR: https://github.com/edithatogo/alaveteli/pull/40
+    - Upstream draft PR: https://github.com/mysociety/alaveteli/pull/9378
+    - The implementation is based directly on upstream `develop` and is
+      limited to the route, controller, focused specs, and existing
+      `AlaveteliRateLimiter` integration. Bulk export, client integration, and
+      dependency migration remain separate child work.
+- [ ] Task: Obtain upstream workflow approval and complete CI, RuboCop, and
+  Changelog checks with no action-required state.
+    - Current blocker: fork-origin workflow runs require upstream repository
+      administrator approval; the current token cannot approve them.
+- [ ] Task: Run the focused RSpec locally after the native
+  `xapian-full-alaveteli` dependency is available in the user-local bundle.
+    - Ruby 3.4.9 syntax checks and `git diff --check` pass.
