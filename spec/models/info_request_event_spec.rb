@@ -337,6 +337,14 @@ RSpec.describe InfoRequestEvent do
       expect(event.search_text_main(true).strip).to eq("No way! I'm not going to tell you that in a month of Thursdays.\n\nThe Geraldine Quango")
       expect(event.incoming_message_selective_columns("cached_main_body_text_folded").cached_main_body_text_folded).not_to eq(nil)
     end
+
+    it 'rejects unapproved incoming message select columns' do
+      event = info_request_events(:useless_incoming_message_event)
+
+      expect {
+        event.incoming_message_selective_columns('id, pg_sleep(1)')
+      }.to raise_error(ArgumentError, /Unsupported incoming message column/)
+    end
   end
 
   describe 'when asked if it has the same email as a previous send' do

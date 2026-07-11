@@ -22,6 +22,11 @@
 # Email: hello@mysociety.org; WWW: http://www.mysociety.org/
 
 class InfoRequestEvent < ApplicationRecord
+  INCOMING_MESSAGE_COLUMNS = {
+    'cached_attachment_text_clipped' => :cached_attachment_text_clipped,
+    'cached_main_body_text_folded' => :cached_main_body_text_folded,
+    'incoming_messages.id' => :id
+  }.freeze
   include Searchable
 
   extend XapianQueries
@@ -127,7 +132,12 @@ class InfoRequestEvent < ApplicationRecord
   end
 
   def incoming_message_selective_columns(fields)
-    message = IncomingMessage.select("#{ fields }, incoming_messages.info_request_id").
+    columns = fields.to_s.split(',').map(&:strip).map do |field|
+      INCOMING_MESSAGE_COLUMNS.fetch(field) do
+        raise ArgumentError, "Unsupported incoming message column: #{field}"
+      end
+    end
+    message = IncomingMessage.select(*columns, :info_request_id).
       joins('INNER JOIN info_request_events ON incoming_messages.id = incoming_message_id').
       where('info_request_events.id = ?', id)
 
