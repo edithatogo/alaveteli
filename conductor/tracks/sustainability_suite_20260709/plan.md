@@ -103,6 +103,9 @@
       #44 and upstream issue #9379 for a compatibility-first cookie serializer
       migration. No one-line `:hybrid` replacement is permitted without
       session, authentication, CSRF, migration, and rollback evidence.
+    - Draft design PR: https://github.com/edithatogo/alaveteli/pull/45.
+      Runtime serializer changes remain blocked until this design gate is
+      reviewed.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
