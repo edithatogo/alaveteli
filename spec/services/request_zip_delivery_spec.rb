@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe RequestZipDelivery do
-  let(:info_request) { instance_double(InfoRequest) }
-  let(:user) { instance_double(User) }
+  let(:info_request) { double('info_request') }
+  let(:user) { double('user') }
   let(:cache_path) { Rails.root.join('cache', 'zips', 'test', 'request.zip') }
 
   before do
