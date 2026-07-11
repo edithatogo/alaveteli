@@ -74,7 +74,7 @@
       limited to the route, controller, focused specs, and existing
       `AlaveteliRateLimiter` integration. Bulk export, client integration, and
       dependency migration remain separate child work.
-- [x] Task: Address endpoint review edge cases [ff5def0e5]
+- [x] Task: Address endpoint review edge cases [e79cd7b2d]
     - [x] Validate malformed and spoofed client addresses before limiter access.
     - [x] Verify non-cacheable `400`/`503` responses and over-limit reset math.
 - [ ] Task: Obtain upstream workflow approval and complete CI, RuboCop, and
