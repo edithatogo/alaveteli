@@ -89,9 +89,13 @@
     - The existing CI, RuboCop, Security & DevSecOps, and Changelog workflows
       now support manual dispatch without changing their validation commands.
     - Fork evidence: Ruby 3.4 gem specs pass; Ruby 3.4 core specs remain in
-      progress. Ruby 4 preview jobs fail, while Brakeman and dependency audit
-      expose pre-existing baseline findings. Dependency Review is unavailable
-      because dependency graph is disabled in the fork.
+      progress. The full Ruby 3.4 core run completed with 41 baseline failures;
+      Ruby 4 preview jobs also fail, while Brakeman and dependency audit expose
+      pre-existing findings. Dependency Review is unavailable because
+      dependency graph is disabled in the fork.
+    - Baseline remediation is tracked separately in fork issues #18
+      (dependency audit), #19 (Brakeman), #30 (Rack/WEBrick), and #31
+      (Sprockets/Rack asset migration).
     - Do not suppress or reclassify these baseline findings in the endpoint PR.
 - [x] Task: Run the focused sustainability controller suite in a hosted Linux
   environment [3e63d8506]
