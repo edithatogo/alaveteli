@@ -106,6 +106,14 @@
     - Draft design PR: https://github.com/edithatogo/alaveteli/pull/45.
       Runtime serializer changes remain blocked until this design gate is
       reviewed.
+    - Brakeman child issue #47 and draft PR #48 remediate the
+      `TrafficControl#public_cache_control` HEAD verb-confusion finding with
+      one focused behavior spec. Focused run
+      https://github.com/edithatogo/alaveteli/actions/runs/29148478445 passes
+      (14 examples, 0 failures); full Brakeman run
+      https://github.com/edithatogo/alaveteli/actions/runs/29148478030 drops
+      from 31 to 30 warnings and reports no remaining warning for
+      `traffic_control.rb`. The parent security gate remains open.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
