@@ -503,11 +503,11 @@ class InfoRequest < ApplicationRecord
   end
 
   def self.zip_cache_path(cache_key:, last_update_hash:, cache_file_suffix:)
-    File.join(download_zip_dir,
-              "download",
-              cache_key,
-              last_update_hash,
-              "request#{cache_file_suffix}.zip")
+    RequestZipCachePath.call(
+      cache_key: cache_key,
+      last_update_hash: last_update_hash,
+      cache_file_suffix: cache_file_suffix
+    )
   end
 
   def self.reject_incoming_at_mta(options)

@@ -372,7 +372,7 @@ class RequestController < ApplicationController
         # url_title is the unique lookup key used above; hash it before using
         # it in a filesystem path so the route value cannot add path segments.
         cache_key = Digest::SHA256.hexdigest(params[:url_title].to_s)
-        cache_file_path = InfoRequest.zip_cache_path(
+        cache_file_path = RequestZipCachePath.call(
           cache_key: cache_key,
           last_update_hash: @info_request.last_update_hash,
           cache_file_suffix: @info_request.zip_cache_file_suffix(@user)
