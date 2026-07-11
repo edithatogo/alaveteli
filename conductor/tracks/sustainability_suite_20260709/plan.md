@@ -120,6 +120,13 @@
       passes; full Brakeman still reports the model-derived cache path through
       `send_file`. Follow-up issue #51 owns that remaining path-flow warning;
       no suppression is permitted.
+    - Child issue #51 and stacked draft PR #52 move cache paths behind a
+      bounded SHA-256 route key and a primitive path builder. Focused run
+      https://github.com/edithatogo/alaveteli/actions/runs/29149611183 passes;
+      full Brakeman still traces the resolved model through `send_file` and
+      `FileUtils.mkdir_p`, so the two request-controller warnings remain
+      open. No scanner suppression or false-positive reclassification was
+      made.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
