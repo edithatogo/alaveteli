@@ -384,11 +384,11 @@ class RequestController < ApplicationController
           cache_file_suffix: cache_file_suffix
         )
         unless File.exist?(cache_file_path)
-          FileUtils.mkdir_p(File.dirname(cache_file_path))
+          FileUtils.mkdir_p(File.dirname(cache_file_path.to_s))
           make_request_zip(@info_request, cache_file_path)
           File.chmod(0644, cache_file_path)
         end
-        send_file(cache_file_path, filename: 'request.zip')
+        send_file(cache_file_path.to_s, filename: 'request.zip')
       end
     end
   end
