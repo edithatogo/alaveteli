@@ -369,7 +369,11 @@ class RequestController < ApplicationController
         # Test for whole request being hidden or requester-only
         return render_hidden if cannot?(:read, @info_request)
 
-        cache_file_path = @info_request.make_zip_cache_path(@user)
+        cache_key = Digest::SHA256.hexdigest(params[:url_title].to_s)
+        cache_file_path = @info_request.make_zip_cache_path(
+          @user,
+          cache_key: cache_key
+        )
         unless File.exist?(cache_file_path)
           FileUtils.mkdir_p(File.dirname(cache_file_path))
           make_request_zip(@info_request, cache_file_path)

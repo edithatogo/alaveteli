@@ -3823,13 +3823,15 @@ RSpec.describe InfoRequest do
     let(:admin) { FactoryBot.create(:admin_user) }
 
     let(:base_path) do
-      File.join(Rails.root, "cache", "zips", "test", "download", "123",
-                "123456", "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3")
+      File.join(Rails.root, "cache", "zips", "test", "download",
+                Digest::SHA256.hexdigest("test"),
+                "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3")
     end
-    let(:path) { File.join(base_path, "123456.zip") }
-    let(:hidden_path) { File.join(base_path, "123456_hidden.zip") }
+    let(:cache_key) { Digest::SHA256.hexdigest("test") }
+    let(:path) { File.join(base_path, "request.zip") }
+    let(:hidden_path) { File.join(base_path, "request_hidden.zip") }
     let(:requester_only_path) do
-      File.join(base_path, "123456_requester_only.zip")
+      File.join(base_path, "request_requester_only.zip")
     end
 
     # Slightly confusing - this runs *after* the let(:request) in each context
@@ -3842,28 +3844,36 @@ RSpec.describe InfoRequest do
 
     shared_examples_for "a situation when everything is public" do
       it "doesn't add a suffix for anyone" do
-        expect(request.make_zip_cache_path(nil)).to eq(path)
-        expect(request.make_zip_cache_path(non_owner)).to eq(path)
-        expect(request.make_zip_cache_path(admin)).to eq(path)
-        expect(request.make_zip_cache_path(owner)).to eq(path)
+        expect(request.make_zip_cache_path(nil, cache_key: cache_key)).
+          to eq(path)
+        expect(request.make_zip_cache_path(non_owner, cache_key: cache_key)).
+          to eq(path)
+        expect(request.make_zip_cache_path(admin, cache_key: cache_key)).
+          to eq(path)
+        expect(request.make_zip_cache_path(owner, cache_key: cache_key)).
+          to eq(path)
       end
     end
 
     shared_examples_for "a situation when anything is not public" do
       it "doesn't add a suffix for anonymous users" do
-        expect(request.make_zip_cache_path(nil)).to eq(path)
+        expect(request.make_zip_cache_path(nil, cache_key: cache_key)).
+          to eq(path)
       end
 
       it "doesn't add a suffix for non owner users" do
-        expect(request.make_zip_cache_path(non_owner)).to eq(path)
+        expect(request.make_zip_cache_path(non_owner, cache_key: cache_key)).
+          to eq(path)
       end
 
       it "adds a _hidden suffix for admin users" do
-        expect(request.make_zip_cache_path(admin)).to eq(hidden_path)
+        expect(request.make_zip_cache_path(admin, cache_key: cache_key)).
+          to eq(hidden_path)
       end
 
       it "adds a requester_only suffix for owner users" do
-        expect(request.make_zip_cache_path(owner)).to eq(requester_only_path)
+        expect(request.make_zip_cache_path(owner, cache_key: cache_key)).
+          to eq(requester_only_path)
       end
     end
 
@@ -3926,7 +3936,7 @@ RSpec.describe InfoRequest do
       end
 
       it 'keeps the cache path below the download directory' do
-        expect(request.make_zip_cache_path(nil)).
+        expect(request.make_zip_cache_path(nil, cache_key: cache_key)).
           to start_with(InfoRequest.download_zip_dir)
       end
 

@@ -1364,17 +1364,17 @@ class InfoRequest < ApplicationRecord
     File.join(InfoRequest.download_zip_dir, "download", request_dirs)
   end
 
-  def make_zip_cache_path(user)
+  def make_zip_cache_path(user, cache_key:)
     # The zip file varies depending on user because it can include different
     # messages depending on whether the user can access hidden or
     # requester_only messages. We name it appropriately, so that every user
     # with the right permissions gets a file with only the right things in.
     cache_file_dir = File.join(InfoRequest.download_zip_dir,
                                "download",
-                               request_dirs,
+                               cache_key,
                                last_update_hash)
     cache_file_suffix = zip_cache_file_suffix(user)
-    File.join(cache_file_dir, "#{id}#{cache_file_suffix}.zip")
+    File.join(cache_file_dir, "request#{cache_file_suffix}.zip")
   end
 
   def zip_cache_file_suffix(user)
