@@ -68,6 +68,10 @@ jobs:
           bundle exec rake themes:install
           bundle exec rails db:migrate
 
+      - name: Initialize disposable rate limiter store
+        run: |
+          ruby -rpstore -e 'PStore.new("tmp/signup_ip_rate_limiter.pstore").transaction {}'
+
       - name: Run focused fyi-cli contract specs
         run: >-
           bundle exec rspec
