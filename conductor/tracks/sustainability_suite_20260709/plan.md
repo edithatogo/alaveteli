@@ -93,3 +93,9 @@
       expose pre-existing baseline findings. Dependency Review is unavailable
       because dependency graph is disabled in the fork.
     - Do not suppress or reclassify these baseline findings in the endpoint PR.
+- [x] Task: Run the focused sustainability controller suite in a hosted Linux
+  environment [3e63d8506]
+    - Focused harness run: https://github.com/edithatogo/alaveteli/actions/runs/29146357879
+    - Ruby 3.4 / PostgreSQL 13.5: 5 examples, 0 failures.
+    - The disposable harness initializes the existing `commonlib` submodule;
+      this setup correction is not part of the endpoint PR.
