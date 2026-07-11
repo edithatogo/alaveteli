@@ -12,7 +12,8 @@ RSpec.describe RequestZipDelivery do
     allow(FileUtils).to receive(:mkdir_p).with(cache_path.dirname.to_s)
     allow(FileUtils).to receive(:rm_f).and_call_original
     allow(FileUtils).to receive(:rm_f).with("#{cache_path}.part")
-    lock_file = instance_double(File, flock: true)
+    lock_file = instance_double(File)
+    allow(lock_file).to receive(:flock).and_return(true)
     allow(File).to receive(:open).and_call_original
     allow(File).to receive(:open).
       with("#{cache_path}.lock", File::CREAT).and_yield(lock_file)
@@ -43,6 +44,21 @@ RSpec.describe RequestZipDelivery do
       with(cache_path.dirname.to_s)
     expect(File).to have_received(:rename).
       with("#{cache_path}.part", cache_path)
+    expect(FileUtils).to have_received(:rm_f).
+      with("#{cache_path}.part").twice
+    expect(lock_file).to have_received(:flock).with(File::LOCK_EX)
+  end
+
+  it 'removes the partial artifact when ZIP generation fails' do
+    expect {
+      described_class.call(
+        info_request: info_request,
+        user: user,
+        cache_key: 'bounded-key'
+      ) { raise 'generation failed' }
+    }.to raise_error('generation failed')
+
+    expect(File).not_to have_received(:rename)
     expect(FileUtils).to have_received(:rm_f).
       with("#{cache_path}.part").twice
   end
