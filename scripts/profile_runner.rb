@@ -41,7 +41,9 @@ def profile_block(name, output_dir)
 end
 
 def profile_result_hash(result)
-  result.respond_to?(:to_h) ? result.to_h : {}
+  result.to_h
+rescue StandardError
+  {}
 end
 
 if workload == 'all'
