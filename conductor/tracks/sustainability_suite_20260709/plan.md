@@ -153,9 +153,11 @@
       reports 29 baseline warnings and no request-controller or
       `request_zip_delivery.rb` FileAccess/SendFile finding. Full repository
       security and dependency gates remain red; Ruby 3.4 core CI is still in
-      progress and Ruby 4 preview fails at toolchain installation. Keep #52
-      draft and do not close #53 until integration, failure-cleanup,
-      concurrency, and repository-wide gates are evidenced.
+      progress in the hosted run. That core job ran for roughly ten hours
+      without completing, was cancelled as a stale sensor, and GitHub has not
+      yet released the workflow for rerun. Ruby 4 preview fails at toolchain
+      installation. Keep #52 draft and do not close #53 until a fresh core run
+      and the repository-wide gates are evidenced.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
