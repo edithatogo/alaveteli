@@ -152,8 +152,8 @@ module HasTagString
     def find_by_tag(tag_as_string)
       join_sql = <<-EOF.strip_heredoc.squish
       LEFT JOIN has_tag_string_tags
-      ON has_tag_string_tags.model_type = '#{ self }'
-      AND has_tag_string_tags.model_id = #{ table_name }.id
+      ON has_tag_string_tags.model_type = #{ connection.quote(self.to_s) }
+      AND has_tag_string_tags.model_id = #{ connection.quote_table_name(table_name) }.id
       EOF
 
       search =

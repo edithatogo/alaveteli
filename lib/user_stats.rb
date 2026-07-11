@@ -10,7 +10,7 @@ class UserStats
       SELECT lower(substring(email, position('@' in email)+1)) AS domain,
       COUNT(id) AS count
       FROM users
-      WHERE created_at >= '#{start_date}'
+      WHERE created_at >= #{User.connection.quote(start_date)}
       GROUP BY domain
       ORDER BY count DESC
       SQL
@@ -23,7 +23,7 @@ class UserStats
       ORDER BY count DESC
       SQL
     end
-    sql = "#{sql} LIMIT #{limit}" if limit
+    sql = "#{sql} LIMIT #{limit.to_i}" if limit
 
     User.connection.select_all(sql).to_a
   end
@@ -51,9 +51,9 @@ class UserStats
       ) AND id NOT IN (
         SELECT DISTINCT user_id FROM comments
         WHERE user_id IS NOT NULL
-      ) AND email LIKE '%@#{domain}'
+      ) AND email LIKE #{User.connection.quote("%@#{domain}")}
     eos
-    sql += " AND created_at >= '#{start_date}'" if start_date
+    sql += " AND created_at >= #{User.connection.quote(start_date)}" if start_date
     User.connection.select_all(sql).first["count"].to_i
   end
 
