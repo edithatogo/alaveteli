@@ -168,6 +168,14 @@
       https://github.com/edithatogo/alaveteli/actions/runs/29190840378 passes
       with 47 examples and 0 failures. Full CI and security gates remain
       separate blockers.
+    - [~] Issue #56 is decomposed into child issues #62 (Xapian job
+      uniqueness), #63 (Rack::Attack cache state), #64 (BotTrafficMetrics
+      cache state), and #65 (machine-readable failure taxonomy). Child issue
+      #64 has draft fork PR #66, containing one test-only commit that injects
+      a per-example MemoryStore and covers the increment-to-write fallback.
+      Local Ruby syntax and diff checks pass; focused RSpec is blocked until
+      the user-space locked bundle finishes installing. Hosted checks are
+      pending. No production behavior or failure has been waived.
     - [~] Fork issue #58 tracks the unsupported Ruby 4.0.0-preview1 matrix
       entry. Draft fork PR #60 changes only the experimental matrix entries to
       supported Ruby 4.0.0-preview3 and requires hosted proof of installation
