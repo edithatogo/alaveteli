@@ -97,7 +97,17 @@ class AlaveteliPro::DraftInfoRequestBatchesController < ApplicationController
   end
 
   def update_bodies_params
-    params.require(:alaveteli_pro_draft_info_request_batch).
+    permitted = params.require(:alaveteli_pro_draft_info_request_batch).
       permit(:draft_id, :public_body_id, :action)
+    public_body_id = permitted[:public_body_id]
+    if public_body_id.is_a?(Array)
+      unless public_body_id.one?
+        raise ActionController::BadRequest,
+          'public_body_id must contain exactly one value'
+      end
+
+      permitted[:public_body_id] = public_body_id.first
+    end
+    permitted
   end
 end
