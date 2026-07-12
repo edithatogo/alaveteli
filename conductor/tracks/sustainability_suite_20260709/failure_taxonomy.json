@@ -1,0 +1,57 @@
+{
+  "track_id": "sustainability_suite_20260709",
+  "source_run": "https://github.com/edithatogo/alaveteli/actions/runs/29156551656",
+  "inventory_status": "partial_until_core_run_completes",
+  "policy": {
+    "unknown_failures_block_closure": true,
+    "retries_do_not_close_failures": true,
+    "test_exclusions_are_prohibited": true
+  },
+  "failures": [
+    {
+      "class": "batch_parameter_type_error",
+      "symptom": "TypeError: can't quote Array",
+      "owner": "AlaveteliPro::DraftInfoRequestBatchesController#update_bodies",
+      "issue": 57,
+      "pr": 61,
+      "status": "focused_fix_verified_full_suite_pending"
+    },
+    {
+      "class": "xapian_job_uniqueness",
+      "symptom": "acts_as_xapian_jobs uniqueness and isolation failures",
+      "owner": "ActsAsXapian::ActsAsXapianJob",
+      "issue": 62,
+      "status": "untriaged"
+    },
+    {
+      "class": "rack_attack_state",
+      "symptom": "rate-control integration failures under shared middleware/cache state",
+      "owner": "Rack::Attack integration harness",
+      "issue": 63,
+      "status": "untriaged"
+    },
+    {
+      "class": "bot_traffic_metrics_cache",
+      "symptom": "counter increment does not produce the expected snapshot value",
+      "owner": "BotTrafficMetrics service spec cache lifecycle",
+      "issue": 64,
+      "pr": 66,
+      "status": "draft_fix_hosted_checks_pending"
+    },
+    {
+      "class": "security_baseline",
+      "symptom": "Brakeman warnings and dependency vulnerability audit findings",
+      "owner": "repository-wide security gates",
+      "issue": 59,
+      "status": "decomposed_remediation_pending"
+    },
+    {
+      "class": "ruby_preview_matrix",
+      "symptom": "Ruby 4.0.0-preview1 is unavailable on the hosted runner",
+      "owner": "experimental CI matrix",
+      "issue": 58,
+      "pr": 60,
+      "status": "preview3_executes_tests_compatibility_failures_pending"
+    }
+  ]
+}
