@@ -158,6 +158,14 @@
       yet released the workflow for rerun. Ruby 4 preview fails at toolchain
       installation. Keep #52 draft and do not close #53 until a fresh core run
       and the repository-wide gates are evidenced.
+    - [ ] Baseline full-suite blockers are decomposed into fork issues #56
+      (Alaveteli Pro batch parameter TypeError), #57 (rate-control/Xapian test
+      isolation), and #59 (Brakeman and dependency audit remediation). These
+      remain separate from PR #52 and must not be waived as baseline risk.
+    - [~] Fork issue #58 tracks the unsupported Ruby 4.0.0-preview1 matrix
+      entry. Draft fork PR #60 changes only the experimental matrix entries to
+      supported Ruby 4.0.0-preview3 and requires hosted proof of installation
+      without masking Ruby 3.4 failures.
     - Initial inventory identifies `_wdtk_cookie_session` as the cookie-store
       session and direct unsigned consumers for locale, request/body IDs, and
       widget votes. No direct signed/encrypted cookie call sites were found;
