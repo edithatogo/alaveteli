@@ -162,6 +162,12 @@
       (Alaveteli Pro batch parameter TypeError), #57 (rate-control/Xapian test
       isolation), and #59 (Brakeman and dependency audit remediation). These
       remain separate from PR #52 and must not be waived as baseline risk.
+    - [~] Issue #56 is implemented in draft fork PR #61. The controller now
+      normalizes exactly one array value before the permit boundary and rejects
+      ambiguous multi-value input. Hosted focused run
+      https://github.com/edithatogo/alaveteli/actions/runs/29190840378 passes
+      with 47 examples and 0 failures. Full CI and security gates remain
+      separate blockers.
     - [~] Fork issue #58 tracks the unsupported Ruby 4.0.0-preview1 matrix
       entry. Draft fork PR #60 changes only the experimental matrix entries to
       supported Ruby 4.0.0-preview3 and requires hosted proof of installation
