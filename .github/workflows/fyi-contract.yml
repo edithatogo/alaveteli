@@ -71,6 +71,7 @@ jobs:
       - name: Run focused fyi-cli contract specs
         run: >-
           bundle exec rspec
+          spec/controllers/alaveteli_pro/draft_info_request_batches_controller_spec.rb
           spec/services/bulk_export_streamer_spec.rb
           spec/controllers/concerns/traffic_control_spec.rb
           spec/requests/contracts_validation_spec.rb
