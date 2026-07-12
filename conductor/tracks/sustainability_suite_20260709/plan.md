@@ -176,6 +176,11 @@
       Local Ruby syntax and diff checks pass; focused RSpec is blocked until
       the user-space locked bundle finishes installing. Hosted checks are
       pending. No production behavior or failure has been waived.
+    - [~] Child issue #63 has draft fork PR #67 with one test-only commit.
+      Rack::Attack integration examples now restore both the enabled flag and
+      cache store in an ensure block, preventing state leakage without
+      changing production throttling or fail-open behavior. Ruby syntax and
+      diff checks pass; focused RSpec and hosted checks remain pending.
     - [~] Fork issue #58 tracks the unsupported Ruby 4.0.0-preview1 matrix
       entry. Draft fork PR #60 changes only the experimental matrix entries to
       supported Ruby 4.0.0-preview3 and requires hosted proof of installation
