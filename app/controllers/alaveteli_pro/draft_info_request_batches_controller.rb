@@ -107,7 +107,7 @@ class AlaveteliPro::DraftInfoRequestBatchesController < ApplicationController
 
       public_body_id = public_body_id.first
     end
-    permitted = batch_params.permit(:draft_id, :action)
+    permitted = batch_params.except(:public_body_id).permit(:draft_id, :action)
     permitted[:public_body_id] = public_body_id
     permitted
   end
