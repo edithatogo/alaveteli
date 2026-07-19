@@ -89,17 +89,6 @@
       "note": "Reviewed model-owned table-name SQL; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
-      "fingerprint": "8d8c728436fc6e2918d477794074ebb54efbdc546a91cf531eb5d021039b4466",
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/public_body.rb",
-      "line": 547,
-      "confidence": "Medium",
-      "note": "Reviewed statistics column allowlist flow; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
       "fingerprint": "a38b80d8916edf88659bc3b164326718805f8a3d4b7a4b83339cbe5b4cca5b13",
       "warning_type": "Cross-Site Scripting",
       "warning_code": 4,
