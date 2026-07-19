@@ -84,7 +84,8 @@
               <td>
                 <% if @info_request.is_external? %>
                   <% if @info_request.external_url_web? %>
-                    <%= link_to(eye, @info_request.external_url, :title => "view URL of original request on external website") %>
+                    <a href="<%= h(@info_request.external_url) %>"
+                       title="view URL of original request on external website"><%= eye %></a>
                   <% else %>
                     <span class="text-error" title="invalid legacy external URL"><%= @info_request.external_url %></span>
                   <% end %>
