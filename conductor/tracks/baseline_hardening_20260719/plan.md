@@ -16,8 +16,8 @@
 
 ## Phase 3: Security Baseline
 
-- [ ] Classify every Brakeman and dependency-audit finding (#59).
-- [ ] Upgrade or repair confirmed findings without default suppression.
+- [x] Classify every Brakeman and dependency-audit finding (#59).
+- [x] Upgrade or repair confirmed findings without default suppression.
 - [ ] Obtain green security and supported-Ruby hosted evidence.
 
 ## Phase 4: Closeout

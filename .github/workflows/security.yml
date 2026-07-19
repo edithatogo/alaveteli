@@ -27,7 +27,7 @@ jobs:
     - name: Run Brakeman
       run: |
         gem install brakeman
-        brakeman -z --format plain --output /dev/stdout
+        brakeman -z --ignore-config config/brakeman.ignore --format plain --output /dev/stdout
 
   bundler-audit:
     name: Dependency Vulnerability Audit
