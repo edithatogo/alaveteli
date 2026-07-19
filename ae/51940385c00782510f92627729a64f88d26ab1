@@ -1,1 +1,1 @@
-Subagent export CI remediation reviewed: production query unchanged, tests isolate via explicit time windows and streaming enumeration; RuboCop/syntax/diff checks passed.
+Integrated hosted full-suite remediation round: fixed Arel literal, exporter fixture windows/streaming, Selenium-WebMock/runtime contracts, validation fixtures, and metrics/rate-limit state cleanup. Agent RuboCop/syntax/diff checks passed; hosted rerun required.
