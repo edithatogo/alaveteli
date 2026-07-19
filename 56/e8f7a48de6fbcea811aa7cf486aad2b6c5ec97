@@ -1,0 +1,1 @@
+Ported and reviewed unique profiler fallback regression from superseded PR #43; standalone execution, syntax, and diff checks passed.
