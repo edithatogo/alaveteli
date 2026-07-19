@@ -1,0 +1,1 @@
+Issues #56 and #65; fixes six BulkExportStreamer failures caused by selecting nonexistent public_bodies translated columns.
