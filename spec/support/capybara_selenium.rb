@@ -1,8 +1,16 @@
 require 'selenium-webdriver'
 
-# Selenium communicates with its local driver over HTTP, including during the
-# process-level cleanup that runs after RSpec has finished.
-WebMock.disable_net_connect!(allow_localhost: true)
+SELENIUM_WEBDRIVER_REQUEST = lambda do |uri|
+  loopback = ['127.0.0.1', '::1'].include?(uri.host)
+  webdriver_path = uri.path == '/status' || uri.path.start_with?('/session')
+  loopback && webdriver_path
+end
+
+# Capybara's driver cleanup is registered before this hook, so this runs first
+# and permits only the WebDriver protocol request needed by Selenium teardown.
+at_exit do
+  WebMock.disable_net_connect!(allow: SELENIUM_WEBDRIVER_REQUEST)
+end
 
 Capybara.register_driver :headless_chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new
