@@ -1,0 +1,1 @@
+PR #71 hosted CI follow-up: retain the actual Selenium driver before Capybara clears its session pool, quit that retained driver under the scoped WebMock allowance, and restore app/driver/network state in a nested ensure to prevent teardown contamination. Previous run failures were all downstream of the RackTest mislookup.
