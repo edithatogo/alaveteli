@@ -2877,7 +2877,7 @@ RSpec.describe InfoRequest do
       def create_old_unclassified_no_user
         request = FactoryBot.create(:info_request, user: nil,
                                                    external_user_name: 'test_user',
-                                                   external_url: 'test',
+                                                   external_url: 'https://example.com/request',
                                                    created_at: old_date)
         message = FactoryBot.create(:incoming_message, created_at: old_date,
                                                        info_request: request)

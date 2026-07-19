@@ -145,13 +145,17 @@ RSpec.describe InfoRequestEvent do
     let(:event) { info_request_events(:useless_incoming_message_event) }
 
     it 'selects an explicitly allowed set of fields' do
+      event.incoming_message.update_column(
+        :cached_main_body_text_folded,
+        'Cached message body'
+      )
       message = event.incoming_message_selective_columns(
         :id,
         :cached_main_body_text_folded
       )
 
       expect(message.id).to be_present
-      expect(message.cached_main_body_text_folded).to be_present
+      expect(message.cached_main_body_text_folded).to eq('Cached message body')
       expect(message.info_request).to eq(event.info_request)
     end
 
