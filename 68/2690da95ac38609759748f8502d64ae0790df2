@@ -1,0 +1,1 @@
+Ported and reviewed cookie serializer migration/rollback guidance from PR #45; diff checks passed.
