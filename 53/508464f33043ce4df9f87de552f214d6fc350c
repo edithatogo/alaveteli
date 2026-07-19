@@ -1,1 +1,1 @@
-Reconciled two fixed SQL findings after explicit allowlist remediation; 15 deterministically justified residual fingerprints remain.
+Integrated security audit remediations complete: 9 previously questionable findings fixed; exact residual ledger reduced to 15 deterministically justified fingerprints; Ruby 4 syntax, JSON/YAML, verifier tests (5/18), and diff checks passed; full local bundle blocked only by xapian-full-alaveteli.
