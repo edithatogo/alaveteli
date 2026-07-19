@@ -1994,7 +1994,13 @@ RSpec.describe PublicBody do
     %i[home_page publication_scheme disclosure_log].each do |attribute|
       it "allows an unrelated update when #{attribute} is already unsafe" do
         public_body = FactoryBot.create(:public_body)
-        public_body.update_column(attribute, 'javascript:http://example.com')
+        if attribute == :home_page
+          public_body.update_column(attribute, 'javascript:http://example.com')
+        else
+          public_body.translation_for(I18n.locale).
+            update_column(attribute, 'javascript:http://example.com')
+          public_body.reload
+        end
 
         expect { public_body.update!(short_name: 'Updated body') }.
           not_to raise_error

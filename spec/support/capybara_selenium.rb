@@ -2,8 +2,10 @@ require 'selenium-webdriver'
 
 SELENIUM_WEBDRIVER_REQUEST = lambda do |uri|
   loopback = ['127.0.0.1', '::1'].include?(uri.host)
-  webdriver_path = uri.path == '/status' || uri.path.start_with?('/session')
-  loopback && webdriver_path
+  selenium_path = uri.path == '/status' ||
+                  uri.path == '/__identify__' ||
+                  uri.path.start_with?('/session')
+  loopback && selenium_path
 end
 
 # Capybara's driver cleanup is registered before this hook, so this runs first
