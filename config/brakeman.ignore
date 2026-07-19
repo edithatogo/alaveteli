@@ -166,17 +166,6 @@
       "note": "Reviewed application-generated action URL; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
-      "fingerprint": "baad8a8f132051e84cd3ddf5a5a60b457b420606800a014f5c4c27e00f208496",
-      "warning_type": "Cross-Site Scripting",
-      "warning_code": 4,
-      "check_name": "LinkToHref",
-      "message": "Potentially unsafe model attribute in `link_to` href",
-      "file": "app/views/alaveteli_pro/invoices/_invoice.html.erb",
-      "line": 9,
-      "confidence": "Weak",
-      "note": "Reviewed Stripe receipt URL; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
       "fingerprint": "cb2f1a5399572496355062c373d1768dffa23d94bf93854b7c54f3f89daa4ce6",
       "warning_type": "Cross-Site Scripting",
       "warning_code": 4,
