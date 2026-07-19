@@ -26,7 +26,10 @@ RSpec.describe 'alaveteli_pro/invoices/_invoice' do
     allow(invoice).to receive(:receipt_url).
       and_return('https://pay.stripe.com/receipts/receipt_123')
 
-    render partial: 'alaveteli_pro/invoices/invoice', locals: { invoice: invoice }
+    render(
+      partial: 'alaveteli_pro/invoices/invoice',
+      locals: { invoice: invoice }
+    )
 
     expect(rendered).to have_link(
       'View Receipt', href: 'https://pay.stripe.com/receipts/receipt_123'
@@ -36,7 +39,10 @@ RSpec.describe 'alaveteli_pro/invoices/_invoice' do
   it 'omits the receipt link when the URL is absent or invalid' do
     allow(invoice).to receive(:paid?).and_return(true)
 
-    render partial: 'alaveteli_pro/invoices/invoice', locals: { invoice: invoice }
+    render(
+      partial: 'alaveteli_pro/invoices/invoice',
+      locals: { invoice: invoice }
+    )
 
     expect(rendered).not_to have_link('View Receipt')
   end
@@ -46,7 +52,10 @@ RSpec.describe 'alaveteli_pro/invoices/_invoice' do
     allow(invoice).to receive(:hosted_invoice_url).
       and_return('https://invoice.stripe.com/i/invoice_123')
 
-    render partial: 'alaveteli_pro/invoices/invoice', locals: { invoice: invoice }
+    render(
+      partial: 'alaveteli_pro/invoices/invoice',
+      locals: { invoice: invoice }
+    )
 
     expect(rendered).to have_link(
       'View Invoice and Pay', href: 'https://invoice.stripe.com/i/invoice_123'
@@ -56,7 +65,10 @@ RSpec.describe 'alaveteli_pro/invoices/_invoice' do
   it 'omits the hosted invoice link when the URL is absent or invalid' do
     allow(invoice).to receive(:open?).and_return(true)
 
-    render partial: 'alaveteli_pro/invoices/invoice', locals: { invoice: invoice }
+    render(
+      partial: 'alaveteli_pro/invoices/invoice',
+      locals: { invoice: invoice }
+    )
 
     expect(rendered).not_to have_link('View Invoice and Pay')
   end

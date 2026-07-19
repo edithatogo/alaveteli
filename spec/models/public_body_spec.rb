@@ -2123,10 +2123,12 @@ RSpec.describe PublicBody, "when calculating statistics" do
       # classified requests, one of which is successful, so the
       # percentage should be 50%:
 
-      percentages_data = PublicBody.get_request_percentages(column=:info_requests_successful_count,
-                                                            n=3,
-                                                            highest=false,
-                                                            minimum_requests=1)
+      percentages_data = PublicBody.get_request_percentages(
+        :info_requests_successful_count,
+        3,
+        false,
+        1
+      )
       geraldine_index = percentages_data['public_bodies'].index do |pb|
         pb.name == "Geraldine Quango"
       end
@@ -2153,10 +2155,12 @@ RSpec.describe PublicBody, "when calculating statistics" do
       minimum_requests = 3
       with_enough_info_requests = PublicBody.where(["info_requests_visible_classified_count >= ?",
                                                     minimum_requests]).length
-      all_data = PublicBody.get_request_percentages(column=:info_requests_successful_count,
-                                                    n=10,
-                                                    true,
-                                                    minimum_requests)
+      all_data = PublicBody.get_request_percentages(
+        :info_requests_successful_count,
+        10,
+        true,
+        minimum_requests
+      )
       expect(all_data).to be_nil
     end
   end

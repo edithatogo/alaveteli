@@ -149,7 +149,9 @@ RSpec.describe 'JavaScript asset browser behavior' do
     find('#datepicker').click
     expect(page).to have_css('.ui-datepicker')
 
-    page.execute_script("$('#datepicker').datepicker('setDate', new Date(2026, 6, 19))")
+    page.execute_script(
+      "$('#datepicker').datepicker('setDate', new Date(2026, 6, 19))"
+    )
     expect(find('#datepicker').value).to eq('2026-07-19')
   end
 end

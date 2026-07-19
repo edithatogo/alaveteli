@@ -66,8 +66,9 @@ module PublicBody::CalculatedHomePage
   end
 
   def public_body_web_urls_are_safe
-    errors.add(:home_page, _("The URL doesn't look like a valid web address")) if
-      home_page.present? && calculated_home_page.blank?
+    if home_page.present? && calculated_home_page.blank?
+      errors.add(:home_page, _("The URL doesn't look like a valid web address"))
+    end
 
     { publication_scheme: publication_scheme,
       disclosure_log: disclosure_log }.each do |attribute, value|

@@ -354,15 +354,25 @@ RSpec.describe InfoRequestEvent do
 
     it 'should get search text for incoming messages' do
       event = info_request_events(:useless_incoming_message_event)
-      expect(event.search_text_main.strip).to eq("No way! I'm not going to tell you that in a month of Thursdays.\n\nThe Geraldine Quango")
+      expected = "No way! I'm not going to tell you that in a month of " \
+                 "Thursdays.\n\nThe Geraldine Quango"
+      expect(event.search_text_main.strip).to eq(expected)
     end
 
     it 'should get clipped text for incoming messages, and cache it too' do
       event = info_request_events(:useless_incoming_message_event)
 
-      event.incoming_message_selective_columns(:cached_main_body_text_folded).cached_main_body_text_folded = nil
-      expect(event.search_text_main(true).strip).to eq("No way! I'm not going to tell you that in a month of Thursdays.\n\nThe Geraldine Quango")
-      expect(event.incoming_message_selective_columns(:cached_main_body_text_folded).cached_main_body_text_folded).not_to eq(nil)
+      message = event.incoming_message_selective_columns(
+        :cached_main_body_text_folded
+      )
+      message.cached_main_body_text_folded = nil
+      expected = "No way! I'm not going to tell you that in a month of " \
+                 "Thursdays.\n\nThe Geraldine Quango"
+      expect(event.search_text_main(true).strip).to eq(expected)
+      message = event.incoming_message_selective_columns(
+        :cached_main_body_text_folded
+      )
+      expect(message.cached_main_body_text_folded).not_to be_nil
     end
   end
 

@@ -1757,7 +1757,8 @@ RSpec.describe InfoRequest do
       urls = ['javascript:alert(1)', '/request/1', 'https://']
 
       urls.each do |url|
-        expect(InfoRequest.new(external_url: url).external_url_web?).to eq(false)
+        request = InfoRequest.new(external_url: url)
+        expect(request.external_url_web?).to eq(false)
       end
     end
   end

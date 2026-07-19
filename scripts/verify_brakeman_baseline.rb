@@ -74,7 +74,8 @@ module BrakemanBaselineVerifier
 
       missing = METADATA_FIELDS.reject { |field| entry.key?(field) }
       unless missing.empty?
-        raise "#{fingerprint} lacks metadata in #{source}: #{missing.join(', ')}"
+        message = "#{fingerprint} lacks metadata in #{source}: "
+        raise message + missing.join(', ')
       end
 
       index[fingerprint] = entry
