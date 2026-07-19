@@ -1,0 +1,1 @@
+Added 60-minute core-suite bound, PostgreSQL health-check user, retained RSpec progress log, and Ruby 2.6-compatible exact Brakeman verifier; 5 verifier tests and syntax/YAML checks passed.
