@@ -66,15 +66,21 @@ module PublicBody::CalculatedHomePage
   end
 
   def public_body_web_urls_are_safe
-    if home_page.present? && calculated_home_page.blank?
+    if web_url_requires_validation?(:home_page) &&
+       home_page.present? && ensure_home_page_protocol.blank?
       errors.add(:home_page, _("The URL doesn't look like a valid web address"))
     end
 
     { publication_scheme: publication_scheme,
       disclosure_log: disclosure_log }.each do |attribute, value|
+      next unless web_url_requires_validation?(attribute)
       next if value.blank? || safe_web_url(value)
 
       errors.add(attribute, _("The URL doesn't look like a valid web address"))
     end
+  end
+
+  def web_url_requires_validation?(attribute)
+    new_record? || will_save_change_to_attribute?(attribute)
   end
 end

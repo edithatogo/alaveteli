@@ -1940,6 +1940,19 @@ RSpec.describe PublicBody do
       expect(public_body).not_to be_valid
     end
 
+    it 'rejects a newly assigned unsafe home page after reading the old value' do
+      public_body = FactoryBot.create(
+        :public_body,
+        home_page: 'https://example.com'
+      )
+      public_body.calculated_home_page
+
+      public_body.home_page = 'javascript:http://example.com'
+
+      expect(public_body).not_to be_valid
+      expect(public_body.errors[:home_page]).to be_present
+    end
+
     it 'returns the home page based on the request email domain if it has one' do
       public_body = PublicBody.new
 
@@ -1974,6 +1987,30 @@ RSpec.describe PublicBody do
     it 'ignores case sensitivity for excluded domains' do
       public_body = PublicBody.new(request_email: 'x@EXAMPLE.net')
       expect(public_body.calculated_home_page).to be_nil
+    end
+  end
+
+  describe 'legacy web URLs' do
+    %i[home_page publication_scheme disclosure_log].each do |attribute|
+      it "allows an unrelated update when #{attribute} is already unsafe" do
+        public_body = FactoryBot.create(:public_body)
+        public_body.update_column(attribute, 'javascript:http://example.com')
+
+        expect { public_body.update!(short_name: 'Updated body') }.
+          not_to raise_error
+      end
+
+      it "rejects a newly assigned unsafe #{attribute}" do
+        public_body = FactoryBot.create(:public_body)
+
+        public_body.public_send(
+          "#{attribute}=",
+          'javascript:http://example.com'
+        )
+
+        expect(public_body).not_to be_valid
+        expect(public_body.errors[attribute]).to be_present
+      end
     end
   end
 
