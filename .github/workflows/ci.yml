@@ -43,6 +43,7 @@ jobs:
   rspec-core:
     name: Core Specs / Ruby ${{ matrix.ruby }} / PostgreSQL ${{ matrix.postgres }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     needs: check
     if: needs.check.outputs.skip_rspec == 'false'
@@ -67,7 +68,7 @@ jobs:
         ports:
         - '5432:5432'
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready --username=postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -126,7 +127,16 @@ jobs:
 
     - name: Run core tests
       run: |
-        bundle exec rspec --format Fivemat
+        set -o pipefail
+        bundle exec rspec --format progress 2>&1 | tee rspec-core.log
+
+    - name: Retain core test log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: rspec-core-ruby-${{ matrix.ruby }}
+        path: rspec-core.log
+        if-no-files-found: warn
 
     - name: Coveralls Parallel
       uses: coverallsapp/github-action@v2

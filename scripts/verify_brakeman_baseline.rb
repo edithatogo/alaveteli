@@ -29,11 +29,11 @@ module BrakemanBaselineVerifier
     errors << "unapproved ignored fingerprints: #{unapproved.sort.join(', ')}" unless unapproved.empty?
 
     (approved.keys & ignored.keys).sort.each do |fingerprint|
-      mismatches = METADATA_FIELDS.filter_map do |field|
+      mismatches = METADATA_FIELDS.each_with_object([]) do |field, result|
         next if approved[fingerprint][field] == ignored[fingerprint][field]
 
-        "#{field}=#{approved[fingerprint][field].inspect} " \
-          "(report: #{ignored[fingerprint][field].inspect})"
+        result << "#{field}=#{approved[fingerprint][field].inspect} " \
+                  "(report: #{ignored[fingerprint][field].inspect})"
       end
       errors << "#{fingerprint}: #{mismatches.join('; ')}" unless mismatches.empty?
     end
