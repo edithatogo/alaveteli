@@ -1,0 +1,213 @@
+// Compatibility for admin templates that still use Bootstrap 2 markup.
+// Keep this scoped by importing it from inside `.admin` in admin.scss.
+
+// Bootstrap 2's fluid grid used spanN classes. Bootstrap 3's row gutters and
+// breakpoints are retained so the old markup remains usable while templates
+// are migrated incrementally.
+@media (min-width: $screen-sm-min) {
+  .span1,
+  .span2,
+  .span3,
+  .span4,
+  .span5,
+  .span6,
+  .span7,
+  .span8,
+  .span9,
+  .span10,
+  .span11,
+  .span12 {
+    float: left;
+    min-height: 1px;
+    padding-left: floor(($grid-gutter-width / 2));
+    padding-right: ceil(($grid-gutter-width / 2));
+    position: relative;
+  }
+
+  @for $columns from 1 through $grid-columns {
+    .span#{$columns} {
+      width: percentage(($columns / $grid-columns));
+    }
+  }
+
+  @for $columns from 1 through ($grid-columns - 1) {
+    .offset#{$columns} {
+      margin-left: percentage(($columns / $grid-columns));
+    }
+  }
+}
+
+// Bootstrap 2 horizontal forms used control-group/controls rather than
+// form-group and col-* classes.
+.control-group {
+  @include clearfix;
+  margin-bottom: $form-group-margin-bottom;
+}
+
+.form-horizontal {
+  .control-label {
+    float: left;
+    padding-top: ($padding-base-vertical + 1);
+    text-align: right;
+    width: 160px;
+  }
+
+  .controls {
+    margin-left: 180px;
+  }
+
+  @media (max-width: $screen-xs-max) {
+    .control-label {
+      float: none;
+      text-align: left;
+      width: auto;
+    }
+
+    .controls {
+      margin-left: 0;
+    }
+  }
+}
+
+.help-inline {
+  color: $text-muted;
+  display: inline-block;
+  padding-left: 5px;
+  vertical-align: middle;
+}
+
+// Bootstrap 2 navbar shell retained by the admin navigation partial.
+.navbar-inner {
+  @include clearfix;
+  background-color: $navbar-default-bg;
+  border: 1px solid $navbar-default-border;
+  border-radius: $navbar-border-radius;
+  min-height: $navbar-height;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.navbar-fixed-top .navbar-inner {
+  border-radius: 0;
+}
+
+.navbar {
+  .brand {
+    color: $navbar-default-brand-color;
+    float: left;
+    font-size: $font-size-large;
+    line-height: 20px;
+    padding: 15px;
+  }
+
+  .nav-collapse {
+    @include clearfix;
+  }
+
+  .nav {
+    float: left;
+    margin: 0;
+
+    > li {
+      float: left;
+
+      > a {
+        line-height: 20px;
+        padding: 15px;
+      }
+    }
+  }
+}
+
+.navbar-inverse .brand {
+  color: $navbar-inverse-brand-color;
+}
+
+// Bootstrap 2 compact button aliases.
+.btn-mini {
+  @extend .btn-xs;
+}
+
+.btn-small {
+  @extend .btn-sm;
+}
+
+// Bootstrap 2 accordion structure mapped onto Bootstrap 3 panel/collapse
+// behavior without changing data attributes or JavaScript contracts.
+.accordion-group {
+  border: 1px solid $panel-default-border;
+  border-radius: $panel-border-radius;
+  margin-bottom: 2px;
+}
+
+.accordion-heading {
+  @include clearfix;
+}
+
+.accordion-toggle {
+  display: block;
+  padding: $panel-heading-padding;
+}
+
+.accordion-inner {
+  border-top: 1px solid $panel-inner-border;
+  padding: $panel-body-padding;
+}
+
+// Renamed Bootstrap 2 contextual classes.
+.alert-error {
+  @extend .alert-danger;
+}
+
+.alert-block {
+  padding-bottom: 14px;
+  padding-top: 14px;
+}
+
+.label-important {
+  @extend .label-danger;
+}
+
+.label-inverse {
+  background-color: $gray-dark;
+}
+
+// Bootstrap 2 bundled Glyphicons under icon-* names. Reuse Bootstrap 3's
+// font with the old class names needed by the admin templates.
+@mixin bootstrap2-icon($glyph) {
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  position: relative;
+  top: 1px;
+
+  &::before {
+    content: $glyph;
+  }
+}
+
+.icon-eye-open {
+  @include bootstrap2-icon("\e105");
+}
+
+.icon-eye-close {
+  @include bootstrap2-icon("\e106");
+}
+
+.icon-lock {
+  @include bootstrap2-icon("\e033");
+}
+
+.icon-info-sign {
+  @include bootstrap2-icon("\e086");
+}
+
+.icon-move {
+  @include bootstrap2-icon("\e068");
+}
+
+.icon-chevron-right {
+  @include bootstrap2-icon("\e080");
+}
