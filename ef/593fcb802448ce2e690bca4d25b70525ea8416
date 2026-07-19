@@ -1,0 +1,1 @@
+Issue #59; resolves current bundler-audit requirements for loofah >=2.25.2 and rails-html-sanitizer >=1.7.1.
