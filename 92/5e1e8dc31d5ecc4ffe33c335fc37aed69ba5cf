@@ -1,0 +1,1 @@
+Ported and reviewed unique HEAD cache-validator regression from superseded PR #48; syntax and diff checks passed.
