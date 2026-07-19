@@ -1,0 +1,1 @@
+PR #71 hosted CI follow-up: all 9550 Ruby 4 core examples passed, but lazy Capybara at_exit registration outran the WebMock policy hook. Browser drivers now quit explicitly while the narrowly scoped loopback allowance is active, eliminating deferred teardown and retaining deny-all restoration.
