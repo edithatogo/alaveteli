@@ -35,7 +35,43 @@ RSpec.describe BulkExportStreamer do
 
     described_class.new(limit: 1).each.to_a
 
-    expect(InfoRequest).to have_received(:joins).with(public_body: :translations)
+    expect(InfoRequest).to have_received(:joins).with(:public_body)
+  end
+
+  it 'uses the Globalize fallback translation without omitting requests' do
+    allow(AlaveteliLocalization).to receive(:locale).and_return('fr')
+    allow(Globalize).to receive(:fallbacks).with('fr').and_return(%i[fr en])
+    old_request.public_body.translations.update_all(locale: 'en')
+
+    rows = described_class.new(batch_size: 1).each.to_a
+    row = rows.find { |candidate| candidate[:id] == old_request.id }
+    fallback = old_request.public_body.translations.find_by!(locale: 'en')
+
+    expect(row).to include(
+      public_body_name: fallback.name,
+      public_body_url_name: fallback.url_name
+    )
+  end
+
+  it 'prefers the current translation and paginates each request once' do
+    allow(AlaveteliLocalization).to receive(:locale).and_return('fr')
+    allow(Globalize).to receive(:fallbacks).with('fr').and_return(%i[fr en])
+    old_request.public_body.translations.update_all(locale: 'en')
+    old_request.public_body.translations.create!(
+      locale: 'fr',
+      name: 'Autorite francaise',
+      url_name: 'autorite-francaise'
+    )
+
+    rows = described_class.new(batch_size: 1).each.to_a
+
+    expect(rows.map { |row| row[:id] }).to eq(
+      [old_request.id, new_request.id]
+    )
+    expect(rows.first).to include(
+      public_body_name: 'Autorite francaise',
+      public_body_url_name: 'autorite-francaise'
+    )
   end
 
   it 'enforces the limit without reading past the requested row count' do

@@ -45,8 +45,8 @@ class BulkExportStreamer
   def fetch_rows(last_id, remaining)
     page_limit = [remaining || batch_size, batch_size].min
     relation = InfoRequest.
-      joins(public_body: :translations).
-      where(public_body_translations: { locale: AlaveteliLocalization.locale }).
+      joins(:public_body).
+      joins(public_body_translation_join).
       where('info_requests.id > ?', last_id).
       order('info_requests.id ASC').
       limit(page_limit)
@@ -65,9 +65,31 @@ class BulkExportStreamer
       'info_requests.created_at',
       'info_requests.updated_at',
       "#{status_expression} AS status",
-      'public_body_translations.name AS public_body_name',
-      'public_body_translations.url_name AS public_body_url_name'
+      'export_public_body_translation.name AS public_body_name',
+      'export_public_body_translation.url_name AS public_body_url_name'
     ]
+  end
+
+  def public_body_translation_join
+    connection = ActiveRecord::Base.connection
+    locales = Globalize.fallbacks(AlaveteliLocalization.locale).
+      map(&:to_s).
+      uniq
+    quoted_locales = locales.map { |locale| connection.quote(locale) }
+    locale_order = quoted_locales.each_with_index.map do |locale, index|
+      "WHEN #{locale} THEN #{index}"
+    end.join(' ')
+
+    <<~SQL.squish
+      LEFT JOIN LATERAL (
+        SELECT translations.name, translations.url_name
+        FROM public_body_translations translations
+        WHERE translations.public_body_id = public_bodies.id
+          AND translations.locale IN (#{quoted_locales.join(', ')})
+        ORDER BY CASE translations.locale #{locale_order} END
+        LIMIT 1
+      ) export_public_body_translation ON TRUE
+    SQL
   end
 
   def status_expression
