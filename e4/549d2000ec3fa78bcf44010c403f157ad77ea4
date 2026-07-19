@@ -1,0 +1,1 @@
+Issue #18 behavioral verification: compiled Sprockets bundles must register datepicker, tabs, sortable, collapse, dropdown, and tooltip jQuery plugins; application initializers and Bootstrap data APIs are checked. Ruby syntax and diff checks passed; focused RSpec remains locally blocked by unavailable xapian-full-alaveteli native gem.
