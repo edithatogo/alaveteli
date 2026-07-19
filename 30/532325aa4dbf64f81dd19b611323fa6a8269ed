@@ -1,0 +1,1 @@
+PR #71 review fix: limit WebMock network allowance to loopback WebDriver protocol paths during Selenium examples and process-level teardown; external and unrelated localhost traffic remain blocked.
