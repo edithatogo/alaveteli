@@ -1,0 +1,1 @@
+Resolved baseline merge by removing both now-fixed Stripe URL fingerprints; 21 exact residual findings remain after external URL and Stripe fixes.
