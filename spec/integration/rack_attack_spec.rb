@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 RSpec.describe 'Rack::Attack middleware rate limiting', type: :request do
+  original_enabled = Rack::Attack.enabled
+  original_store = Rack::Attack.cache.store
+
   around do |example|
     previous_enabled = Rack::Attack.enabled
     previous_store = Rack::Attack.cache.store
@@ -12,6 +15,11 @@ RSpec.describe 'Rack::Attack middleware rate limiting', type: :request do
   ensure
     Rack::Attack.enabled = previous_enabled
     Rack::Attack.cache.store = previous_store
+  end
+
+  after(:context) do
+    expect(Rack::Attack.enabled).to eq(original_enabled)
+    expect(Rack::Attack.cache.store).to equal(original_store)
   end
 
   context 'when IP is anonymous' do
