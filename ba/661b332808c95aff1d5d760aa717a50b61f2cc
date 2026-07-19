@@ -1,0 +1,1 @@
+Targeted RuboCop cleanup for remediation changes after hosted reviewdog identified line-length, documentation, and word-array offenses. Standalone Brakeman verifier tests: 5 runs, 18 assertions, all passing. Ruby syntax and git diff checks passed.
