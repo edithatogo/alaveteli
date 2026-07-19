@@ -1,0 +1,1 @@
+Subagent export CI remediation reviewed: production query unchanged, tests isolate via explicit time windows and streaming enumeration; RuboCop/syntax/diff checks passed.
