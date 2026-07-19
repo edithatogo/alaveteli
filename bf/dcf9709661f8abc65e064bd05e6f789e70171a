@@ -1,0 +1,1 @@
+PR #71 hosted CI follow-up: legacy translated URL fixtures now bypass validation in public_body_translations rather than nonexistent base-table columns; scoped loopback policy includes Capybara server identification alongside WebDriver protocol paths.
