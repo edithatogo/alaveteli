@@ -36,6 +36,33 @@ RSpec.describe Blog::Post, type: :model do
       post.url = 'http://example.com/blog_post_1'
       expect(post).not_to be_valid
     end
+
+    it 'accepts absolute HTTP and HTTPS URLs' do
+      %w[http://example.com/post https://example.com/post].each do |url|
+        post.url = url
+        expect(post).to be_valid
+      end
+    end
+
+    it 'rejects non-web, relative, and malformed URLs' do
+      ['javascript:alert(1)', '//example.com/post', '/post', 'not a url'].
+        each do |url|
+          post.url = url
+          expect(post).not_to be_valid
+        end
+    end
+  end
+
+  describe '#safe_url' do
+    it 'returns a valid web URL' do
+      post.url = 'https://example.com/post'
+      expect(post.safe_url).to eq('https://example.com/post')
+    end
+
+    it 'does not expose an invalid legacy URL' do
+      post.url = 'javascript:alert(1)'
+      expect(post.safe_url).to be_nil
+    end
   end
 
   describe '#description' do

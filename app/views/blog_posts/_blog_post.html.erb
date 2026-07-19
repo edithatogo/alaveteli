@@ -1,3 +1,7 @@
 <li class="blog-post-list__blog_post">
-  <%= link_to blog_post.title, blog_post.url, rel: 'nofollow' %>
+  <% if blog_post.safe_url %>
+    <a href="<%= blog_post.safe_url %>" rel="nofollow"><%= blog_post.title %></a>
+  <% else %>
+    <%= blog_post.title %>
+  <% end %>
 </li>

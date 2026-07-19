@@ -22,10 +22,9 @@ class Blog
     return [] if content.empty?
 
     posts = XmlSimple.xml_in(content)['channel'][0].fetch('item', []).reverse
-    posts.map do |data|
-      Blog::Post.find_or_initialize_by(url: data['link'][0]).tap do |post|
-        post.update(title: data['title'][0], data: data)
-      end
+    posts.filter_map do |data|
+      post = Blog::Post.find_or_initialize_by(url: data['link'][0])
+      post if post.update(title: data['title'][0], data: data)
     end.reverse
   end
 

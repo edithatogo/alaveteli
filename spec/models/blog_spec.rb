@@ -75,6 +75,18 @@ RSpec.describe Blog do
         expect(posts.first.title).to eq('Example Post')
         expect(posts.second.title).to eq('Other Post')
       end
+
+      it 'skips and does not persist feed entries with unsafe URLs' do
+        unsafe_content = load_file_fixture('blog_feed.atom').sub(
+          'http://www.example.com/example-post',
+          'javascript:alert(1)'
+        )
+        allow(blog).to receive(:quietly_try_to_open).and_return(unsafe_content)
+
+        expect { posts }.to change(Blog::Post, :count).by(1)
+        expect(posts.map(&:title)).to eq(['Other Post'])
+        expect(Blog::Post.where(url: 'javascript:alert(1)')).not_to exist
+      end
     end
 
     context 'when feed returns an error' do
