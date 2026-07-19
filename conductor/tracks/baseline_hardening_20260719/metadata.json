@@ -1,0 +1,8 @@
+{
+  "track_id": "baseline_hardening_20260719",
+  "type": "bug",
+  "status": "in_progress",
+  "created_at": "2026-07-19T05:20:00Z",
+  "updated_at": "2026-07-19T05:20:00Z",
+  "description": "Restore supported-Ruby CI, test isolation, and a zero-known-risk security baseline."
+}
