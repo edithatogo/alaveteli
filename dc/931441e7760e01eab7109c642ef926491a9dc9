@@ -1,0 +1,1 @@
+PR #71 review fix: validate external_url on create or URL mutation, preserving unrelated updates to legacy-invalid records; adds regressions for both changed and unchanged URLs.
