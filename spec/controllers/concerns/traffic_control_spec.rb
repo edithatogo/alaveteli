@@ -79,6 +79,17 @@ RSpec.describe TrafficControl, type: :controller do
         with(:cache_misses)
     end
 
+    it 'sets cache validators for HEAD requests' do
+      allow(BotTrafficMetrics).to receive(:increment)
+
+      head :show
+
+      expect(response.status).to eq(200)
+      expect(response.headers['ETag']).to be_present
+      expect(BotTrafficMetrics).to have_received(:increment).
+        with(:cache_misses)
+    end
+
     it 'returns 304 if etag matches' do
       allow(BotTrafficMetrics).to receive(:increment)
 
