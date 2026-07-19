@@ -1,0 +1,1 @@
+Issue #59; replaces raw user-stats SQL, binds locale SQL, escapes generated regex, disables hybrid cookie deserialization, and handles HEAD cache policy.
