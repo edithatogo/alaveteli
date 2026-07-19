@@ -198,6 +198,7 @@ group :test do
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-lcov', '~> 0.9.0'
   gem 'capybara', '~> 3.40.0'
+  gem 'selenium-webdriver', '~> 4.28'
   gem 'stripe-ruby-mock', '~> 5.0.0'
   gem 'rails-controller-testing'
 end
