@@ -8,6 +8,12 @@ Brakeman remains fail-closed with `-z`. The ignore file contains exact
 fingerprints only: new findings, changed code shapes, parser errors, and stale
 fingerprints are not accepted automatically.
 
+CI pins Brakeman 8.0.5 and verifies the approved ledger against the scanner's
+machine-readable report. Fingerprints and security-relevant warning metadata
+must match exactly. The report is retained as a workflow artifact. Bearer is an
+advisory scanner because its current signal has not been qualified as a release
+gate; its SARIF output is retained for review even when the scan reports issues.
+
 ## Confirmed Findings Fixed
 
 - Unsafe hybrid cookie deserialization was replaced by JSON serialization.
