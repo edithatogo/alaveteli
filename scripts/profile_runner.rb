@@ -42,7 +42,9 @@ end
 
 def profile_result_hash(result)
   result.to_h
-rescue StandardError
+rescue StandardError => error
+  warning = 'Profiler result serialization fell back to an empty object '
+  warn "#{warning}(#{error.class})"
   {}
 end
 

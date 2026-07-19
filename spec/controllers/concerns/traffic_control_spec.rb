@@ -90,6 +90,21 @@ RSpec.describe TrafficControl, type: :controller do
         with(:cache_misses)
     end
 
+    it 'returns 304 and records a cache hit for a conditional HEAD request' do
+      allow(BotTrafficMetrics).to receive(:increment)
+
+      head :show
+      etag = response.headers['ETag']
+      expect(etag).to be_present
+
+      request.headers['If-None-Match'] = etag
+      head :show
+
+      expect(response.status).to eq(304)
+      expect(BotTrafficMetrics).to have_received(:increment).
+        with(:cache_hits).once
+    end
+
     it 'returns 304 if etag matches' do
       allow(BotTrafficMetrics).to receive(:increment)
 

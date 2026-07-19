@@ -3,7 +3,7 @@ require 'open3'
 require 'tmpdir'
 
 RSpec.describe 'scripts/profile_runner.rb' do
-  def run_profile_with(result_expression)
+  def run_profile_with(result_expression, expected:, warning_class: nil)
     stub_dir = Dir.mktmpdir('profile-runner-vernier')
     profile_path = Rails.root.join('tmp/profiles/rate_limit_profile.json')
     FileUtils.rm_f(profile_path)
@@ -25,23 +25,43 @@ RSpec.describe 'scripts/profile_runner.rb' do
     )
 
     expect(status).to be_success, "stdout: #{stdout}\nstderr: #{stderr}"
-    expect(JSON.parse(File.read(profile_path))).to eq({})
+    expect(JSON.parse(File.read(profile_path))).to eq(expected)
+    if warning_class
+      expect(stderr).to include(
+        "Profiler result serialization fell back to an empty object " \
+        "(#{warning_class})"
+      )
+      expect(stderr).not_to include('profile conversion failed')
+    else
+      expect(stderr).to be_empty
+    end
   ensure
     FileUtils.rm_f(profile_path) if profile_path
     FileUtils.remove_entry(stub_dir) if stub_dir && File.directory?(stub_dir)
   end
 
+  it 'serializes a profiler result hash' do
+    run_profile_with(
+      "{ samples: 3, elapsed_seconds: '0.125' }",
+      expected: { 'samples' => 3, 'elapsed_seconds' => '0.125' }
+    )
+  end
+
   it 'serializes a profiler result without a to_h method as an empty object' do
-    run_profile_with('Object.new')
+    run_profile_with('Object.new', expected: {}, warning_class: 'NoMethodError')
   end
 
   it 'serializes a profiler result with a failing to_h method as an empty object' do
-    run_profile_with(<<~'RUBY'.strip)
-      Object.new.tap do |result|
-        def result.to_h
-          raise 'profile conversion failed'
+    run_profile_with(
+      <<~'RUBY'.strip,
+        Object.new.tap do |result|
+          def result.to_h
+            raise 'profile conversion failed'
+          end
         end
-      end
-    RUBY
+      RUBY
+      expected: {},
+      warning_class: 'RuntimeError'
+    )
   end
 end
