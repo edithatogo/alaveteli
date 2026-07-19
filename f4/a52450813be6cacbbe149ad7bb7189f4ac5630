@@ -1,0 +1,1 @@
+PR #71 review follow-up: browser shutdown now runs even if Capybara session reset raises; app, driver, and WebMock restoration remain guaranteed by the outer ensure.
