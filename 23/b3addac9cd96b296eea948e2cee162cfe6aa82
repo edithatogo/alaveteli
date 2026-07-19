@@ -1,0 +1,1 @@
+PR #71 CI remediation: keep WebMock external-network blocking while allowing Selenium localhost teardown through process exit; refresh three Brakeman source-line metadata entries after prior validated edits. Ruby execution deferred to hosted CI because local Apple Ruby 2.6 lacks Bundler 2.7.2.
