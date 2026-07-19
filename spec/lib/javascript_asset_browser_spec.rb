@@ -115,6 +115,7 @@ RSpec.describe 'JavaScript asset browser behavior' do
     example.run
   ensure
     Capybara.reset_sessions!
+    Capybara.current_session.driver.quit
     Capybara.current_driver = original_driver
     Capybara.app = original_app
     WebMock.disable_net_connect!

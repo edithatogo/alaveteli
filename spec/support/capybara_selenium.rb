@@ -8,12 +8,6 @@ SELENIUM_WEBDRIVER_REQUEST = lambda do |uri|
   loopback && selenium_path
 end
 
-# Capybara's driver cleanup is registered before this hook, so this runs first
-# and permits only the WebDriver protocol request needed by Selenium teardown.
-at_exit do
-  WebMock.disable_net_connect!(allow: SELENIUM_WEBDRIVER_REQUEST)
-end
-
 Capybara.register_driver :headless_chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new
   options.add_argument('--headless=new')
