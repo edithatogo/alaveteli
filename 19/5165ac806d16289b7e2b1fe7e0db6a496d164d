@@ -1,0 +1,1 @@
+Added and reviewed deterministic compiled-asset behavior contracts for jQuery UI and Bootstrap upgrade; syntax and diff checks passed; hosted RSpec pending.
