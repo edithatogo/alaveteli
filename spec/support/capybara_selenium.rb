@@ -1,5 +1,9 @@
 require 'selenium-webdriver'
 
+# Selenium communicates with its local driver over HTTP, including during the
+# process-level cleanup that runs after RSpec has finished.
+WebMock.disable_net_connect!(allow_localhost: true)
+
 Capybara.register_driver :headless_chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new
   options.add_argument('--headless=new')
