@@ -4,6 +4,7 @@ SELENIUM_WEBDRIVER_REQUEST = lambda do |uri|
   loopback = ['127.0.0.1', '::1'].include?(uri.host)
   selenium_path = uri.path == '/status' ||
                   uri.path == '/__identify__' ||
+                  uri.path == '/shutdown' ||
                   uri.path.start_with?('/session')
   loopback && selenium_path
 end
