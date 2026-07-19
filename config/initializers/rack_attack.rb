@@ -93,10 +93,10 @@ class Rack::Attack
 
   # Response customizing
   self.throttled_responder = lambda do |env|
-    match_data = env['rack.attack.match_data']
-    now = match_data[:epoch_time]
-    period = match_data[:period]
-    limit = match_data[:limit]
+    match_data = env['rack.attack.match_data'] || {}
+    now = match_data.fetch(:epoch_time, Time.now.to_i)
+    period = match_data.fetch(:period, 60)
+    limit = match_data.fetch(:limit, 0)
     reset_time = period - (now % period)
 
     headers = {

@@ -75,10 +75,11 @@ RSpec.describe 'Rack::Attack middleware rate limiting', type: :request do
     let(:ip) { '1.2.3.4' }
 
     before do
-      # Simulate Redis error
-      allow(Rack::Attack.cache).to receive(:write).and_raise(Redis::BaseError.new("Redis down"))
-      allow(Rack::Attack.cache).to receive(:read).and_raise(Redis::BaseError.new("Redis down"))
-      allow(Rack::Attack.cache).to receive(:count).and_raise(Redis::BaseError.new("Redis down"))
+      failing_store = ActiveSupport::Cache::MemoryStore.new
+      allow(failing_store).to receive(:write).and_raise(Redis::BaseError.new('Redis down'))
+      allow(failing_store).to receive(:read).and_raise(Redis::BaseError.new('Redis down'))
+      allow(failing_store).to receive(:increment).and_raise(Redis::BaseError.new('Redis down'))
+      Rack::Attack.cache.store = Rack::Attack::ResilientCacheStore.new(failing_store)
     end
 
     it 'fails open without 500 erroring the request' do
