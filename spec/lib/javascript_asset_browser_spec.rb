@@ -112,13 +112,17 @@ RSpec.describe 'JavaScript asset browser behavior' do
     WebMock.disable_net_connect!(allow: SELENIUM_WEBDRIVER_REQUEST)
     Capybara.app = AssetBehaviorApp.new
     Capybara.current_driver = :headless_chrome
+    selenium_driver = Capybara.current_session.driver
     example.run
   ensure
-    Capybara.reset_sessions!
-    Capybara.current_session.driver.quit
-    Capybara.current_driver = original_driver
-    Capybara.app = original_app
-    WebMock.disable_net_connect!
+    begin
+      Capybara.reset_sessions!
+      selenium_driver&.quit
+    ensure
+      Capybara.current_driver = original_driver
+      Capybara.app = original_app
+      WebMock.disable_net_connect!
+    end
   end
 
   def wait_for_assets
