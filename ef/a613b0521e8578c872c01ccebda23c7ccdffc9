@@ -1,0 +1,1 @@
+Issues #56, #63, #65; preserves fail-open cache behavior and prevents malformed throttle metadata from raising.
