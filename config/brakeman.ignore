@@ -122,17 +122,6 @@
       "note": "Reviewed model-owned table-name SQL; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
-      "fingerprint": "8c8ad19b109d45b37a9612e200dc44466e0655c68501c97d3fae20c351938db2",
-      "warning_type": "Cross-Site Scripting",
-      "warning_code": 4,
-      "check_name": "LinkToHref",
-      "message": "Potentially unsafe model attribute in `link_to` href",
-      "file": "app/views/blog_posts/_blog_post.html.erb",
-      "line": 2,
-      "confidence": "Weak",
-      "note": "Reviewed persisted blog URL; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
       "fingerprint": "8d8c728436fc6e2918d477794074ebb54efbdc546a91cf531eb5d021039b4466",
       "warning_type": "SQL Injection",
       "warning_code": 0,
