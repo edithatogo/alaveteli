@@ -1,0 +1,1 @@
+Hosted Brakeman showed one unignored LinkToHref warning despite model validation; changed admin rendering to explicit escaped anchor markup so scanner and reviewed trust boundary align.
