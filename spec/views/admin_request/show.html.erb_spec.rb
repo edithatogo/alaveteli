@@ -62,4 +62,24 @@ RSpec.describe "admin_request/show" do
                                    text: 'Some information please')
     end
   end
+
+  context 'for an external request with an invalid legacy URL' do
+    let(:info_request) do
+      request = FactoryBot.create(:info_request, :external)
+      request.update_column(:external_url, 'javascript:alert(document.domain)')
+      request
+    end
+
+    it 'renders the URL as escaped text rather than a link' do
+      render
+
+      expect(rendered).to have_css(
+        'span.text-error',
+        text: 'javascript:alert(document.domain)'
+      )
+      expect(rendered).not_to have_css(
+        'a[href="javascript:alert(document.domain)"]'
+      )
+    end
+  end
 end

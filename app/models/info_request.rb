@@ -78,6 +78,7 @@ class InfoRequest < ApplicationRecord
              optional: true
 
   validate :must_be_internal_or_external
+  validate :external_url_format, if: -> { external_url.present? }
 
   belongs_to :public_body,
              inverse_of: :info_requests,
@@ -706,10 +707,23 @@ class InfoRequest < ApplicationRecord
     external_url.nil? ? false : true
   end
 
+  def external_url_web?
+    uri = URI.parse(external_url.to_s)
+    uri.is_a?(URI::HTTP) && uri.host.present?
+  rescue URI::InvalidURIError
+    false
+  end
+
   def user_name
     return external_user_name if is_external?
 
     user&.name
+  end
+
+  def external_url_format
+    return if external_url_web?
+
+    errors.add(:external_url, "must be an absolute HTTP or HTTPS URL")
   end
 
   def from_name

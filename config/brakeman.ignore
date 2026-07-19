@@ -133,17 +133,6 @@
       "note": "Reviewed Stripe-hosted invoice URL; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
-      "fingerprint": "87415c219a106d7add65c2c3bfbab083227e6c1cb90395db46d4ba1c97b3d18e",
-      "warning_type": "Cross-Site Scripting",
-      "warning_code": 4,
-      "check_name": "LinkToHref",
-      "message": "Potentially unsafe model attribute in `link_to` href",
-      "file": "app/views/admin_request/show.html.erb",
-      "line": 86,
-      "confidence": "Weak",
-      "note": "Reviewed administrator-visible external request URL; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
       "fingerprint": "8c8ad19b109d45b37a9612e200dc44466e0655c68501c97d3fae20c351938db2",
       "warning_type": "Cross-Site Scripting",
       "warning_code": 4,

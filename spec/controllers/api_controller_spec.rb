@@ -100,6 +100,28 @@ RSpec.describe ApiController, "when using the API" do
       expect(new_request.info_request_events[0].calculated_state).
         to eq('waiting_response')
     end
+
+    it 'rejects an external request with a malicious URL scheme' do
+      request_data = {
+        'title' => 'Tell me about your chickens',
+        'body' => 'Please provide the records.',
+        'external_url' => 'javascript:alert(document.domain)',
+        'external_user_name' => 'Bob Smith'
+      }
+
+      expect {
+        post :create_request,
+             params: {
+               k: public_bodies(:geraldine_public_body).api_key,
+               request_json: request_data.to_json
+             }
+      }.not_to change(InfoRequest, :count)
+
+      errors = ActiveSupport::JSON.decode(response.body).fetch('errors')
+      expect(errors).to include(
+        'External url must be an absolute HTTP or HTTPS URL'
+      )
+    end
   end
 
   # POST /api/v2/request/:id/add_correspondence.json
