@@ -1,0 +1,1 @@
+Subagent global-state CI fixes reviewed: derived reset expectation, rendered metrics view, targeted cache cleanup, Rack::Attack restoration assertion; production unchanged.
