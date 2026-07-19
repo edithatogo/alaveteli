@@ -4,6 +4,13 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
+- [x] **Track: Retrospective governance for request-state taxonomy and process-clock metadata**
+  *Link: [./archive/request_state_taxonomy_20260719/index.md](./archive/request_state_taxonomy_20260719/index.md)*
+  *GitHub issue: [#68](https://github.com/edithatogo/alaveteli/issues/68)*
+  *Merged PR: [#69](https://github.com/edithatogo/alaveteli/pull/69)*
+
+---
+
 - [~] **Track: Implement user notification preferences dashboard**
   *Link: [./tracks/notification_preferences_20260709/](./tracks/notification_preferences_20260709/)*
 

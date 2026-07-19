@@ -1,0 +1,17 @@
+{
+  "track_id": "request_state_taxonomy_20260719",
+  "type": "chore",
+  "status": "completed",
+  "created_at": "2026-07-19T03:30:00Z",
+  "updated_at": "2026-07-19T03:30:00Z",
+  "description": "Retrospective governance for issue #68 and merged PR #69 request-state taxonomy",
+  "evidence_schema": "1.0",
+  "gates": [
+    {
+      "id": "pr-69-exact-base-non-regression",
+      "kind": "hosted-checks",
+      "status": "satisfied",
+      "evidence": "evidence.md"
+    }
+  ]
+}
