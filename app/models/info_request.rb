@@ -78,7 +78,11 @@ class InfoRequest < ApplicationRecord
              optional: true
 
   validate :must_be_internal_or_external
-  validate :external_url_format, if: -> { external_url.present? }
+  validate :external_url_format,
+           if: -> {
+             external_url.present? &&
+               (new_record? || will_save_change_to_external_url?)
+           }
 
   belongs_to :public_body,
              inverse_of: :info_requests,

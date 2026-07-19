@@ -1775,6 +1775,25 @@ RSpec.describe InfoRequest do
       expect(info_request.errors[:external_url]).
         to include('must be an absolute HTTP or HTTPS URL')
     end
+
+    it 'rejects an unsafe URL assigned to an existing request' do
+      info_request = FactoryBot.create(:info_request, :external)
+
+      info_request.external_url = 'javascript:alert(document.domain)'
+
+      expect(info_request).not_to be_valid
+      expect(info_request.errors[:external_url]).
+        to include('must be an absolute HTTP or HTTPS URL')
+    end
+
+    it 'allows unrelated updates to legacy requests with invalid URLs' do
+      info_request = FactoryBot.create(:info_request, :external)
+      info_request.update_column(:external_url, 'legacy-relative-url')
+
+      info_request.title = 'Updated title'
+
+      expect(info_request).to be_valid
+    end
   end
 
   describe '#user_name' do
