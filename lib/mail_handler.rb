@@ -20,7 +20,9 @@ module MailHandler
       IO.popen(["tnef", "-K", "-C", dir], "wb", err: File::NULL) do |f|
         f.write(content)
         f.close
-        raise IOError, "tnef exited with signal #{$CHILD_STATUS.termsig}" if $CHILD_STATUS.signaled?
+        if $CHILD_STATUS.signaled?
+          raise TNEFParsingError, "tnef exited with signal #{$CHILD_STATUS.termsig}"
+        end
         if $CHILD_STATUS.exited? && $CHILD_STATUS.exitstatus != 0
           raise TNEFParsingError, "tnef exited with status #{$CHILD_STATUS.exitstatus}"
         end
