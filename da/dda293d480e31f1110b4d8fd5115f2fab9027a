@@ -1,0 +1,1 @@
+Issue #59; removes Brakeman parser error without suppressing findings; syntax verified with Ruby 4.0.5.
