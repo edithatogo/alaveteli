@@ -1,0 +1,1 @@
+PR #71 review fix: validate PublicBody web URLs on create or attribute mutation, bypassing stale calculated_home_page memoization and preserving unrelated updates to legacy-invalid records.
