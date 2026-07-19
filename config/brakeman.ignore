@@ -1,17 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "fingerprint": "0b080e08710cef6998d51e6b8f5938c8c26fab0bd03bab12d57a403e7f0df5b6",
-      "warning_type": "Cross-Site Scripting",
-      "warning_code": 4,
-      "check_name": "LinkToHref",
-      "message": "Potentially unsafe model attribute in `link_to` href",
-      "file": "app/views/public_body/_more_info.html.erb",
-      "line": 4,
-      "confidence": "Weak",
-      "note": "Reviewed persisted URL flow; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
       "fingerprint": "2067e6b03a9e5ce1ae4ceb6c88a40002a9fbca5c835ded2d40951c41ccf8c724",
       "warning_type": "SQL Injection",
       "warning_code": 0,
@@ -65,17 +54,6 @@
       "line": 3,
       "confidence": "Weak",
       "note": "Reviewed application-generated action URL; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
-      "fingerprint": "488ccf5c2626b779659c7b05410889d4f79ac528d7aad6afe1fbaa543b51febb",
-      "warning_type": "Cross-Site Scripting",
-      "warning_code": 4,
-      "check_name": "LinkToHref",
-      "message": "Potentially unsafe model attribute in `link_to` href",
-      "file": "app/views/admin_public_body/show.html.erb",
-      "line": 41,
-      "confidence": "Weak",
-      "note": "Reviewed normalized public-body URL; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
       "fingerprint": "4fa54529eb0f289ddfe96985be7868291814fc46e04c5efea8fd4b03fb8f45f7",
@@ -166,17 +144,6 @@
       "note": "Reviewed model-derived ZIP cache path; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
-      "fingerprint": "e1007fe8b6a2d0a30087f01e7d8455d4669bdbcb1b435ce7f7bf2a259775114b",
-      "warning_type": "Cross-Site Scripting",
-      "warning_code": 2,
-      "check_name": "CrossSiteScripting",
-      "message": "Unescaped model attribute",
-      "file": "app/views/request/new.html.erb",
-      "line": 35,
-      "confidence": "Weak",
-      "note": "Reviewed analytics label escaped by view rendering; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
       "fingerprint": "f6ea20546b7f2d11055be93930c4ed81a6e3c8f1a62d39acb5d12b658356f3e0",
       "warning_type": "File Access",
       "warning_code": 16,
@@ -221,6 +188,6 @@
       "note": "Reviewed configured locale collation SQL; see baseline_hardening SECURITY_BASELINE.md."
     }
   ],
-  "updated": "2026-07-19T05:30:00Z",
+  "updated": "2026-07-19T08:15:00Z",
   "brakeman_version": "8.0.5"
 }

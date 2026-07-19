@@ -38,4 +38,15 @@ RSpec.describe "admin_public_body/show" do
       end
     end
   end
+
+  it 'renders a legacy unsafe home page as inert text' do
+    public_body.update_column(:home_page, 'javascript:http://example.com')
+
+    render template: 'admin_public_body/show'
+
+    expect(rendered).to have_content('javascript:http://example.com')
+    expect(rendered).not_to have_css(
+      'a[href="javascript:http://example.com"]'
+    )
+  end
 end

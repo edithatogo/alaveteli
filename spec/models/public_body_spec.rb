@@ -642,6 +642,14 @@ RSpec.describe PublicBody do
       subject = FactoryBot.create(:public_body, publication_scheme: '')
       expect(subject.publication_scheme).to be_nil
     end
+
+    it 'rejects non-web and embedded web schemes' do
+      %w[javascript:alert(1) javascript:http://example.com].each do |url|
+        subject = PublicBody.new(publication_scheme: url)
+        subject.valid?
+        expect(subject.errors[:publication_scheme]).to be_present
+      end
+    end
   end
 
   describe '#disclosure_log' do
@@ -654,6 +662,14 @@ RSpec.describe PublicBody do
     it 'strips blank attributes' do
       subject = FactoryBot.create(:public_body, disclosure_log: '')
       expect(subject.disclosure_log).to be_nil
+    end
+
+    it 'accepts absolute HTTP and HTTPS URLs' do
+      %w[http://example.com/log https://example.com/log].each do |url|
+        subject = PublicBody.new(disclosure_log: url)
+        subject.valid?
+        expect(subject.errors[:disclosure_log]).to be_empty
+      end
     end
   end
 
@@ -1909,6 +1925,19 @@ RSpec.describe PublicBody do
     it 'does not add http when https is present' do
       public_body = PublicBody.new(home_page: 'https://example.com')
       expect(public_body.calculated_home_page).to eq('https://example.com')
+    end
+
+    it 'rejects malicious schemes containing HTTP text' do
+      public_body = PublicBody.new(home_page: 'javascript:http://example.com')
+      expect(public_body.calculated_home_page).to be_nil
+      expect(public_body).not_to be_valid
+      expect(public_body.errors[:home_page]).to be_present
+    end
+
+    it 'rejects URLs containing credentials' do
+      public_body = PublicBody.new(home_page: 'https://user:pass@example.com')
+      expect(public_body.calculated_home_page).to be_nil
+      expect(public_body).not_to be_valid
     end
 
     it 'returns the home page based on the request email domain if it has one' do

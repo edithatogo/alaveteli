@@ -33,7 +33,6 @@ gate; its SARIF output is retained for review even when the scan reports issues.
 | SQL construction | 11 | Model-owned table/field names, configured locales, database metadata, sanitized tag helpers | Fingerprint baseline; no request value is concatenated without an existing sanitizer or allowlist. |
 | Persisted/generated URLs | 6 | Public-body, citation and application action URLs | Fingerprint baseline; retain existing model/admin trust boundary and require separate URL-policy work if that boundary changes. |
 | ZIP file paths | 2 | `InfoRequest#make_zip_cache_path` under the configured download root | Fingerprint baseline; path remains model-derived and authorization-gated. |
-| Analytics rendering | 1 | Public-body homepage used as an escaped analytics label | Fingerprint baseline; not emitted as raw HTML. |
 
 The 20 current fingerprints are enumerated in `config/brakeman.ignore`. This
 classification does not authorize adding wildcard ignores or disabling a
