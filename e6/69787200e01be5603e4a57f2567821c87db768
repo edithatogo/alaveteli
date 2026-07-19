@@ -1,0 +1,1 @@
+Resolved all RuboCop offenses reported on newly added lines; new files clean under RuboCop 1.88.1, Ruby 4 syntax and diff checks pass.
