@@ -1,0 +1,1 @@
+Review-fix commit from subagent: added profiler success/fallback diagnostics and conditional HEAD 304 coverage; syntax/diff checks passed.
