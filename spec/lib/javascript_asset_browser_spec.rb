@@ -63,9 +63,16 @@ RSpec.describe 'JavaScript asset browser behavior' do
             <script src="/admin.js"></script>
             <script>
               $(function () {
-                $('#tooltip-target').tooltip();
-                $('#tabs').tabs();
-                $('#sortable').sortable();
+                $.support.transition = false;
+                $.fx.off = true;
+                $('#tooltip-target').tooltip({ animation: false });
+                $('#tabs').tabs({ show: false, hide: false });
+                $('#sortable').sortable({ revert: false });
+                document.documentElement.dataset.plugins = [
+                  'collapse', 'dropdown', 'tooltip', 'tabs', 'sortable'
+                ].every(function (plugin) {
+                  return typeof $.fn[plugin] === 'function';
+                }) ? 'ready' : 'missing';
                 document.documentElement.dataset.ready = 'true';
               });
             </script>
@@ -83,7 +90,13 @@ RSpec.describe 'JavaScript asset browser behavior' do
             <script src="/application.js"></script>
             <script>
               $(function () {
-                $('#datepicker').datepicker({ dateFormat: 'yy-mm-dd' });
+                $.fx.off = true;
+                $('#datepicker').datepicker({
+                  dateFormat: 'yy-mm-dd',
+                  showAnim: ''
+                });
+                document.documentElement.dataset.plugins =
+                  typeof $.fn.datepicker === 'function' ? 'ready' : 'missing';
                 document.documentElement.dataset.ready = 'true';
               });
             </script>
@@ -96,6 +109,7 @@ RSpec.describe 'JavaScript asset browser behavior' do
   around do |example|
     original_app = Capybara.app
     original_driver = Capybara.current_driver
+    WebMock.disable_net_connect!(allow_localhost: true)
     Capybara.app = AssetBehaviorApp.new
     Capybara.current_driver = :headless_chrome
     example.run
@@ -103,10 +117,12 @@ RSpec.describe 'JavaScript asset browser behavior' do
     Capybara.reset_sessions!
     Capybara.current_driver = original_driver
     Capybara.app = original_app
+    WebMock.disable_net_connect!
   end
 
   def wait_for_assets
     expect(page).to have_css('html[data-ready="true"]')
+    expect(page).to have_css('html[data-plugins="ready"]')
   end
 
   it 'executes Bootstrap dropdown, collapse, and tooltip interactions' do
@@ -128,18 +144,22 @@ RSpec.describe 'JavaScript asset browser behavior' do
     wait_for_assets
 
     find('#tabs a', text: 'Two').click
+    expect(page).to have_css('#tabs li.ui-tabs-active a', text: 'Two')
     expect(page).to have_css('#tab-two', text: 'Second panel', visible: true)
 
     page.execute_script(<<~JS)
       var list = $('#sortable');
       list.append(list.children().first());
       list.sortable('refresh');
+      document.documentElement.dataset.sortableOrder =
+        list.sortable('toArray', { attribute: 'data-id' }).join(',');
     JS
     serialized = page.evaluate_script(
       "$('#sortable').sortable('serialize', { attribute: 'data-id' })"
     )
 
     expect(serialized).to eq('item[]=2&item[]=1')
+    expect(page).to have_css('html[data-sortable-order="item_2,item_1"]')
   end
 
   it 'executes the jQuery UI datepicker selection flow' do

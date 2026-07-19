@@ -10,7 +10,6 @@ RSpec.describe 'JavaScript asset behavior contracts' do
       source = compiled_asset(asset)
 
       expect(source).to match(registration)
-      expect(source).to match(/\.fn\.#{Regexp.escape(plugin)}/)
     end
   end
 
