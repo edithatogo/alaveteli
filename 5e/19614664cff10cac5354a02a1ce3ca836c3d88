@@ -1,0 +1,1 @@
+Issues #56 and #65; fixes the challenge form POST route while retaining the existing read-only controller action.
