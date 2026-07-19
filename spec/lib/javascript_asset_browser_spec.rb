@@ -116,8 +116,11 @@ RSpec.describe 'JavaScript asset browser behavior' do
     example.run
   ensure
     begin
-      Capybara.reset_sessions!
-      selenium_driver&.quit
+      begin
+        Capybara.reset_sessions!
+      ensure
+        selenium_driver&.quit
+      end
     ensure
       Capybara.current_driver = original_driver
       Capybara.app = original_app
