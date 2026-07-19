@@ -1,0 +1,1 @@
+Issue #59; maps five Bootstrap 2 Sprockets names used by admin.js to patched Bootstrap 3.4.1 modules after run 29675112681 exposed 489 repeated asset failures.
