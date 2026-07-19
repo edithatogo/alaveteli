@@ -325,7 +325,7 @@ class InfoRequest < ApplicationRecord
     # try to find a match on InfoRequest#title
     reply_format = InfoRequest.new(title: '').email_subject_followup
     requests_by_title = InfoRequest.left_joins(:incoming_messages).
-      where(title: subject_line.gsub(/#{reply_format}/i, '').strip)
+      where(title: subject_line.gsub(/#{Regexp.escape(reply_format)}/i, '').strip)
 
     # try to find a match on IncomingMessage#subject
     requests_by_subject = InfoRequest.left_joins(:incoming_messages).
