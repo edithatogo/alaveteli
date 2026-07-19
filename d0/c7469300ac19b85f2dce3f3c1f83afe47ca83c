@@ -1,0 +1,1 @@
+Conductor task: export_optimization_20260710 Phase 3 CI retry. Corrected rack-attack lock from 6.8.0 to 6.7.0 because Gemfile pins ~> 6.7.0. Validation: previous GitHub Actions logs showed frozen Bundler dependency mismatch; local bundle unavailable.

@@ -1,0 +1,1 @@
+Task: Run regression and security gate (Brakeman visibility). Summary: Configured Brakeman to emit plain text findings to stdout while preserving warning-fail mode. Files: .github/workflows/security.yml. Why: The security job was failing with only an HTML report artifact path in logs, which blocked deterministic triage from CI output.

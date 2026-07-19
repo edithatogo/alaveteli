@@ -1,0 +1,1 @@
+Task: Run regression and security gate (Brakeman harness). Summary: Replaced unsupported Brakeman 8 --fail-on-warn option with the supported -z warning-fail mode. Files: .github/workflows/security.yml. Why: The security workflow must fail on real Brakeman warnings, not on stale scanner CLI syntax.

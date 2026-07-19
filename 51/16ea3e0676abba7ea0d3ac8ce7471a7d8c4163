@@ -1,0 +1,3 @@
+Task: Rack::Attack Initializer Configuration
+
+Summary: Configured Rack::Attack middleware with token-based tiers, fail2ban blocking, Redis store with a custom ResilientCacheStore circuit-breaker wrapper, and dynamic load-based anonymous limits. Wrote comprehensive integration specs under spec/integration/rack_attack_spec.rb.

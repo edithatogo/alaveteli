@@ -1,0 +1,3 @@
+Task: Route Expensive Requests to Bulk Queue
+
+Summary: Created Current model inheriting from ActiveSupport::CurrentAttributes to persist bot request status. Added LowPriorityWorker concern for ActiveJob queue routing, registered in ApplicationController. Wrote specs under spec/jobs/concerns/low_priority_worker_spec.rb.

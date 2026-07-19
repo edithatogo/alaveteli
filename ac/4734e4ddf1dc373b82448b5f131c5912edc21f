@@ -1,0 +1,3 @@
+Task: CI Throughput and DevSecOps
+
+Summary: Split RSpec tests into core and gems parallel jobs in ci.yml. Created security.yml to run Brakeman, bundler-audit, dependency reviews, and Bearer scans. Added ci_developer_documentation.md.

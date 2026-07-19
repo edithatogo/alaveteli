@@ -1,0 +1,1 @@
+Follow-up to #19. CI showed the analyzer regression's broad File.exist? stub caused an unrelated PStore rate-limiter failure. Scoped File.exist? and File.read stubs to the expected converted workbook path and restored real filesystem behavior elsewhere. Local Ruby/RSpec unavailable; CI is the verification sensor.

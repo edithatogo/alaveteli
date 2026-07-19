@@ -1,0 +1,1 @@
+Conductor follow-up for bot_resilience_modernization_20260709 Phase 7 Metrics and Operator Runbooks. Adds runtime bot traffic counters for rate-limit API requests, bulk export access, Turnstile challenge outcomes, cache hits/misses, and metrics endpoint exposure. Validation: git diff --check and scoped line-length scan passed; Ruby/Bundler unavailable locally.

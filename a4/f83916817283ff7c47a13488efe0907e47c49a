@@ -1,0 +1,1 @@
+Issue #21. Completed notification-preference settings flow for upstream-shaped review. Added profile navigation, preserved omitted values on partial updates through strong-parameter Active Record updates, and added discoverability and parameter-boundary regressions. git diff --check passed. Local Ruby and Bundler are unavailable, so fork-local PR CI is required.

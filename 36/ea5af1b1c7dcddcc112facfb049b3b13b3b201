@@ -1,0 +1,3 @@
+Task: Rate Limit API Endpoint
+
+Summary: Created sustainability controller under namespace Api::V1 containing rate_limit and bulk_export endpoints. Registered endpoints in config/routes.rb and wrote specs in spec/controllers/api/v1/sustainability_controller_spec.rb.

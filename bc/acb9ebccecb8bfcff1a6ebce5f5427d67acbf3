@@ -1,0 +1,1 @@
+Issue #21 and PR #22 review remediation. Made the authenticated user assignment explicit in the preferences controller and eager-loaded notification users to avoid a newly introduced instant-mail N+1 query. Added a regression expectation for the eager-load contract. git diff --check passed; CI rerun required.

@@ -1,0 +1,3 @@
+Task: Traffic Control Controller Concern
+
+Summary: Created TrafficControl concern to automatically parse Rack::Attack throttle data and inject RateLimit-* and advisory load headers. Registered concern in ApplicationController and wrote unit tests in spec/controllers/concerns/traffic_control_spec.rb.

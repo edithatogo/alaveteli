@@ -1,0 +1,3 @@
+Task: Rails 8 Infrastructure Simplification and Deployment
+
+Summary: Documented Solid Cache/Queue/Cable comparative analysis in solid_trifecta_evaluation.md. Created config/deploy.yml.example for Kamal deployment pilots.

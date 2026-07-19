@@ -1,0 +1,1 @@
+Conductor task: export_optimization_20260710 Phase 2 Add performance and security sensors. Added streaming export review evidence, benchmark mode comparison guidance, SQL binding review, telemetry impact note, and a service spec guard for public_body join usage. Validation: git diff --check and scoped line-length scan passed; Ruby/Bundler unavailable locally for RSpec.
