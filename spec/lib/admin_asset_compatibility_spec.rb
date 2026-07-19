@@ -8,23 +8,24 @@ RSpec.describe 'admin asset compatibility' do
   end
 
   it 'retains the Bootstrap 2 contracts used by admin templates' do
-    selectors = %w[
-      .admin\ .span12
-      .admin\ .offset5
-      .admin\ .control-group
-      .admin\ .form-horizontal\ .controls
-      .admin\ .navbar-inner
-      .admin\ .navbar\ .brand
-      .admin\ .btn-mini
-      .admin\ .accordion-group
-      .admin\ .accordion-inner
-      .admin\ .alert-error
-      .admin\ .icon-eye-open
-      .admin\ .icon-lock
+    selectors = [
+      '.admin .span12',
+      '.admin .offset5',
+      '.admin .control-group',
+      '.admin .form-horizontal .controls',
+      '.admin .navbar-inner',
+      '.admin .navbar .brand',
+      '.admin .btn-mini',
+      '.admin .accordion-group',
+      '.admin .accordion-inner',
+      '.admin .alert-error',
+      '.admin .icon-eye-open',
+      '.admin .icon-lock'
     ]
 
     selectors.each do |selector|
-      expect(stylesheet).to include(selector), "expected admin.css to define #{selector}"
+      expect(stylesheet).to include(selector),
+                            "expected admin.css to define #{selector}"
     end
   end
 

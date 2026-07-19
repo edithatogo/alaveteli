@@ -6,6 +6,7 @@ require 'tempfile'
 
 require_relative 'verify_brakeman_baseline'
 
+# Exercises fail-closed matching of the reviewed Brakeman warning ledger.
 class BrakemanBaselineVerifierTest < Minitest::Test
   def warning
     {

@@ -19,9 +19,11 @@ class UserStats
   # Returns the number of domant users for the given domain
   # (A dormant user is one with no requests, tracks or comments)
   def self.count_dormant_users(domain, start_date=nil)
+    tracked_users = TrackThing.where.not(tracking_user_id: nil).
+      select(:tracking_user_id)
     users = User.
       where.not(id: InfoRequest.where.not(user_id: nil).select(:user_id)).
-      where.not(id: TrackThing.where.not(tracking_user_id: nil).select(:tracking_user_id)).
+      where.not(id: tracked_users).
       where.not(id: Comment.where.not(user_id: nil).select(:user_id)).
       where('email LIKE ?', "%@#{User.sanitize_sql_like(domain)}")
     users = users.where('created_at >= ?', start_date) if start_date

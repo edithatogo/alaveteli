@@ -21,10 +21,12 @@ module MailHandler
         f.write(content)
         f.close
         if $CHILD_STATUS.signaled?
-          raise TNEFParsingError, "tnef exited with signal #{$CHILD_STATUS.termsig}"
+          signal = $CHILD_STATUS.termsig
+          raise TNEFParsingError, "tnef exited with signal #{signal}"
         end
         if $CHILD_STATUS.exited? && $CHILD_STATUS.exitstatus != 0
-          raise TNEFParsingError, "tnef exited with status #{$CHILD_STATUS.exitstatus}"
+          status = $CHILD_STATUS.exitstatus
+          raise TNEFParsingError, "tnef exited with status #{status}"
         end
       end
       found = 0

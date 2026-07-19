@@ -76,9 +76,10 @@ RSpec.describe 'Rack::Attack middleware rate limiting', type: :request do
 
     before do
       failing_store = ActiveSupport::Cache::MemoryStore.new
-      allow(failing_store).to receive(:write).and_raise(Redis::BaseError.new('Redis down'))
-      allow(failing_store).to receive(:read).and_raise(Redis::BaseError.new('Redis down'))
-      allow(failing_store).to receive(:increment).and_raise(Redis::BaseError.new('Redis down'))
+      redis_error = Redis::BaseError.new('Redis down')
+      allow(failing_store).to receive(:write).and_raise(redis_error)
+      allow(failing_store).to receive(:read).and_raise(redis_error)
+      allow(failing_store).to receive(:increment).and_raise(redis_error)
       Rack::Attack.cache.store = Rack::Attack::ResilientCacheStore.new(failing_store)
     end
 
