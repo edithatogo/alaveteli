@@ -1,0 +1,1 @@
+PR #71 CI remediation: Ruby 4 exposed nondeterministic PostgreSQL association ordering; assertion now verifies the unchanged contributor set without imposing an undefined row order. Focused execution deferred to hosted CI because local Apple Ruby 2.6 lacks Bundler 2.7.2.
