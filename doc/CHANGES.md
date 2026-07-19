@@ -2,6 +2,8 @@
 
 ## Highlighted Features
 
+* Document request-state roles and add an optional process-clock metadata hook
+  for themes (Dylan Mordaunt)
 * Move admin attachment erasure into background job (Graeme Porteous)
 * Add Search module providing a backend-agnostic search interface, decoupling
   controllers, models and mailers from Xapian (Graeme Porteous)
