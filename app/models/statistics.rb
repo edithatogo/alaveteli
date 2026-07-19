@@ -39,7 +39,7 @@ module Statistics
         data = nil
         data =
           if percentages
-            PublicBody.get_request_percentages(column,
+            PublicBody.get_request_percentages(column.to_sym,
                                                per_graph,
                                                highest,
                                                minimum_requests)

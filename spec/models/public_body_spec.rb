@@ -2123,7 +2123,7 @@ RSpec.describe PublicBody, "when calculating statistics" do
       # classified requests, one of which is successful, so the
       # percentage should be 50%:
 
-      percentages_data = PublicBody.get_request_percentages(column='info_requests_successful_count',
+      percentages_data = PublicBody.get_request_percentages(column=:info_requests_successful_count,
                                                             n=3,
                                                             highest=false,
                                                             minimum_requests=1)
@@ -2153,7 +2153,7 @@ RSpec.describe PublicBody, "when calculating statistics" do
       minimum_requests = 3
       with_enough_info_requests = PublicBody.where(["info_requests_visible_classified_count >= ?",
                                                     minimum_requests]).length
-      all_data = PublicBody.get_request_percentages(column='info_requests_successful_count',
+      all_data = PublicBody.get_request_percentages(column=:info_requests_successful_count,
                                                     n=10,
                                                     true,
                                                     minimum_requests)
@@ -2174,6 +2174,58 @@ RSpec.describe PublicBody, "when calculating statistics" do
       expect(all_data['public_bodies'].length).to eq(4)
     ensure
       hpb.tag_string = original_tag_string
+    end
+  end
+
+  describe '.get_request_percentages' do
+    it 'rejects columns outside the statistics allowlist' do
+      expect {
+        described_class.get_request_percentages(
+          :'info_requests_successful_count; DROP TABLE public_bodies',
+          3,
+          true,
+          1
+        )
+      }.to raise_error(ArgumentError, /Unsupported request percentage column/)
+    end
+
+    it 'coerces numeric string arguments' do
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count,
+          '3',
+          true,
+          '1'
+        )
+      }.not_to raise_error
+    end
+
+    it 'rejects negative and non-numeric limits' do
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count, -1, true, 1
+        )
+      }.to raise_error(ArgumentError, /n must be non-negative/)
+
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count, 'all', true, 1
+        )
+      }.to raise_error(ArgumentError)
+    end
+
+    it 'rejects negative minimums and non-boolean ordering' do
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count, 3, true, -1
+        )
+      }.to raise_error(ArgumentError, /minimum_requests must be non-negative/)
+
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count, 3, 'DESC', 1
+        )
+      }.to raise_error(ArgumentError, /highest must be true or false/)
     end
   end
 end

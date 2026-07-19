@@ -7,20 +7,9 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/public_body.rb",
-      "line": 622,
+      "line": 642,
       "confidence": "Medium",
       "note": "Reviewed internal tag SQL builder; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
-      "fingerprint": "2c825bca0a74ddb53585c413ed5217c9804ed596b51d0ba5b2bda74110f36e92",
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/info_request_event.rb",
-      "line": 130,
-      "confidence": "Medium",
-      "note": "Reviewed internal field-list SQL; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
       "fingerprint": "3bdbcef734f916f8f76124dcb55a95455c3e5a664d73c7ada74e2857f44db5b9",
@@ -172,7 +161,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/public_body.rb",
-      "line": 661,
+      "line": 681,
       "confidence": "Weak",
       "note": "Reviewed internal translation-table SQL; see baseline_hardening SECURITY_BASELINE.md."
     },
@@ -183,7 +172,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/public_body.rb",
-      "line": 672,
+      "line": 692,
       "confidence": "Medium",
       "note": "Reviewed configured locale collation SQL; see baseline_hardening SECURITY_BASELINE.md."
     }
