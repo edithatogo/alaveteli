@@ -1,4 +1,7 @@
 <% unless @batch %>
+  <% authority_home_page = @info_request.public_body.safe_web_url(
+       @info_request.public_body.calculated_home_page
+     ) %>
   <% content_for :javascript do %>
     <%= javascript_tag nonce: true do %>
       $(document).ready(function(){
@@ -32,12 +35,12 @@
                 <%= raw(track_analytics_event(
                   AnalyticsEvent::Category::SEARCH_OFFICIAL_WEBSITE,
                   AnalyticsEvent::Action::POSSIBLE_RELATED,
-                  :label => @info_request.public_body.calculated_home_page
+                  :label => authority_home_page
                 )) %>
               }).attr({
                 "target": "_blank",
                 "href": "http://www.google.com/#q="+encodeURI($("#typeahead_search").val())+
-                        "+site:<%= @info_request.public_body.calculated_home_page %>"
+                        "+site:"+<%= raw(json_escape(authority_home_page.to_s.to_json)) %>
               });
 
               $('.close-button').click(function() { $(this).parent().hide() });

@@ -29,6 +29,12 @@ require 'securerandom'
 require 'set'
 
 class PublicBody < ApplicationRecord
+  REQUEST_PERCENTAGE_COLUMNS = {
+    info_requests_successful_count: :info_requests_successful_count,
+    info_requests_overdue_count: :info_requests_overdue_count,
+    info_requests_not_held_count: :info_requests_not_held_count
+  }.freeze
+
   include Rails.application.routes.url_helpers
   include LinkToHelper
 
@@ -505,8 +511,8 @@ class PublicBody < ApplicationRecord
     # sub-select to find the IDs of those public bodies.
     test_tagged_query = "SELECT model_id FROM has_tag_string_tags" \
       " WHERE model_type = 'PublicBody' AND name = 'test'"
-    "#{total_column} >= #{minimum_requests} " \
-    "AND id NOT IN (#{test_tagged_query})"
+    ["#{total_column} >= ? AND id NOT IN (#{test_tagged_query})",
+     Integer(minimum_requests)]
   end
 
   # Return data for the 'n' public bodies with the highest (or
@@ -536,21 +542,36 @@ class PublicBody < ApplicationRecord
   # percentage.  This only returns data for those public bodies with
   # at least 'minimum_requests' requests.
   def self.get_request_percentages(column, n, highest, minimum_requests)
-    total_column = "info_requests_visible_classified_count"
-    ordering = "y_value"
-    ordering += " DESC" if highest
-    y_value_column = "(cast(#{column} as float) / #{total_column})"
-    where_clause = where_clause_for_stats minimum_requests, total_column
-    where_clause += " AND #{column} IS NOT NULL"
-    public_bodies = PublicBody.select("*, #{y_value_column} AS y_value").
+    column_name = REQUEST_PERCENTAGE_COLUMNS.fetch(column) do
+      raise ArgumentError,
+            "Unsupported request percentage column: #{column.inspect}"
+    end
+    limit = Integer(n)
+    minimum = Integer(minimum_requests)
+    raise ArgumentError, 'n must be non-negative' if limit.negative?
+    if minimum.negative?
+      raise ArgumentError, 'minimum_requests must be non-negative'
+    end
+    unless [true, false].include?(highest)
+      raise ArgumentError, 'highest must be true or false'
+    end
+
+    total_column = 'info_requests_visible_classified_count'
+    table = arel_table
+    float_literal = Arel::Nodes.build_quoted(1.0)
+    ratio = (table[column_name] * float_literal) / table[total_column]
+    ordering = highest ? ratio.desc : ratio.asc
+    where_clause = where_clause_for_stats minimum, total_column
+    public_bodies = PublicBody.select(table[Arel.star], ratio.as('y_value')).
                                 order(ordering).
                                   where(where_clause).
-                                    limit(n).
+                                    where.not(column_name => nil).
+                                    limit(limit).
                                       to_a
     public_bodies.reverse! if highest
     y_values = public_bodies.map { |pb| pb.y_value.to_f }
 
-    original_values = public_bodies.map { |pb| pb.send(column) }
+    original_values = public_bodies.map { |pb| pb.public_send(column) }
     # If these are all nil, then probably the values have never
     # been set; some have to be set by a rake task.  In that case,
     # just return nil:

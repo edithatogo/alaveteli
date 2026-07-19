@@ -105,7 +105,7 @@ gem 'icalendar', '~> 2.12.3'
 gem 'image_processing', '~> 2.0'
 gem 'mini_magick', '~> 5.1'
 gem 'jquery-rails', '~> 4.6.1'
-gem 'jquery-ui-rails', '~> 6.0.0'
+gem 'jquery-ui-rails', '~> 8.0.0'
 gem 'json', '~> 2.20.0'
 gem 'holidays', '~> 11.0.0'
 gem 'iso_country_codes', '~> 0.7.8'
@@ -168,7 +168,7 @@ gem 'money', '~> 7.0.2'
 gem 'mime-types', '< 4.0.0', require: false
 
 # Assets
-gem 'bootstrap-sass', '~> 2.3.2.2'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'sass-rails', '~> 5.0.8'
 gem 'sprockets', '~> 3.7.5'
 # Modern Assets
@@ -198,6 +198,7 @@ group :test do
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-lcov', '~> 0.9.0'
   gem 'capybara', '~> 3.40.0'
+  gem 'selenium-webdriver', '~> 4.28'
   gem 'stripe-ruby-mock', '~> 5.0.0'
   gem 'rails-controller-testing'
 end

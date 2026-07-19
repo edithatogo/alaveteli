@@ -202,6 +202,31 @@ RSpec.describe AlaveteliPro::DraftInfoRequestBatchesController do
           subject
           expect(flash[:notice]).to eq 'Your Batch Request has been saved!'
         end
+
+        context 'when public_body_id is a single-value array' do
+          before do
+            params[:alaveteli_pro_draft_info_request_batch][:public_body_id] =
+              [authority_1.id]
+          end
+
+          it 'normalizes the value and adds the body' do
+            subject
+            expect(draft.reload.public_bodies).to eq [authority_1]
+          end
+        end
+
+        context 'when public_body_id contains multiple values' do
+          before do
+            params[:alaveteli_pro_draft_info_request_batch][:public_body_id] =
+              [authority_1.id, authority_2.id]
+          end
+
+          it 'rejects the ambiguous request' do
+            expect { subject }.
+              to raise_error(ActionController::BadRequest,
+                             'public_body_id must contain exactly one value')
+          end
+        end
       end
 
       describe "responding to an AJAX request" do

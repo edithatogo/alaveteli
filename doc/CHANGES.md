@@ -2,6 +2,14 @@
 
 ## Highlighted Features
 
+* Validate and normalize batch public-body identifiers before persistence
+  (Dylan Mordaunt)
+* Isolate Rack::Attack and bot-traffic metrics state between tests
+  (Dylan Mordaunt)
+* Update Bootstrap, jQuery UI, Loofah and Rails HTML Sanitizer to patched
+  releases (Dylan Mordaunt)
+* Test the experimental compatibility lane against stable Ruby 4.0 rather than
+  the obsolete preview ABI (Dylan Mordaunt)
 * Document request-state roles and add an optional process-clock metadata hook
   for themes (Dylan Mordaunt)
 * Move admin attachment erasure into background job (Graeme Porteous)

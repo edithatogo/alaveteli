@@ -75,17 +75,63 @@ RSpec.describe AlaveteliPro::Invoice, type: :model do
   describe '#receipt_url' do
     before do
       allow(stripe_charge).to receive(:receipt_url).and_return(
-        'http://example.com/receipt'
+        'https://pay.stripe.com/receipts/receipt_123'
       )
     end
 
-    it 'delegates receipt_url to the charge' do
-      expect(invoice.receipt_url).to eq('http://example.com/receipt')
+    it 'returns HTTPS Stripe receipt URLs' do
+      expect(invoice.receipt_url).
+        to eq('https://pay.stripe.com/receipts/receipt_123')
     end
 
     it 'returns nil when there is no charge' do
       allow(stripe_invoice).to receive(:charge).and_return(nil)
       expect(invoice.receipt_url).to be_nil
+    end
+
+    it 'rejects non-HTTPS receipt URLs' do
+      allow(stripe_charge).to receive(:receipt_url).
+        and_return('http://pay.stripe.com/receipts/receipt_123')
+      expect(invoice.receipt_url).to be_nil
+    end
+
+    it 'rejects receipt URLs on an unexpected host' do
+      allow(stripe_charge).to receive(:receipt_url).
+        and_return('https://example.com/receipt')
+      expect(invoice.receipt_url).to be_nil
+    end
+  end
+
+  describe '#hosted_invoice_url' do
+    it 'returns HTTPS Stripe invoice URLs' do
+      allow(stripe_invoice).to receive(:hosted_invoice_url).
+        and_return('https://invoice.stripe.com/i/invoice_123')
+      expect(invoice.hosted_invoice_url).
+        to eq('https://invoice.stripe.com/i/invoice_123')
+    end
+
+    it 'rejects non-HTTPS invoice URLs' do
+      allow(stripe_invoice).to receive(:hosted_invoice_url).
+        and_return('http://invoice.stripe.com/i/invoice_123')
+      expect(invoice.hosted_invoice_url).to be_nil
+    end
+
+    it 'rejects invoice URLs on an unexpected host' do
+      allow(stripe_invoice).to receive(:hosted_invoice_url).
+        and_return('https://example.com/invoice')
+      expect(invoice.hosted_invoice_url).to be_nil
+    end
+
+    it 'rejects Stripe invoice URLs on a non-standard port' do
+      allow(stripe_invoice).to receive(:hosted_invoice_url).
+        and_return('https://invoice.stripe.com:8443/i/invoice_123')
+      expect(invoice.hosted_invoice_url).to be_nil
+    end
+
+    it 'rejects malformed invoice URLs' do
+      allow(stripe_invoice).to receive(:hosted_invoice_url).
+        and_return('https://invoice.stripe.com/%')
+      expect(invoice.hosted_invoice_url).to be_nil
     end
   end
 

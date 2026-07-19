@@ -96,6 +96,64 @@ RSpec.describe PublicBodyChangeRequest, 'when validating' do
     expect(change_request.valid?).to be false
     expect(change_request.errors[:public_body_email]).to eq(["The authority email doesn't look like a valid address"])
   end
+
+  it 'accepts absolute HTTP and HTTPS source URLs' do
+    user = FactoryBot.build(:user)
+
+    source_urls = %w[http://example.com/source https://example.com/source]
+
+    source_urls.each do |source_url|
+      change_request = PublicBodyChangeRequest.new(
+        user: user,
+        public_body_name: 'New Body',
+        source_url: source_url
+      )
+
+      expect(change_request).to be_valid
+    end
+  end
+
+  it 'allows a blank source URL' do
+    change_request = PublicBodyChangeRequest.new(
+      user: FactoryBot.build(:user),
+      public_body_name: 'New Body',
+      source_url: ''
+    )
+
+    expect(change_request).to be_valid
+  end
+
+  it 'rejects non-HTTP and relative source URLs' do
+    user = FactoryBot.build(:user)
+
+    source_urls = ['javascript:alert(1)', 'ftp://example.com/source', '/source']
+
+    source_urls.each do |source_url|
+      change_request = PublicBodyChangeRequest.new(
+        user: user,
+        public_body_name: 'New Body',
+        source_url: source_url
+      )
+
+      expect(change_request).not_to be_valid
+      expect(change_request.errors[:source_url]).to eq(
+        ["The source URL doesn't look like a valid web address"]
+      )
+    end
+  end
+
+  it 'rejects malformed source URLs' do
+    change_request = PublicBodyChangeRequest.new(
+      user: FactoryBot.build(:user),
+      public_body_name: 'New Body',
+      source_url: 'https://exa mple.com/source'
+    )
+
+    expect(change_request).not_to be_valid
+    expect(change_request.errors[:source_url]).to eq(
+      ["The source URL doesn't look like a valid web address"]
+    )
+  end
 end
 
 RSpec.describe PublicBodyChangeRequest, 'get_user_name' do

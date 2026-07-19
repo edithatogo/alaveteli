@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Health::MetricsController, type: :controller do
+  render_views
+
   describe 'GET index' do
     before do
       allow(Search).to receive(:queued_jobs_count).and_return(3)

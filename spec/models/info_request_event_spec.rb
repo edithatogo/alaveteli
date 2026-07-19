@@ -141,6 +141,37 @@ RSpec.describe InfoRequestEvent do
     end
   end
 
+  describe '#incoming_message_selective_columns' do
+    let(:event) { info_request_events(:useless_incoming_message_event) }
+
+    it 'selects an explicitly allowed set of fields' do
+      event.incoming_message.update_column(
+        :cached_main_body_text_folded,
+        'Cached message body'
+      )
+      message = event.incoming_message_selective_columns(
+        :id,
+        :cached_main_body_text_folded
+      )
+
+      expect(message.id).to be_present
+      expect(message.cached_main_body_text_folded).to eq('Cached message body')
+      expect(message.info_request).to eq(event.info_request)
+    end
+
+    it 'rejects free-form SQL fields' do
+      expect {
+        event.incoming_message_selective_columns('id, raw_email_id')
+      }.to raise_error(ArgumentError, /Unsupported incoming message fields/)
+    end
+
+    it 'rejects an empty field set' do
+      expect {
+        event.incoming_message_selective_columns
+      }.to raise_error(ArgumentError, /Unsupported incoming message fields/)
+    end
+  end
+
   describe '#title' do
     context 'a sent event' do
       it 'should return the related info_request title' do
@@ -327,15 +358,25 @@ RSpec.describe InfoRequestEvent do
 
     it 'should get search text for incoming messages' do
       event = info_request_events(:useless_incoming_message_event)
-      expect(event.search_text_main.strip).to eq("No way! I'm not going to tell you that in a month of Thursdays.\n\nThe Geraldine Quango")
+      expected = "No way! I'm not going to tell you that in a month of " \
+                 "Thursdays.\n\nThe Geraldine Quango"
+      expect(event.search_text_main.strip).to eq(expected)
     end
 
     it 'should get clipped text for incoming messages, and cache it too' do
       event = info_request_events(:useless_incoming_message_event)
 
-      event.incoming_message_selective_columns("cached_main_body_text_folded").cached_main_body_text_folded = nil
-      expect(event.search_text_main(true).strip).to eq("No way! I'm not going to tell you that in a month of Thursdays.\n\nThe Geraldine Quango")
-      expect(event.incoming_message_selective_columns("cached_main_body_text_folded").cached_main_body_text_folded).not_to eq(nil)
+      message = event.incoming_message_selective_columns(
+        :cached_main_body_text_folded
+      )
+      message.cached_main_body_text_folded = nil
+      expected = "No way! I'm not going to tell you that in a month of " \
+                 "Thursdays.\n\nThe Geraldine Quango"
+      expect(event.search_text_main(true).strip).to eq(expected)
+      message = event.incoming_message_selective_columns(
+        :cached_main_body_text_folded
+      )
+      expect(message.cached_main_body_text_folded).not_to be_nil
     end
   end
 

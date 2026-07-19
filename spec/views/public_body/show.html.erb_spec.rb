@@ -20,6 +20,9 @@ RSpec.describe "public_body/show" do
     allow(@pb).to receive(:has_tag?).and_return(false)
     allow(@pb).to receive(:tag_string).and_return('')
     allow(@pb).to receive(:legislation).and_return(Legislation.default)
+    allow(@pb).to receive(:safe_web_url) do |value|
+      PublicBody.safe_web_url(value)
+    end
     @xap = double(ActsAsXapian::Search, matches_estimated: 2)
     allow(@xap).to receive(:results).and_return([
       { model: mock_event },
@@ -47,6 +50,18 @@ RSpec.describe "public_body/show" do
   it "should show the body's name" do
     render
     expect(response).to have_css('h1', text: "Test Quango")
+  end
+
+  it 'renders legacy unsafe authority URLs as inert text' do
+    allow(@pb).to receive(:publication_scheme).
+      and_return('javascript:http://example.com')
+
+    render
+
+    expect(rendered).to have_content('javascript:http://example.com')
+    expect(rendered).not_to have_css(
+      'a[href="javascript:http://example.com"]'
+    )
   end
 
   it "should tell total number of requests" do

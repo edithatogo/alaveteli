@@ -22,20 +22,26 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
     end
 
     context 'with a valid verified bot token' do
+      let!(:export_started_at) { 1.second.ago }
       let!(:info_request) { FactoryBot.create(:info_request) }
 
       before do
         allow(ENV).to receive(:[]).and_call_original
-        allow(ENV).to receive(:[]).with('FYI_BOT_TOKEN').and_return('valid_secret_token')
+        allow(ENV).to receive(:[]).
+          with('FYI_BOT_TOKEN').
+          and_return('valid_secret_token')
         request.env['HTTP_X_FYI_BOT_TOKEN'] = 'valid_secret_token'
       end
 
       it 'returns 200 and streams NDJSON data' do
-        get :bulk_export, params: { limit: 1 }
+        get :bulk_export, params: {
+          limit: 1,
+          since: export_started_at.iso8601(6)
+        }
 
         expect(response.status).to eq(200)
         expect(response.headers['Content-Type']).to eq('application/x-ndjson')
-        lines = response.body.split("\n")
+        lines = response.body.each.to_a.join.split("\n")
         expect(lines.size).to eq(1)
         json = JSON.parse(lines.first)
         expect(json['title']).to eq(info_request.title)

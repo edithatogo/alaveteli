@@ -48,7 +48,8 @@ class Admin::NotesController < AdminController
   private
 
   def scope
-    Note.where(params.permit(:notable_tag, :notable_id, :notable_type))
+    scope_params = params.slice(:notable_tag, :notable_id, :notable_type)
+    Note.where(scope_params.permit(:notable_tag, :notable_id, :notable_type))
   end
 
   def note_params

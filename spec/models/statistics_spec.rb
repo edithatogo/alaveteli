@@ -12,10 +12,10 @@ RSpec.describe Statistics do
 
     let(:percentages_data) do
       PublicBody.get_request_percentages(
-        column='info_requests_successful_count',
-        n=3,
-        highest=false,
-        minimum_requests=1
+        :info_requests_successful_count,
+        3,
+        false,
+        1
       )
     end
 

@@ -7,7 +7,7 @@ module TrafficControl
   end
 
   def public_cache_control(record_or_etag, last_modified: nil)
-    return unless request.get?
+    return unless request.get? || request.head?
 
     request.env['bot_traffic.cache_controlled'] = true
     fresh_when(etag: record_or_etag, last_modified: last_modified, public: true)

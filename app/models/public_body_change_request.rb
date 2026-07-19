@@ -36,6 +36,8 @@ class PublicBodyChangeRequest < ApplicationRecord
                         unless: proc { |change_request| change_request.user }
   validate :user_email_format, unless: proc { |change_request| change_request.user_email.blank? }
   validate :body_email_format, unless: proc { |change_request| change_request.public_body_email.blank? }
+  validate :source_url_format,
+           unless: proc { |change_request| change_request.source_url.blank? }
 
   scope :new_body_requests, -> {
     where(public_body_id: nil).order(:created_at)
@@ -155,5 +157,20 @@ class PublicBodyChangeRequest < ApplicationRecord
     unless MySociety::Validate.is_valid_email(user_email)
       errors.add(:user_email, _("Your email doesn't look like a valid address"))
     end
+  end
+
+  def source_url_format
+    uri = URI.parse(source_url)
+    return if uri.is_a?(URI::HTTP) && uri.host.present?
+
+    errors.add(
+      :source_url,
+      _("The source URL doesn't look like a valid web address")
+    )
+  rescue URI::InvalidURIError
+    errors.add(
+      :source_url,
+      _("The source URL doesn't look like a valid web address")
+    )
   end
 end

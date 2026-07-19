@@ -47,6 +47,7 @@ body.admin {
   line-height: 20px;
 
   @import "bootstrap";
+  @import "admin/bootstrap2_compat";
 
   #main {
     flex: 1;
@@ -118,33 +119,33 @@ body.admin {
 
   i.icon-prominence--normal {
     @include prominence_icon;
-    @extend .icon-eye-open;
+    @include bootstrap2-icon("\e105");
   }
 
   i.icon-prominence--backpage {
     @include prominence_icon;
-    @extend .icon-eye-close;
+    @include bootstrap2-icon("\e106");
     background-color: #e8e8e8;
     border-color: #adadad;
   }
 
   i.icon-prominence--requester_only {
     @include prominence_icon;
-    @extend .icon-eye-close;
+    @include bootstrap2-icon("\e106");
     background-color: #ffe819;
     border-color: #ffb100;
   }
 
   i.icon-prominence--hidden {
     @include prominence_icon;
-    @extend .icon-eye-close;
+    @include bootstrap2-icon("\e106");
     background-color: #c59690;
     border-color: #771414;
   }
 
   i.icon-foi-attachment--locked {
     @include prominence_icon;
-    @extend .icon-lock;
+    @include bootstrap2-icon("\e033");
   }
 
   body.admin blockquote p {

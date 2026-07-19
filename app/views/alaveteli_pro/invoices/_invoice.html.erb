@@ -5,10 +5,10 @@
         invoice_number: invoice.number,
         invoice_amount: format_currency(invoice.amount_due)) %>
 
-  <% if invoice.paid? %>
-    <%= link_to _('View Receipt'), invoice.receipt_url, target: '_blank' %>
-  <% elsif invoice.open? %>
-    <%= link_to _('View Invoice and Pay'), invoice.hosted_invoice_url,
-        target: '_blank' %>
+  <% if invoice.paid? && invoice.receipt_url %>
+    <%= stripe_document_link _('View Receipt'), invoice.receipt_url %>
+  <% elsif invoice.open? && invoice.hosted_invoice_url %>
+    <%= stripe_document_link _('View Invoice and Pay'),
+                             invoice.hosted_invoice_url %>
   <% end %>
 </li>

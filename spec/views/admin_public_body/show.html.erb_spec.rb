@@ -38,4 +38,19 @@ RSpec.describe "admin_public_body/show" do
       end
     end
   end
+
+  it 'renders a legacy unsafe home page as inert text' do
+    current_user = FactoryBot.create(:admin_user)
+    allow(controller).to receive(:current_user).and_return(current_user)
+    public_body.update_column(:home_page, 'javascript:http://example.com')
+
+    render template: 'admin_public_body/show', locals: {
+      current_user: current_user
+    }
+
+    expect(rendered).to have_content('javascript:http://example.com')
+    expect(rendered).not_to have_css(
+      'a[href="javascript:http://example.com"]'
+    )
+  end
 end

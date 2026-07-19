@@ -14,7 +14,11 @@
           <td>
             <% if ['home_page', 'publication_scheme', 'disclosure_log'].include? name %>
               <% if value %>
-                <%= link_to h(value), value  %>
+                <% if (safe_url = @public_body.safe_web_url(value)) %>
+                  <a href="<%= h(safe_url) %>"><%= h(safe_url) %></a>
+                <% else %>
+                  <%= h(value) %>
+                <% end %>
               <% end %>
             <% elsif name == 'request_email' %>
               <%= link_to(h(value), "mailto:#{value}")  %>
@@ -37,8 +41,10 @@
       </td>
 
       <td>
-        <% unless @public_body.calculated_home_page.nil? %>
-          <%= link_to(h(@public_body.calculated_home_page), @public_body.calculated_home_page) %>
+        <% if (safe_url = @public_body.safe_web_url(@public_body.calculated_home_page)) %>
+          <a href="<%= h(safe_url) %>"><%= h(safe_url) %></a>
+        <% elsif @public_body.calculated_home_page.present? %>
+          <%= h(@public_body.calculated_home_page) %>
         <% else %>
           *unknown*
         <% end %>

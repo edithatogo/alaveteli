@@ -437,7 +437,7 @@ Rails.application.routes.draw do
   #### Services controller
   match '/country_message' => 'services#other_country_message',
         :as => :other_country_message,
-        :via => :get
+        :via => [:get, :post]
   match '/hidden_user_explanation' => 'services#hidden_user_explanation',
         :as => :hidden_user_explanation,
         :via => :get

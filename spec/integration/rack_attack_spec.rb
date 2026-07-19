@@ -1,13 +1,25 @@
 require 'spec_helper'
 
 RSpec.describe 'Rack::Attack middleware rate limiting', type: :request do
-  before :each do
+  original_enabled = Rack::Attack.enabled
+  original_store = Rack::Attack.cache.store
+
+  around do |example|
+    previous_enabled = Rack::Attack.enabled
+    previous_store = Rack::Attack.cache.store
+
     Rack::Attack.enabled = true
     Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+
+    example.run
+  ensure
+    Rack::Attack.enabled = previous_enabled
+    Rack::Attack.cache.store = previous_store
   end
 
-  after :each do
-    Rack::Attack.enabled = false
+  after(:context) do
+    expect(Rack::Attack.enabled).to eq(original_enabled)
+    expect(Rack::Attack.cache.store).to equal(original_store)
   end
 
   context 'when IP is anonymous' do
@@ -71,10 +83,12 @@ RSpec.describe 'Rack::Attack middleware rate limiting', type: :request do
     let(:ip) { '1.2.3.4' }
 
     before do
-      # Simulate Redis error
-      allow(Rack::Attack.cache).to receive(:write).and_raise(Redis::BaseError.new("Redis down"))
-      allow(Rack::Attack.cache).to receive(:read).and_raise(Redis::BaseError.new("Redis down"))
-      allow(Rack::Attack.cache).to receive(:count).and_raise(Redis::BaseError.new("Redis down"))
+      failing_store = ActiveSupport::Cache::MemoryStore.new
+      redis_error = Redis::BaseError.new('Redis down')
+      allow(failing_store).to receive(:write).and_raise(redis_error)
+      allow(failing_store).to receive(:read).and_raise(redis_error)
+      allow(failing_store).to receive(:increment).and_raise(redis_error)
+      Rack::Attack.cache.store = Rack::Attack::ResilientCacheStore.new(failing_store)
     end
 
     it 'fails open without 500 erroring the request' do

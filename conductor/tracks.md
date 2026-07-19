@@ -4,6 +4,12 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
+- [~] **Track: Baseline CI and security hardening**
+  *Link: [./tracks/baseline_hardening_20260719/index.md](./tracks/baseline_hardening_20260719/index.md)*
+  *GitHub issues: [#56](https://github.com/edithatogo/alaveteli/issues/56), [#57](https://github.com/edithatogo/alaveteli/issues/57), [#58](https://github.com/edithatogo/alaveteli/issues/58), [#59](https://github.com/edithatogo/alaveteli/issues/59), [#62](https://github.com/edithatogo/alaveteli/issues/62), [#63](https://github.com/edithatogo/alaveteli/issues/63), [#64](https://github.com/edithatogo/alaveteli/issues/64), and [#65](https://github.com/edithatogo/alaveteli/issues/65).*
+
+---
+
 - [x] **Track: Retrospective governance for request-state taxonomy and process-clock metadata**
   *Link: [./archive/request_state_taxonomy_20260719/index.md](./archive/request_state_taxonomy_20260719/index.md)*
   *GitHub issue: [#68](https://github.com/edithatogo/alaveteli/issues/68)*

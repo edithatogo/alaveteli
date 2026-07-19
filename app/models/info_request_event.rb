@@ -109,6 +109,12 @@ class InfoRequestEvent < ApplicationRecord
 
   attr_accessor :no_xapian_reindex
 
+  INCOMING_MESSAGE_SELECT_COLUMNS = %i[
+    id
+    cached_attachment_text_clipped
+    cached_main_body_text_folded
+  ].freeze
+
   def self.count_of_hides_by_week
     where(event_type: "hide").group("date(date_trunc('week', created_at))").count.sort
   end
@@ -126,8 +132,17 @@ class InfoRequestEvent < ApplicationRecord
     last_described_at || created_at
   end
 
-  def incoming_message_selective_columns(fields)
-    message = IncomingMessage.select("#{ fields }, incoming_messages.info_request_id").
+  def incoming_message_selective_columns(*fields)
+    fields = fields.flatten
+    invalid_fields = fields - INCOMING_MESSAGE_SELECT_COLUMNS
+    if invalid_fields.any? || fields.empty?
+      invalid = invalid_fields.join(', ')
+      raise ArgumentError, "Unsupported incoming message fields: #{invalid}"
+    end
+
+    columns = fields.map { |field| IncomingMessage.arel_table[field] }
+    columns << IncomingMessage.arel_table[:info_request_id]
+    message = IncomingMessage.select(*columns).
       joins('INNER JOIN info_request_events ON incoming_messages.id = incoming_message_id').
       where('info_request_events.id = ?', id)
 
@@ -482,7 +497,10 @@ class InfoRequestEvent < ApplicationRecord
     # (to show the search snippet). Actually, we should review if we
     # need all this data to be cached in the database at all, and
     # then we won't need this horrid workaround.
-    message = incoming_message_selective_columns("cached_attachment_text_clipped, cached_main_body_text_folded")
+    message = incoming_message_selective_columns(
+      :cached_attachment_text_clipped,
+      :cached_main_body_text_folded
+    )
     clipped_body = message.cached_main_body_text_folded
     clipped_attachment = message.cached_attachment_text_clipped
     if clipped_body.nil? || clipped_attachment.nil?

@@ -40,7 +40,8 @@ RSpec.describe TrafficControl, type: :controller do
 
       expect(response.headers['RateLimit-Limit']).to eq('10')
       expect(response.headers['RateLimit-Remaining']).to eq('7') # limit - count (10 - 3)
-      expect(response.headers['RateLimit-Reset']).to eq('18') # 60 - (12345678 % 60)
+      expected_reset = 60 - (12_345_678 % 60)
+      expect(response.headers['RateLimit-Reset']).to eq(expected_reset.to_s)
     end
 
     it 'does not inject headers if throttle data is missing' do
@@ -77,6 +78,32 @@ RSpec.describe TrafficControl, type: :controller do
       expect(response.headers['ETag']).to be_present
       expect(BotTrafficMetrics).to have_received(:increment).
         with(:cache_misses)
+    end
+
+    it 'sets cache validators for HEAD requests' do
+      allow(BotTrafficMetrics).to receive(:increment)
+
+      head :show
+
+      expect(response.status).to eq(200)
+      expect(response.headers['ETag']).to be_present
+      expect(BotTrafficMetrics).to have_received(:increment).
+        with(:cache_misses)
+    end
+
+    it 'returns 304 and records a cache hit for a conditional HEAD request' do
+      allow(BotTrafficMetrics).to receive(:increment)
+
+      head :show
+      etag = response.headers['ETag']
+      expect(etag).to be_present
+
+      request.headers['If-None-Match'] = etag
+      head :show
+
+      expect(response.status).to eq(304)
+      expect(BotTrafficMetrics).to have_received(:increment).
+        with(:cache_hits).once
     end
 
     it 'returns 304 if etag matches' do

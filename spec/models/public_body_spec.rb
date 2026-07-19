@@ -642,6 +642,14 @@ RSpec.describe PublicBody do
       subject = FactoryBot.create(:public_body, publication_scheme: '')
       expect(subject.publication_scheme).to be_nil
     end
+
+    it 'rejects non-web and embedded web schemes' do
+      %w[javascript:alert(1) javascript:http://example.com].each do |url|
+        subject = PublicBody.new(publication_scheme: url)
+        subject.valid?
+        expect(subject.errors[:publication_scheme]).to be_present
+      end
+    end
   end
 
   describe '#disclosure_log' do
@@ -654,6 +662,14 @@ RSpec.describe PublicBody do
     it 'strips blank attributes' do
       subject = FactoryBot.create(:public_body, disclosure_log: '')
       expect(subject.disclosure_log).to be_nil
+    end
+
+    it 'accepts absolute HTTP and HTTPS URLs' do
+      %w[http://example.com/log https://example.com/log].each do |url|
+        subject = PublicBody.new(disclosure_log: url)
+        subject.valid?
+        expect(subject.errors[:disclosure_log]).to be_empty
+      end
     end
   end
 
@@ -1911,6 +1927,32 @@ RSpec.describe PublicBody do
       expect(public_body.calculated_home_page).to eq('https://example.com')
     end
 
+    it 'rejects malicious schemes containing HTTP text' do
+      public_body = PublicBody.new(home_page: 'javascript:http://example.com')
+      expect(public_body.calculated_home_page).to be_nil
+      expect(public_body).not_to be_valid
+      expect(public_body.errors[:home_page]).to be_present
+    end
+
+    it 'rejects URLs containing credentials' do
+      public_body = PublicBody.new(home_page: 'https://user:pass@example.com')
+      expect(public_body.calculated_home_page).to be_nil
+      expect(public_body).not_to be_valid
+    end
+
+    it 'rejects a newly assigned unsafe home page after reading the old value' do
+      public_body = FactoryBot.create(
+        :public_body,
+        home_page: 'https://example.com'
+      )
+      public_body.calculated_home_page
+
+      public_body.home_page = 'javascript:http://example.com'
+
+      expect(public_body).not_to be_valid
+      expect(public_body.errors[:home_page]).to be_present
+    end
+
     it 'returns the home page based on the request email domain if it has one' do
       public_body = PublicBody.new
 
@@ -1945,6 +1987,36 @@ RSpec.describe PublicBody do
     it 'ignores case sensitivity for excluded domains' do
       public_body = PublicBody.new(request_email: 'x@EXAMPLE.net')
       expect(public_body.calculated_home_page).to be_nil
+    end
+  end
+
+  describe 'legacy web URLs' do
+    %i[home_page publication_scheme disclosure_log].each do |attribute|
+      it "allows an unrelated update when #{attribute} is already unsafe" do
+        public_body = FactoryBot.create(:public_body)
+        if attribute == :home_page
+          public_body.update_column(attribute, 'javascript:http://example.com')
+        else
+          public_body.translation_for(I18n.locale).
+            update_column(attribute, 'javascript:http://example.com')
+          public_body.reload
+        end
+
+        expect { public_body.update!(short_name: 'Updated body') }.
+          not_to raise_error
+      end
+
+      it "rejects a newly assigned unsafe #{attribute}" do
+        public_body = FactoryBot.create(:public_body)
+
+        public_body.public_send(
+          "#{attribute}=",
+          'javascript:http://example.com'
+        )
+
+        expect(public_body).not_to be_valid
+        expect(public_body.errors[attribute]).to be_present
+      end
     end
   end
 
@@ -2094,10 +2166,12 @@ RSpec.describe PublicBody, "when calculating statistics" do
       # classified requests, one of which is successful, so the
       # percentage should be 50%:
 
-      percentages_data = PublicBody.get_request_percentages(column='info_requests_successful_count',
-                                                            n=3,
-                                                            highest=false,
-                                                            minimum_requests=1)
+      percentages_data = PublicBody.get_request_percentages(
+        :info_requests_successful_count,
+        3,
+        false,
+        1
+      )
       geraldine_index = percentages_data['public_bodies'].index do |pb|
         pb.name == "Geraldine Quango"
       end
@@ -2124,10 +2198,12 @@ RSpec.describe PublicBody, "when calculating statistics" do
       minimum_requests = 3
       with_enough_info_requests = PublicBody.where(["info_requests_visible_classified_count >= ?",
                                                     minimum_requests]).length
-      all_data = PublicBody.get_request_percentages(column='info_requests_successful_count',
-                                                    n=10,
-                                                    true,
-                                                    minimum_requests)
+      all_data = PublicBody.get_request_percentages(
+        :info_requests_successful_count,
+        10,
+        true,
+        minimum_requests
+      )
       expect(all_data).to be_nil
     end
   end
@@ -2145,6 +2221,63 @@ RSpec.describe PublicBody, "when calculating statistics" do
       expect(all_data['public_bodies'].length).to eq(4)
     ensure
       hpb.tag_string = original_tag_string
+    end
+  end
+
+  describe '.get_request_percentages' do
+    it 'rejects columns outside the statistics allowlist' do
+      expect {
+        described_class.get_request_percentages(
+          :'info_requests_successful_count; DROP TABLE public_bodies',
+          3,
+          true,
+          1
+        )
+      }.to raise_error(ArgumentError, /Unsupported request percentage column/)
+    end
+
+    it 'coerces numeric string arguments and preserves decimal division' do
+      with_hidden_and_successful_requests do
+        data = described_class.get_request_percentages(
+          :info_requests_successful_count,
+          '3',
+          false,
+          '1'
+        )
+
+        geraldine_index = data['public_bodies'].index do |public_body|
+          public_body.name == 'Geraldine Quango'
+        end
+        expect(data['y_values'][geraldine_index]).to eq(50)
+      end
+    end
+
+    it 'rejects negative and non-numeric limits' do
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count, -1, true, 1
+        )
+      }.to raise_error(ArgumentError, /n must be non-negative/)
+
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count, 'all', true, 1
+        )
+      }.to raise_error(ArgumentError)
+    end
+
+    it 'rejects negative minimums and non-boolean ordering' do
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count, 3, true, -1
+        )
+      }.to raise_error(ArgumentError, /minimum_requests must be non-negative/)
+
+      expect {
+        described_class.get_request_percentages(
+          :info_requests_successful_count, 3, 'DESC', 1
+        )
+      }.to raise_error(ArgumentError, /highest must be true or false/)
     end
   end
 end

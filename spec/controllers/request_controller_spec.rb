@@ -849,6 +849,23 @@ RSpec.describe RequestController, "when creating a new request" do
     expect(response).to render_template('new')
   end
 
+  it 'JSON-encodes the authority home page in site-search JavaScript' do
+    @body.update_column(:home_page, 'https://example.com/search')
+
+    get :new, params: { public_body_id: @body.id }
+
+    expect(response.body).to include('+site:"+"https://example.com/search"')
+  end
+
+  it 'does not interpolate a legacy unsafe home page into JavaScript' do
+    @body.update_column(:home_page, 'javascript:http://example.com')
+
+    get :new, params: { public_body_id: @body.id }
+
+    expect(response.body).not_to include('javascript:http://example.com')
+    expect(response.body).to include('+site:"+""')
+  end
+
   it 'assigns a default text for the request' do
     get :new, params: { public_body_id: @body.id }
     expect(assigns[:info_request].public_body).to eq(@body)

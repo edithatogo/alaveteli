@@ -1744,6 +1744,58 @@ RSpec.describe InfoRequest do
     end
   end
 
+  describe '#external_url_web?' do
+    it 'accepts absolute HTTP and HTTPS URLs' do
+      http_request = InfoRequest.new(external_url: 'http://example.com/request')
+      https_request = InfoRequest.new(external_url: 'https://example.com/request')
+
+      expect(http_request.external_url_web?).to eq(true)
+      expect(https_request.external_url_web?).to eq(true)
+    end
+
+    it 'rejects non-web, relative, and malformed URLs' do
+      urls = ['javascript:alert(1)', '/request/1', 'https://']
+
+      urls.each do |url|
+        request = InfoRequest.new(external_url: url)
+        expect(request.external_url_web?).to eq(false)
+      end
+    end
+  end
+
+  describe 'external URL validation' do
+    it 'rejects malicious URL schemes' do
+      info_request = FactoryBot.build(
+        :info_request,
+        :external,
+        external_url: 'javascript:alert(document.domain)'
+      )
+
+      expect(info_request).not_to be_valid
+      expect(info_request.errors[:external_url]).
+        to include('must be an absolute HTTP or HTTPS URL')
+    end
+
+    it 'rejects an unsafe URL assigned to an existing request' do
+      info_request = FactoryBot.create(:info_request, :external)
+
+      info_request.external_url = 'javascript:alert(document.domain)'
+
+      expect(info_request).not_to be_valid
+      expect(info_request.errors[:external_url]).
+        to include('must be an absolute HTTP or HTTPS URL')
+    end
+
+    it 'allows unrelated updates to legacy requests with invalid URLs' do
+      info_request = FactoryBot.create(:info_request, :external)
+      info_request.update_column(:external_url, 'legacy-relative-url')
+
+      info_request.title = 'Updated title'
+
+      expect(info_request).to be_valid
+    end
+  end
+
   describe '#user_name' do
     subject { info_request.user_name }
 
@@ -2844,7 +2896,7 @@ RSpec.describe InfoRequest do
       def create_old_unclassified_no_user
         request = FactoryBot.create(:info_request, user: nil,
                                                    external_user_name: 'test_user',
-                                                   external_url: 'test',
+                                                   external_url: 'https://example.com/request',
                                                    created_at: old_date)
         message = FactoryBot.create(:incoming_message, created_at: old_date,
                                                        info_request: request)

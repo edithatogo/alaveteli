@@ -78,6 +78,11 @@ class InfoRequest < ApplicationRecord
              optional: true
 
   validate :must_be_internal_or_external
+  validate :external_url_format,
+           if: -> {
+             external_url.present? &&
+               (new_record? || will_save_change_to_external_url?)
+           }
 
   belongs_to :public_body,
              inverse_of: :info_requests,
@@ -324,8 +329,9 @@ class InfoRequest < ApplicationRecord
 
     # try to find a match on InfoRequest#title
     reply_format = InfoRequest.new(title: '').email_subject_followup
+    title = subject_line.gsub(/#{Regexp.escape(reply_format)}/i, '').strip
     requests_by_title = InfoRequest.left_joins(:incoming_messages).
-      where(title: subject_line.gsub(/#{reply_format}/i, '').strip)
+      where(title: title)
 
     # try to find a match on IncomingMessage#subject
     requests_by_subject = InfoRequest.left_joins(:incoming_messages).
@@ -705,10 +711,23 @@ class InfoRequest < ApplicationRecord
     external_url.nil? ? false : true
   end
 
+  def external_url_web?
+    uri = URI.parse(external_url.to_s)
+    uri.is_a?(URI::HTTP) && uri.host.present?
+  rescue URI::InvalidURIError
+    false
+  end
+
   def user_name
     return external_user_name if is_external?
 
     user&.name
+  end
+
+  def external_url_format
+    return if external_url_web?
+
+    errors.add(:external_url, "must be an absolute HTTP or HTTPS URL")
   end
 
   def from_name

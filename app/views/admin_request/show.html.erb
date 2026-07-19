@@ -83,7 +83,12 @@
               </td>
               <td>
                 <% if @info_request.is_external? %>
-                  <%= link_to(eye, @info_request.external_url, :title => "view URL of original request on external website") %>
+                  <% if @info_request.external_url_web? %>
+                    <a href="<%= h(@info_request.external_url) %>"
+                       title="view URL of original request on external website"><%= eye %></a>
+                  <% else %>
+                    <span class="text-error" title="invalid legacy external URL"><%= @info_request.external_url %></span>
+                  <% end %>
                   <%= @info_request.public_body.name %> on behalf of <%= (@info_request.user_name || 'an anonymous user') %> (using API)
                 <% else %>
                   <%= both_links(@info_request.user) %>
