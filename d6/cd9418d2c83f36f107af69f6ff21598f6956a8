@@ -1,0 +1,1 @@
+Subagent statistics CI fix reviewed: Arel quoted numeric node preserves float division and allowlisted columns; regression added; syntax/diff checks passed.
