@@ -558,7 +558,8 @@ class PublicBody < ApplicationRecord
 
     total_column = 'info_requests_visible_classified_count'
     table = arel_table
-    ratio = (table[column_name] * 1.0) / table[total_column]
+    float_literal = Arel::Nodes.build_quoted(1.0)
+    ratio = (table[column_name] * float_literal) / table[total_column]
     ordering = highest ? ratio.desc : ratio.asc
     where_clause = where_clause_for_stats minimum, total_column
     public_bodies = PublicBody.select(table[Arel.star], ratio.as('y_value')).

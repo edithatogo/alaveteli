@@ -2193,15 +2193,20 @@ RSpec.describe PublicBody, "when calculating statistics" do
       }.to raise_error(ArgumentError, /Unsupported request percentage column/)
     end
 
-    it 'coerces numeric string arguments' do
-      expect {
-        described_class.get_request_percentages(
+    it 'coerces numeric string arguments and preserves decimal division' do
+      with_hidden_and_successful_requests do
+        data = described_class.get_request_percentages(
           :info_requests_successful_count,
           '3',
-          true,
+          false,
           '1'
         )
-      }.not_to raise_error
+
+        geraldine_index = data['public_bodies'].index do |public_body|
+          public_body.name == 'Geraldine Quango'
+        end
+        expect(data['y_values'][geraldine_index]).to eq(50)
+      end
     end
 
     it 'rejects negative and non-numeric limits' do
