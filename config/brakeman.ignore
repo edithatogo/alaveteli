@@ -23,17 +23,6 @@
       "note": "Reviewed internal tag SQL builder; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
-      "fingerprint": "29195938b5f8714f799c10f949d3f9a877199bf4a23d8b953aa70745c4fce214",
-      "warning_type": "Cross-Site Scripting",
-      "warning_code": 4,
-      "check_name": "LinkToHref",
-      "message": "Potentially unsafe model attribute in `link_to` href",
-      "file": "app/views/admin_general/_change_request_summary.html.erb",
-      "line": 41,
-      "confidence": "Weak",
-      "note": "Reviewed administrator-visible persisted URL; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
       "fingerprint": "2c825bca0a74ddb53585c413ed5217c9804ed596b51d0ba5b2bda74110f36e92",
       "warning_type": "SQL Injection",
       "warning_code": 0,
