@@ -36,3 +36,7 @@ gate; its SARIF output is retained for review even when the scan reports issues.
 The 24 current fingerprints are enumerated in `config/brakeman.ignore`. This
 classification does not authorize adding wildcard ignores or disabling a
 Brakeman check.
+
+The session compatibility impact, monitoring requirements, key-rotation
+boundary, and emergency rollback procedure are documented in
+`doc/cookie_serializer_migration.md`.
