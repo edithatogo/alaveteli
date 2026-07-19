@@ -35,7 +35,7 @@ RSpec.describe BulkExportStreamer do
 
     described_class.new(limit: 1).each.to_a
 
-    expect(InfoRequest).to have_received(:joins).with(:public_body)
+    expect(InfoRequest).to have_received(:joins).with(public_body: :translations)
   end
 
   it 'enforces the limit without reading past the requested row count' do
