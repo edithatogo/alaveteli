@@ -1,0 +1,1 @@
+Review fix: replace implementation-coupled includes(:user) mock with SQL behavior evidence that multiple instant notifications load users in one query.
