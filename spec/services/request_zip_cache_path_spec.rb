@@ -319,7 +319,7 @@ RSpec.describe RequestZipCachePath do
 
     it 'rejects delivery before publication' do
       response = double('response')
-      FileUtils.mkdir_p(InfoRequest.download_zip_dir)
+      FileUtils.mkdir_p(File.dirname(cache_path.path))
 
       expect { cache_path.send_to(response) }.
         to raise_error(IOError, 'ZIP cache artifact is unavailable')
