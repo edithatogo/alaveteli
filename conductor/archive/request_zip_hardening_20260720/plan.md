@@ -76,3 +76,9 @@
 > pass (5 runs, 18 assertions). Focused Rails specs cannot boot locally because
 > this checkout has no `config/database.yml`; hosted PostgreSQL CI remains
 > required before merge.
+
+## Completion Evidence
+
+- [x] Current-base PR #50 hosted matrix passed on Ruby 3.4 and Ruby 4.0.
+- [x] PR #50 merged; immutable evidence is recorded in `evidence.md`.
+- [x] Track archived; stale PR #52 was superseded.

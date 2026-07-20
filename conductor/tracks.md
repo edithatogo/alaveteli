@@ -4,8 +4,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Harden request ZIP paths and delivery**
-  *Link: [./tracks/request_zip_hardening_20260720/](./tracks/request_zip_hardening_20260720/)*
+- [x] **Track: Harden request ZIP paths and delivery**
+  *Link: [./archive/request_zip_hardening_20260720/](./archive/request_zip_hardening_20260720/)*
   *GitHub issues: [#49](https://github.com/edithatogo/alaveteli/issues/49), [#51](https://github.com/edithatogo/alaveteli/issues/51), and [#53](https://github.com/edithatogo/alaveteli/issues/53).*
   *Description: Deliver bounded numeric-ID cache paths and coordinated atomic ZIP publication as one merge-safe change superseding PRs #50/#52.*
 - [ ] **Track: Stage Rack and asset-pipeline modernization**
@@ -36,8 +36,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Implement user notification preferences dashboard**
-  *Link: [./tracks/notification_preferences_20260709/](./tracks/notification_preferences_20260709/)*
+- [x] **Track: Implement user notification preferences dashboard**
+  *Link: [./archive/notification_preferences_20260709/](./archive/notification_preferences_20260709/)*
 
 ---
 
@@ -51,8 +51,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Optimize bulk exports for large datasets and low memory footprint**
-  *Link: [./tracks/export_optimization_20260710/](./tracks/export_optimization_20260710/)*
+- [x] **Track: Optimize bulk exports for large datasets and low memory footprint**
+  *Link: [./archive/export_optimization_20260710/](./archive/export_optimization_20260710/)*
 
 ---
 
