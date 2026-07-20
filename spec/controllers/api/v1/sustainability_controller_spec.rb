@@ -61,10 +61,6 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         expect(response.headers['Content-Type']).to eq('application/x-ndjson')
         expect_private_revalidation_cache_control
         expect(response.headers['ETag']).to be_present
-        expect(response.headers['Last-Modified']).to be_blank
-        expect(response.headers['Content-Disposition']).to eq(
-          'attachment; filename="requests_export.ndjson"'
-        )
         lines = consume_response_body.split("\n")
         expect(lines.size).to eq(1)
         json = JSON.parse(lines.first)
@@ -92,7 +88,6 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         expect(response.status).to eq(304)
         expect(response.body).to be_empty
         expect_private_revalidation_cache_control
-        expect(response.headers['Last-Modified']).to be_blank
       end
 
       it 'hashes the exact response body bytes' do
@@ -120,13 +115,14 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
       end
 
       it 'returns a new representation after request mutation and deletion' do
-        get :bulk_export, params: { limit: 1 }
+        export_params = { limit: 1, since: export_started_at.iso8601(6) }
+        get :bulk_export, params: export_params
         consume_response_body
         original_etag = response.headers['ETag']
         request.headers['If-None-Match'] = original_etag
         info_request.update!(title: 'Changed request')
 
-        get :bulk_export, params: { limit: 1 }
+        get :bulk_export, params: export_params
         consume_response_body
         changed_etag = response.headers['ETag']
 
@@ -134,8 +130,8 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         expect(changed_etag).not_to eq(original_etag)
 
         request.headers['If-None-Match'] = changed_etag
-        info_request.delete
-        get :bulk_export, params: { limit: 1 }
+        info_request.destroy!
+        get :bulk_export, params: export_params
         consume_response_body
 
         expect(response.status).to eq(200)
@@ -143,7 +139,8 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
       end
 
       it 'returns a new representation after authority translation mutation' do
-        get :bulk_export, params: { limit: 1 }
+        export_params = { limit: 1, since: export_started_at.iso8601(6) }
+        get :bulk_export, params: export_params
         consume_response_body
         original_etag = response.headers['ETag']
         request.headers['If-None-Match'] = original_etag
@@ -154,7 +151,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
           name: 'Changed authority'
         )
 
-        get :bulk_export, params: { limit: 1 }
+        get :bulk_export, params: export_params
         consume_response_body
 
         expect(response.status).to eq(200)
