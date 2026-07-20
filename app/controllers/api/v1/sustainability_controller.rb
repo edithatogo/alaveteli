@@ -1,12 +1,14 @@
 class Api::V1::SustainabilityController < ApplicationController
   skip_before_action :verify_authenticity_token
   skip_before_action :html_response, raise: false
+  skip_after_action :inject_rate_limit_headers, only: :rate_limit
 
   def rate_limit
     BotTrafficMetrics.increment(:rate_limit_requests)
 
-    contract = RateLimitContract.new.call(params.permit(:ip).to_h)
+    contract = RateLimitContract.new.call(rate_limit_params)
     if contract.failure?
+      response.headers['Cache-Control'] = 'no-store'
       render(
         json: { error: 'Invalid parameters', details: contract.errors.to_h },
         status: :unprocessable_entity
@@ -14,31 +16,19 @@ class Api::V1::SustainabilityController < ApplicationController
       return
     end
 
-    throttle_data = request.env['rack.attack.throttle_data'] || {}
-    name, data = throttle_data.find { |k, v| k.start_with?('req/') }
-
-    if data.present?
-      limit = data[:limit]
-      count = data[:count]
-      period = data[:period]
-      epoch_time = data[:epoch_time]
-      remaining = [limit - count, 0].max
-      reset_in_seconds = period - (epoch_time % period)
-      tier = name == 'req/verified_bot' ? 'verified_bot' : 'anonymous'
-    else
-      limit = 10
-      remaining = 10
-      reset_in_seconds = 60
-      tier = 'anonymous'
-    end
-
-    render json: {
-      tier: tier,
-      limit: limit,
-      remaining: remaining,
-      reset_in_seconds: reset_in_seconds,
-      advisory_status: Rack::Attack.high_system_load? ? 'degraded' : 'nominal'
-    }
+    status = RackAttackRateLimitStatus.new(request: request)
+    set_rate_limit_headers(status)
+    render json: status.as_json
+  rescue RackAttackRateLimitStatus::BackendUnavailable
+    response.headers['Cache-Control'] = 'no-store'
+    render(
+      json: {
+        version: 1,
+        error: 'rate_limit_status_unavailable',
+        advisory_status: 'degraded'
+      },
+      status: :service_unavailable
+    )
   end
 
   def bulk_export
@@ -96,6 +86,18 @@ class Api::V1::SustainabilityController < ApplicationController
     response.cache_control[:no_cache] = true
     response.cache_control[:extras] =
       Array(response.cache_control[:extras]) | ['private']
+  end
+
+  def rate_limit_params
+    params.to_unsafe_h.except('controller', 'action', 'format')
+  end
+
+  def set_rate_limit_headers(status)
+    response.headers['Cache-Control'] = 'no-store'
+    response.headers['RateLimit-Limit'] = status.limit.to_s
+    response.headers['RateLimit-Remaining'] = status.remaining.to_s
+    response.headers['RateLimit-Reset'] = status.reset_in_seconds.to_s
+    response.headers['X-Advisory-Status'] = status.advisory_status
   end
 
   def parsed_since(value)
