@@ -40,7 +40,8 @@ class NotificationMailer < ApplicationMailer
   def self.send_instant_notifications
     done_something = false
     notifications = Notification.
-      instantly.
+      includes(:user).
+        instantly.
         unseen.
           where(expired: false).
             order(:created_at)

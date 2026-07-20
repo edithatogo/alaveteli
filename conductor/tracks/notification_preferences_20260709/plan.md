@@ -41,6 +41,9 @@
     - [~] Pass supported Ruby, focused specs, lint, and security checks
     - [x] Verify migration defaults, authorization, strong parameters, UI behavior,
       and mail suppression contracts
+    - [x] Reconstruct the unique corrective changes on current `origin/develop`
+      without replaying the migration, routes, or core feature
+    - [ ] Run the reconstructed candidate through hosted verification
     - [ ] Confirm no known security, privacy, accessibility, data-integrity,
       availability, correctness, quality, or operator risk remains
 - [ ] Task: Conductor - User Manual Verification 'Phase 5: Upstream Readiness'

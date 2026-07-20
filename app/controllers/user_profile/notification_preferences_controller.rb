@@ -16,10 +16,7 @@ class UserProfile::NotificationPreferencesController < ApplicationController
       return
     end
 
-    @user.send_daily_summary = ActiveModel::Type::Boolean.new.cast(user_params[:send_daily_summary])
-    @user.send_immediate_request_alerts = ActiveModel::Type::Boolean.new.cast(user_params[:send_immediate_request_alerts])
-
-    if @user.save
+    if @user.update(user_params)
       flash[:notice] = _("Your notification preferences have been updated.")
       redirect_to edit_profile_notification_preferences_path
     else
@@ -34,7 +31,8 @@ class UserProfile::NotificationPreferencesController < ApplicationController
   end
 
   def check_user_logged_in
-    return if authenticated?
+    @user = authenticated_user
+    return if @user
 
     msg = _('You need to be logged in to change your notification preferences.')
     redirect_to frontpage_url, error: msg
