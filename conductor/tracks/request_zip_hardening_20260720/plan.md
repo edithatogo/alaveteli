@@ -23,6 +23,15 @@
 
 ## Verification
 
+- [x] **Task: Address independent pre-push review findings**
+  - Replace second-granularity cache identity with a deterministic SHA-256
+    representation digest covering visibility, redaction, attachment, message,
+    event, comment, authority, requester, mask, locale, and blob inputs.
+  - Reject symlink/non-directory components throughout the bounded hierarchy
+    and document the residual operator-controlled-root assumption.
+  - Replace thread scheduling coverage with fork/pipe publication and abnormal
+    writer-exit recovery tests where `fork` is available.
+
 - [ ] Run focused model, service, controller, and integration specs on the
   repository-supported Ruby toolchain.
 - [ ] Run RuboCop, Brakeman without new suppressions, Bearer, dependency audit,
@@ -40,3 +49,9 @@
 > concurrency harnesses, failure cleanup, Brakeman 8.0.5, and the exact
 > fingerprint verifier pass. The Rails-focused RSpec file cannot boot locally
 > without PostgreSQL; hosted CI remains the authoritative RSpec gate.
+
+> REVIEW CHECKPOINT (2026-07-20): Independent findings on same-second cache
+> invalidation, parent symlink traversal, and thread-only concurrency evidence
+> are implemented. Final local syntax, lint, Brakeman, deterministic digest,
+> symlink, and cross-process harness evidence must be recorded in the follow-up
+> commit note; hosted Rails RSpec remains required before merge.

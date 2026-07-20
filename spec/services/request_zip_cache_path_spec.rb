@@ -8,12 +8,12 @@ RSpec.describe RequestZipCachePath do
 
   let(:info_request) { InfoRequest.allocate }
   let(:user) { Object.new }
-  let(:version) { 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3' }
+  let(:version) { 'a' * 64 }
 
   before do
     allow(info_request).to receive(:persisted?).and_return(true)
     allow(info_request).to receive(:id).and_return(123_456)
-    allow(info_request).to receive(:last_update_hash).and_return(version)
+    allow(info_request).to receive(:zip_cache_version).and_return(version)
     allow(info_request).to receive(:zip_cache_file_suffix).
       with(user).and_return('')
   end
@@ -59,7 +59,7 @@ RSpec.describe RequestZipCachePath do
       other_request = InfoRequest.allocate
       allow(other_request).to receive(:persisted?).and_return(true)
       allow(other_request).to receive(:id).and_return(123_457)
-      allow(other_request).to receive(:last_update_hash).and_return(version)
+      allow(other_request).to receive(:zip_cache_version).and_return(version)
       allow(other_request).to receive(:zip_cache_file_suffix).
         with(user).and_return('')
 
@@ -117,55 +117,120 @@ RSpec.describe RequestZipCachePath do
         end
       end
 
-      it 'coordinates callers and publishes exactly one complete artifact' do
-        writer_started = Queue.new
-        finish_writer = Queue.new
-        reader_generated = Queue.new
+      it 'coordinates cross-process publication without exposing partial data' do
+        skip 'fork is unavailable' unless Process.respond_to?(:fork)
 
-        writer = Thread.new do
-          cache_path.write_if_missing do |file|
+        writer_started_reader, writer_started_writer = IO.pipe
+        release_reader, release_writer = IO.pipe
+        reader_started_reader, reader_started_writer = IO.pipe
+        reader_done_reader, reader_done_writer = IO.pipe
+
+        writer_pid = fork do
+          writer_started_reader.close
+          release_writer.close
+          result = cache_path.write_if_missing do |file|
             file.write('partial')
             file.flush
-            writer_started << true
-            finish_writer.pop
+            writer_started_writer.write('S')
+            writer_started_writer.close
+            release_reader.read(1)
             file.write('-complete')
           end
+          exit!(result ? 0 : 2)
         end
+        writer_started_writer.close
+        release_reader.close
 
-        Timeout.timeout(5) { writer_started.pop }
+        Timeout.timeout(5) { expect(writer_started_reader.read(1)).to eq('S') }
         expect(File.exist?(cache_path.path)).to be(false)
-
         temporary_files = Dir.glob("#{cache_path.path}.*.part")
         expect(temporary_files.length).to eq(1)
         expect(File.stat(temporary_files.first).mode & 0o777).to eq(0o600)
 
-        reader_path = described_class.new(
-          info_request: info_request,
-          user: user
-        )
-        reader = Thread.new do
-          reader_path.write_if_missing do |file|
-            reader_generated << true
+        reader_pid = fork do
+          reader_started_reader.close
+          reader_done_reader.close
+          reader_started_writer.write('S')
+          reader_started_writer.close
+          generated = false
+          result = cache_path.write_if_missing do |file|
+            generated = true
             file.write('second-publication')
           end
+          reader_done_writer.write("#{result}:#{generated}")
+          reader_done_writer.close
+          exit!(0)
         end
+        reader_started_writer.close
+        reader_done_writer.close
 
-        expect(reader.join(0.1)).to be_nil
+        Timeout.timeout(5) { expect(reader_started_reader.read(1)).to eq('S') }
+        expect(IO.select([reader_done_reader], nil, nil, 0.25)).to be_nil
         expect(File.exist?(cache_path.path)).to be(false)
 
-        finish_writer << true
-        results = Timeout.timeout(5) { [writer.value, reader.value] }
+        release_writer.write('R')
+        release_writer.close
+        reader_result = Timeout.timeout(5) { reader_done_reader.read }
+        _, writer_status = Process.wait2(writer_pid)
+        _, reader_status = Process.wait2(reader_pid)
 
-        expect(results).to contain_exactly(true, false)
-        expect(reader_generated).to be_empty
+        expect(writer_status).to be_success
+        expect(reader_status).to be_success
+        expect(reader_result).to eq('false:false')
         expect(File.binread(cache_path.path)).to eq('partial-complete')
         expect(File.stat("#{cache_path.path}.lock").mode & 0o777).to eq(0o600)
         expect(Dir.glob("#{cache_path.path}.*.part")).to be_empty
       ensure
-        finish_writer << true if writer&.alive?
-        [writer, reader].compact.each do |thread|
-          thread.join(5)
-          thread.kill if thread.alive?
+        [writer_started_reader, release_writer, reader_started_reader,
+         reader_done_reader].compact.each do |io|
+          io.close unless io.closed?
+        end
+        [writer_pid, reader_pid].compact.each do |pid|
+          Process.kill('KILL', pid)
+          Process.wait(pid)
+        rescue Errno::ESRCH, Errno::ECHILD
+          nil
+        end
+      end
+
+      it 'recovers after a writer exits without running cleanup' do
+        skip 'fork is unavailable' unless Process.respond_to?(:fork)
+
+        started_reader, started_writer = IO.pipe
+        writer_pid = fork do
+          started_reader.close
+          cache_path.write_if_missing do |file|
+            file.write('orphaned-partial')
+            file.flush
+            started_writer.write('S')
+            started_writer.close
+            exit!(42)
+          end
+        end
+        started_writer.close
+
+        Timeout.timeout(5) { expect(started_reader.read(1)).to eq('S') }
+        _, writer_status = Process.wait2(writer_pid)
+        writer_pid = nil
+
+        expect(writer_status.exitstatus).to eq(42)
+        expect(File.exist?(cache_path.path)).to be(false)
+        expect(Dir.glob("#{cache_path.path}.*.part").length).to eq(1)
+
+        result = cache_path.write_if_missing { |file| file.write('recovered') }
+
+        expect(result).to be(true)
+        expect(File.binread(cache_path.path)).to eq('recovered')
+        expect(Dir.glob("#{cache_path.path}.*.part")).to be_empty
+      ensure
+        started_reader&.close unless started_reader&.closed?
+        begin
+          if writer_pid
+            Process.kill('KILL', writer_pid)
+            Process.wait(writer_pid)
+          end
+        rescue Errno::ESRCH, Errno::ECHILD
+          nil
         end
       end
 
@@ -196,6 +261,38 @@ RSpec.describe RequestZipCachePath do
 
         expect(result).to be(false)
         expect(File.binread(cache_path.path)).to eq('cached')
+      end
+
+      it 'rejects symlinks at every cache hierarchy level' do
+        levels = %w[root download shard request version]
+
+        levels.each do |level|
+          Dir.mktmpdir("request-zip-symlink-#{level}") do |parent|
+            root = File.join(parent, 'cache-root')
+            outside = File.join(parent, 'outside')
+            FileUtils.mkdir_p(outside)
+            allow(InfoRequest).to receive(:download_zip_dir).and_return(root)
+            candidate = described_class.new(
+              info_request: info_request,
+              user: user
+            )
+            targets = {
+              'root' => root,
+              'download' => File.join(root, 'download'),
+              'shard' => File.join(root, 'download', '123'),
+              'request' => File.join(root, 'download', '123', '123456'),
+              'version' => candidate.directory
+            }
+            target = targets.fetch(level)
+            FileUtils.mkdir_p(File.dirname(target))
+            FileUtils.ln_s(outside, target)
+
+            expect {
+              candidate.write_if_missing { |file| file.write('escape') }
+            }.to raise_error(SecurityError, /unsafe ZIP cache directory/)
+            expect(Dir.children(outside)).to be_empty
+          end
+        end
       end
     end
   end
@@ -232,7 +329,7 @@ RSpec.describe RequestZipCachePath do
     end
 
     it 'rejects an unbounded cache version' do
-      allow(info_request).to receive(:last_update_hash).and_return('../escape')
+      allow(info_request).to receive(:zip_cache_version).and_return('../escape')
 
       expect { cache_path.path }.
         to raise_error(ArgumentError, 'invalid cache version')

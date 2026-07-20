@@ -3,12 +3,17 @@
   "type": "security-hardening",
   "status": "active",
   "created_at": "2026-07-20T00:00:00Z",
-  "updated_at": "2026-07-20T00:43:00Z",
+  "updated_at": "2026-07-20T01:20:00Z",
   "description": "Replace request ZIP slug-derived filesystem inputs with a bounded numeric-ID path and fixed download filename.",
   "github_issues": [49, 51, 53],
   "supersedes_pull_requests": [50, 52],
   "base_commit": "c768208716864c72fdb8301c8f3286a212084d98",
   "risk_policy": "no-known-risk-accepted",
   "delivery_model": "single-merge-safe-bounded-atomic-publication",
+  "independent_review_findings_addressed": [
+    "authoritative-cache-version",
+    "parent-component-symlink-rejection",
+    "cross-process-atomic-publication"
+  ],
   "depends_on": ["baseline_hardening_20260719"]
 }

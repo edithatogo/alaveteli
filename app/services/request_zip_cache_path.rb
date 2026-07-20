@@ -8,7 +8,7 @@ class RequestZipCachePath
   CACHE_FILENAME = 'correspondence.zip'
   LOCK_SUFFIX = '.lock'
   TEMP_SUFFIX = '.part'
-  VERSION_PATTERN = /\A[0-9a-f]{40}\z/
+  VERSION_PATTERN = /\A[0-9a-f]{64}\z/
 
   attr_reader :info_request, :user
 
@@ -29,8 +29,10 @@ class RequestZipCachePath
 
   def write_if_missing
     prepare_directory!
+    validate_directory_chain!
 
     with_lock do
+      validate_directory_chain!
       return false if published?
 
       cleanup_stale_temps!
@@ -39,6 +41,7 @@ class RequestZipCachePath
   end
 
   def send_to(response)
+    validate_directory_chain!
     raise IOError, 'ZIP cache artifact is unavailable' unless published?
 
     response.send_file(path)
@@ -70,7 +73,7 @@ class RequestZipCachePath
   end
 
   def version
-    @version ||= info_request.last_update_hash.to_s
+    @version ||= info_request.zip_cache_version.to_s
   end
 
   def cache_filename
@@ -79,17 +82,60 @@ class RequestZipCachePath
   end
 
   def prepare_directory!
-    FileUtils.mkdir_p(directory, mode: 0o700)
-    File.chmod(0o700, directory)
+    prepare_root!
+    current = root
+    directory_components.each do |component|
+      current = File.join(current, component)
+      begin
+        Dir.mkdir(current, 0o700)
+      rescue Errno::EEXIST
+        # Validated below without following the existing component.
+      end
+      validate_directory!(current)
+      File.chmod(0o700, current)
+    end
+  end
+
+  def prepare_root!
+    begin
+      File.lstat(root)
+    rescue Errno::ENOENT
+      FileUtils.mkdir_p(root, mode: 0o700)
+    end
+    validate_directory!(root)
+  end
+
+  def directory_components
+    ['download', shard, request_id, version]
+  end
+
+  def validate_directory_chain!
+    validate_directory!(root)
+    current = root
+    directory_components.each do |component|
+      current = File.join(current, component)
+      validate_directory!(current)
+    end
+  end
+
+  def validate_directory!(candidate)
+    stat = File.lstat(candidate)
+    return if stat.directory? && !stat.symlink?
+
+    raise SecurityError, "unsafe ZIP cache directory: #{candidate}"
+  rescue Errno::ENOENT
+    raise SecurityError, "missing ZIP cache directory: #{candidate}"
   end
 
   def with_lock
+    validate_directory_chain!
     File.open(lock_path, lock_open_flags, 0o600) do |lock|
       lock.chmod(0o600)
       unless lock.flock(File::LOCK_EX)
         raise IOError, 'could not lock ZIP cache path'
       end
 
+      validate_directory_chain!
       yield
     end
   end
@@ -105,6 +151,7 @@ class RequestZipCachePath
   end
 
   def published?
+    validate_directory_chain!
     return false unless File.exist?(path)
 
     unless File.lstat(path).file?
@@ -116,12 +163,14 @@ class RequestZipCachePath
   end
 
   def publish
+    validate_directory_chain!
     temporary_path = new_temporary_path
     File.open(temporary_path, temporary_open_flags, 0o600) do |file|
       yield file
       file.flush
       file.fsync
     end
+    validate_directory_chain!
     File.rename(temporary_path, path)
     File.chmod(0o600, path)
     fsync_directory!
@@ -141,6 +190,7 @@ class RequestZipCachePath
   end
 
   def cleanup_stale_temps!
+    validate_directory_chain!
     prefix = "#{File.basename(path)}."
     Dir.children(directory).each do |entry|
       next unless entry.start_with?(prefix) && entry.end_with?(TEMP_SUFFIX)

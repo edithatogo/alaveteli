@@ -3876,7 +3876,7 @@ RSpec.describe InfoRequest do
 
     let(:base_path) do
       File.join(Rails.root, "cache", "zips", "test", "download", "123",
-                "123456", "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3")
+                "123456", "a" * 64)
     end
     let(:path) { File.join(base_path, "correspondence.zip") }
     let(:hidden_path) { File.join(base_path, "correspondence_hidden.zip") }
@@ -3887,9 +3887,8 @@ RSpec.describe InfoRequest do
     # Slightly confusing - this runs *after* the let(:request) in each context
     # below, so it's ok
     before do
-      # Digest::SHA1.hexdigest("test")
-      test_hash = "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3"
-      allow(request).to receive(:last_update_hash).and_return(test_hash)
+      test_hash = "a" * 64
+      allow(request).to receive(:zip_cache_version).and_return(test_hash)
     end
 
     shared_examples_for "a situation when everything is public" do

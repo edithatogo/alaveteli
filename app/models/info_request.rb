@@ -35,7 +35,6 @@
 #  prominence_reason                     :text
 #
 
-require 'digest/sha1'
 require 'fileutils'
 
 class InfoRequest < ApplicationRecord
@@ -1311,8 +1310,8 @@ class InfoRequest < ApplicationRecord
     info_request_events.last
   end
 
-  def last_update_hash
-    Digest::SHA1.hexdigest(info_request_events.last.created_at.to_i.to_s + updated_at.to_i.to_s)
+  def zip_cache_version
+    RequestZipCacheVersion.new(self).hexdigest
   end
 
   # Get previous email sent to
