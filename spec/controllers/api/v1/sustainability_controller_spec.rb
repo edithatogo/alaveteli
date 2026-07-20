@@ -115,13 +115,14 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
       end
 
       it 'returns a new representation after request mutation and deletion' do
-        get :bulk_export, params: { limit: 1 }
+        export_params = { limit: 1, since: export_started_at.iso8601(6) }
+        get :bulk_export, params: export_params
         consume_response_body
         original_etag = response.headers['ETag']
         request.headers['If-None-Match'] = original_etag
         info_request.update!(title: 'Changed request')
 
-        get :bulk_export, params: { limit: 1 }
+        get :bulk_export, params: export_params
         consume_response_body
         changed_etag = response.headers['ETag']
 
@@ -130,7 +131,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
 
         request.headers['If-None-Match'] = changed_etag
         info_request.delete
-        get :bulk_export, params: { limit: 1 }
+        get :bulk_export, params: export_params
         consume_response_body
 
         expect(response.status).to eq(200)
@@ -138,7 +139,8 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
       end
 
       it 'returns a new representation after authority translation mutation' do
-        get :bulk_export, params: { limit: 1 }
+        export_params = { limit: 1, since: export_started_at.iso8601(6) }
+        get :bulk_export, params: export_params
         consume_response_body
         original_etag = response.headers['ETag']
         request.headers['If-None-Match'] = original_etag
@@ -149,7 +151,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
           name: 'Changed authority'
         )
 
-        get :bulk_export, params: { limit: 1 }
+        get :bulk_export, params: export_params
         consume_response_body
 
         expect(response.status).to eq(200)
