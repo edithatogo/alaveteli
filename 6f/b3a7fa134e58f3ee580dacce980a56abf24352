@@ -1,0 +1,6 @@
+Track: rack_asset_modernization_20260720
+Task: Initialize refreshed Conductor track for Alaveteli issue #74
+Summary: Added the specification, phased implementation plan, metadata, index, evidence ledger, and registry entry for independently reversible Sass, asset-pipeline, and Rack modernization. The track reflects the current Rack 2/Sprockets 3/sass-rails/Sidekiq constraints, preserves existing assurance sensors, and is explicitly non-release-blocking.
+Files: conductor/tracks.md; conductor/tracks/rack_asset_modernization_20260720/{spec.md,plan.md,metadata.json,index.md,evidence.jsonl}
+Why: Replace the stale PR #32 assessment with an evidence-bound roadmap that avoids unsupported vulnerability claims and prevents combined dependency migrations.
+Validation: metadata JSON and evidence JSONL parsed; relative Markdown links and registry consistency checked; git diff --check passed.
