@@ -1,0 +1,3 @@
+Issue: edithatogo/alaveteli#34
+Provenance: clean reconstruction of superseded PR #33 from origin/develop c76820871
+Validation: Ruby syntax (4 files), metadata JSON parse, git diff --check passed. RSpec and RuboCop unavailable locally because system Ruby 2.6 lacks locked Bundler 2.7.2. Not pushed.
