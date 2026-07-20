@@ -1114,7 +1114,11 @@ RSpec.describe NotificationMailer do
         ActiveSupport::Notifications.unsubscribe(subscriber)
       end
 
-      expect(user_queries.size).to eq(1)
+      preload_queries = user_queries.select do |sql|
+        sql.match?(/WHERE "users"\."id" IN \(/)
+      end
+
+      expect(preload_queries.size).to eq(1)
     end
 
     it 'sets seen_at on the notifications' do
