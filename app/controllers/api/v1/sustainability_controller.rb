@@ -68,18 +68,24 @@ class Api::V1::SustainabilityController < ApplicationController
 
     BotTrafficMetrics.increment(:bulk_export_requests)
 
+    export_since = parsed_since(contract.to_h[:since])
+    snapshot = BulkExportSnapshot.new(
+      limit: contract.to_h[:limit],
+      since: export_since
+    )
+    response.headers['ETag'] = %Q("#{snapshot.etag}")
+    response.headers['Cache-Control'] = 'private, no-cache'
+
+    if request.fresh?(response)
+      snapshot.close!
+      head :not_modified
+      return
+    end
+
     response.headers['Content-Type'] = 'application/x-ndjson'
     response.headers['Content-Disposition'] = 'attachment; filename="requests_export.ndjson"'
-    response.headers['Last-Modified'] = Time.zone.now.ctime
 
-    self.response_body = Enumerator.new do |y|
-      BulkExportStreamer.new(
-        limit: contract.to_h[:limit],
-        since: parsed_since(contract.to_h[:since])
-      ).each do |row|
-        y << "#{row.to_json}\n"
-      end
-    end
+    self.response_body = snapshot
   end
 
   private

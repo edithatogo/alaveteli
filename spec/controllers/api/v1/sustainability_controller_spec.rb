@@ -41,6 +41,9 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
 
         expect(response.status).to eq(200)
         expect(response.headers['Content-Type']).to eq('application/x-ndjson')
+        expect(response.headers['Cache-Control']).to include('private')
+        expect(response.headers['Cache-Control']).not_to include('public')
+        expect(response.headers['ETag']).to be_present
         lines = response.body.each.to_a.join.split("\n")
         expect(lines.size).to eq(1)
         json = JSON.parse(lines.first)
@@ -55,6 +58,110 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
           'public_body_name',
           'public_body_url_name'
         )
+      end
+
+      it 'returns 304 when the private export ETag matches' do
+        get :bulk_export, params: { limit: 1 }
+        response.body.each.to_a
+        etag = response.headers['ETag']
+        request.headers['If-None-Match'] = etag
+
+        get :bulk_export, params: { limit: 1 }
+
+        expect(response.status).to eq(304)
+        expect(response.body).to be_empty
+        expect(response.headers['Cache-Control']).to include('private')
+      end
+
+      it 'hashes the exact response body bytes' do
+        get :bulk_export, params: { limit: 1 }
+        body = response.body.each.to_a.join
+        digest = Digest::SHA256.hexdigest(body)
+
+        expect(response.headers['ETag']).to eq(%Q("#{digest}"))
+        expect(response.headers['Last-Modified']).to be_blank
+      end
+
+      it 'closes the unused snapshot on an ETag 304' do
+        snapshot = instance_double(
+          BulkExportSnapshot,
+          etag: 'unchanged',
+          close!: nil
+        )
+        allow(BulkExportSnapshot).to receive(:new).and_return(snapshot)
+        request.headers['If-None-Match'] = '"unchanged"'
+
+        get :bulk_export, params: { limit: 1 }
+
+        expect(response.status).to eq(304)
+        expect(snapshot).to have_received(:close!)
+      end
+
+      it 'returns a new representation after request mutation and deletion' do
+        get :bulk_export, params: { limit: 1 }
+        response.body.each.to_a
+        original_etag = response.headers['ETag']
+        request.headers['If-None-Match'] = original_etag
+        info_request.update!(title: 'Changed request')
+
+        get :bulk_export, params: { limit: 1 }
+        response.body.each.to_a
+        changed_etag = response.headers['ETag']
+
+        expect(response.status).to eq(200)
+        expect(changed_etag).not_to eq(original_etag)
+
+        request.headers['If-None-Match'] = changed_etag
+        info_request.delete
+        get :bulk_export, params: { limit: 1 }
+        response.body.each.to_a
+
+        expect(response.status).to eq(200)
+        expect(response.headers['ETag']).not_to eq(changed_etag)
+      end
+
+      it 'returns a new representation after authority translation mutation' do
+        get :bulk_export, params: { limit: 1 }
+        response.body.each.to_a
+        original_etag = response.headers['ETag']
+        request.headers['If-None-Match'] = original_etag
+        info_request.public_body.translations.first.update!(
+          name: 'Changed authority'
+        )
+
+        get :bulk_export, params: { limit: 1 }
+        response.body.each.to_a
+
+        expect(response.status).to eq(200)
+        expect(response.headers['ETag']).not_to eq(original_etag)
+      end
+
+      it 'returns a new representation when date-sensitive status changes' do
+        current_status = 'waiting_response'
+        allow(BulkExportStreamer).to receive(:new) do
+          [{ id: info_request.id, status: current_status }]
+        end
+
+        get :bulk_export, params: { limit: 1 }
+        response.body.each.to_a
+        original_etag = response.headers['ETag']
+        request.headers['If-None-Match'] = original_etag
+        current_status = 'waiting_response_overdue'
+
+        get :bulk_export, params: { limit: 1 }
+        response.body.each.to_a
+
+        expect(response.status).to eq(200)
+        expect(response.headers['ETag']).not_to eq(original_etag)
+      end
+
+      it 'does not expose validators to unauthenticated requests' do
+        request.env.delete('HTTP_X_FYI_BOT_TOKEN')
+
+        get :bulk_export, params: { limit: 1 }
+
+        expect(response.status).to eq(401)
+        expect(response.headers['ETag']).to be_blank
       end
 
       it 'rejects invalid limit values' do
