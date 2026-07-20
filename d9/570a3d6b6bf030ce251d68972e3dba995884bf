@@ -1,0 +1,4 @@
+Issue: edithatogo/alaveteli#34
+Base: remote PR #33 head 0ed5241a32d9d055d7ee5474efdf7b846bb54a52 after GitHub update-branch merge
+Fix: use Rails response.cache_control finalization to emit exactly one private and no-cache directive on 200 and 304; consume either Rack bodies or materialized String bodies in controller specs; mutate the selected authority translation.
+Validation: Ruby 4.0.5 syntax passed; metadata JSON parse and git diff --check passed; Rails 8.0.5 serializer smoke test emitted no-cache, private exactly once each; focused spec RuboCop passed. Controller-wide RuboCop reports four pre-existing offenses outside this change. Focused RSpec blocked locally because PostgreSQL is not installed/running. Hosted Ruby 3.4 and 4.0 core jobs for 0ed5241a3 were still running at commit time. Not pushed.
