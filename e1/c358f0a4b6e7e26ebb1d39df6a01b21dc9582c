@@ -1,0 +1,1 @@
+Synchronized ZIP-hardening branch with origin/develop cdd800efddb73da9640a96dfc36a6cf4198016c3 after PR #41 merged. The only conflict was conductor/tracks.md; resolution retains both request ZIP hardening and manual-validation dispatch tracks. Metadata records the synchronized base. Application/test changes merged without conflict. No push performed.
