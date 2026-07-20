@@ -1,133 +1,109 @@
 require 'spec_helper'
-require 'ostruct'
 
 RSpec.describe RequestZipCacheVersion do
-  FIXED_TIME = Time.utc(2026, 7, 20, 0, 0, 0)
-
-  def record(id, attributes = {}, **associations)
-    OpenStruct.new(
-      { attributes: {
-        'id' => id,
-        'updated_at' => FIXED_TIME
-      }.merge(attributes) }.merge(associations)
-    )
+  def entry(type, identity, values)
+    [type, identity, values]
   end
 
-  def build_request
-    comment_user = record(20, 'name' => 'Commenter')
-    comment = record(19, { 'body' => 'Annotation' }, user: comment_user)
-    attachment_blob = record(18, 'checksum' => 'attachment-v1')
-    attachment = record(
-      17,
-      { 'filename' => 'evidence.pdf', 'prominence' => 'normal' },
-      file_blob: attachment_blob
-    )
-    raw_blob = record(16, 'checksum' => 'raw-v1')
-    raw_email = record(
-      15,
-      { 'message_checksum' => 'message-v1' },
-      file_blob: raw_blob
-    )
-    incoming = record(
-      14,
-      { 'prominence' => 'normal', 'subject' => 'Response' },
-      raw_email: raw_email
-    )
-
-    OpenStruct.new(
-      attributes: {
-        'id' => 13,
-        'title' => 'Request title',
-        'updated_at' => FIXED_TIME
-      },
-      masks: [{ to_replace: 'private', replacement: '[redacted]' }],
-      public_body: record(
-        12,
-        { 'name' => 'Authority' },
-        translations: [record(21, 'locale' => 'en', 'name' => 'Authority')]
-      ),
-      user: record(11, 'name' => 'Requester'),
-      info_request_events: [record(10, 'visible' => true)],
-      outgoing_messages: [record(9, 'body' => 'Question',
-                                    'prominence' => 'normal')],
-      incoming_messages: [incoming],
-      comments: [comment],
-      foi_attachments: [attachment],
-      applicable_censor_rules: [record(8, 'text' => 'secret',
-                                          'replacement' => 'x')]
-    )
+  def digest(entries)
+    source = instance_double(described_class::Source, entries: entries)
+    described_class.new(nil, source: source).hexdigest
   end
 
-  def digest(request)
-    described_class.new(request).hexdigest
+  let(:fixed_time) { Time.utc(2026, 7, 20, 0, 0, 0) }
+  let(:entries) do
+    [
+      entry('InfoRequest', 1, ['Title', 'normal', fixed_time]),
+      entry('InfoRequestEvent', 2, ['response', true, fixed_time]),
+      entry('IncomingMessage', 3, ['normal', fixed_time]),
+      entry('OutgoingMessage', 4, [fixed_time]),
+      entry('Comment', 5, [fixed_time]),
+      entry('FoiAttachment', 6, ['normal', 'attachment-md5-v1', fixed_time]),
+      entry('FoiAttachmentBlob', '6:7', ['blob-checksum-v1', 100]),
+      entry('RawEmail', 8, ['raw-checksum-v1', fixed_time]),
+      entry('RawEmailBlob', '8:9', ['raw-blob-checksum-v1', 200]),
+      entry('CensorRule', 10, ['secret', 'redacted', fixed_time]),
+      entry('PublicBody::Translation', 11, %w[en Authority])
+    ]
   end
 
-  it 'changes for same-second mutations to every ZIP representation input' do
-    mutations = {
-      request: ->(request) { request.attributes['title'] = 'Changed' },
-      authority: ->(request) do
-        request.public_body.attributes['name'] = 'Changed'
-      end,
-      authority_translation: ->(request) do
-        request.public_body.translations.first.attributes['name'] = 'Changed'
-      end,
-      requester: ->(request) { request.user.attributes['name'] = 'Changed' },
-      event_visibility: ->(request) {
-        request.info_request_events.first.attributes['visible'] = false
-      },
-      outgoing_message: ->(request) {
-        request.outgoing_messages.first.attributes['body'] = 'Changed'
-      },
-      incoming_visibility: ->(request) {
-        request.incoming_messages.first.attributes['prominence'] = 'hidden'
-      },
-      comment: ->(request) do
-        request.comments.first.attributes['body'] = 'Changed'
-      end,
-      comment_user: ->(request) {
-        request.comments.first.user.attributes['name'] = 'Changed'
-      },
-      attachment: ->(request) {
-        request.foi_attachments.first.attributes['filename'] = 'changed.pdf'
-      },
-      attachment_content: ->(request) {
-        request.foi_attachments.first.file_blob.attributes['checksum'] =
-          'changed'
-      },
-      raw_email: ->(request) {
-        raw_email = request.incoming_messages.first.raw_email
-        raw_email.attributes['message_checksum'] = 'changed'
-      },
-      raw_email_content: ->(request) {
-        raw_email = request.incoming_messages.first.raw_email
-        raw_email.file_blob.attributes['checksum'] = 'changed'
-      },
-      censor_rule: ->(request) {
-        request.applicable_censor_rules.first.attributes['replacement'] =
-          'changed'
-      },
-      masks: ->(request) { request.masks.first[:replacement] = '[changed]' }
-    }
+  it 'changes for same-second content, visibility, and redaction mutations' do
+    entries.each_index do |index|
+      changed = Marshal.load(Marshal.dump(entries))
+      changed[index][2][0] = "changed-#{index}"
 
-    mutations.each do |label, mutate|
-      request = build_request
-      original = digest(request)
-      mutate.call(request)
-
-      expect(digest(request)).not_to eq(original), label.to_s
+      expect(digest(changed)).not_to eq(digest(entries)), entries[index][0]
     end
   end
 
-  it 'changes when a relevant record is deleted without a timestamp advance' do
-    request = build_request
-    original = digest(request)
+  it 'distinguishes subsecond revisions within the same second' do
+    revised = Marshal.load(Marshal.dump(entries))
+    revised[3][2][0] = fixed_time + Rational(1, 1_000_000)
 
-    request.foi_attachments.clear
-
-    expect(digest(request)).not_to eq(original)
+    expect(digest(revised)).not_to eq(digest(entries))
   end
 
-  it 'is stable for identical snapshots' do
-    expect(digest(build_request)).to eq(digest(build_request))
+  it 'changes when a relevant record is added or deleted' do
+    expect(digest(entries.drop(1))).not_to eq(digest(entries))
+    expect(digest(entries + [entry('Comment', 99, ['new'])])).
+      not_to eq(digest(entries))
+  end
+
+  it 'sorts every collection by record type and stable identity' do
+    shuffled = entries.shuffle(random: Random.new(12_345))
+
+    expect(digest(shuffled)).to eq(digest(entries))
+  end
+
+  it 'distinguishes numeric primary keys without lexical ordering artifacts' do
+    numeric = [entry('Comment', 10, ['ten']), entry('Comment', 2, ['two'])]
+
+    expect(digest(numeric.reverse)).to eq(digest(numeric))
+  end
+
+  describe RequestZipCacheVersion::Source do
+    it 'does not project derived megabyte-scale cached text columns' do
+      projected_fields = described_class.constants(false).
+        grep(/_FIELDS\z/).
+        flat_map { |name| described_class.const_get(name) }
+
+      expect(projected_fields).not_to include(
+        :cached_attachment_text_clipped,
+        :cached_main_body_text_folded,
+        :cached_main_body_text_unfolded
+      )
+    end
+
+    it 'uses revisions for text and persisted checksums for stored content' do
+      expect(described_class::OUTGOING_FIELDS).to include(:updated_at)
+      expect(described_class::OUTGOING_FIELDS).not_to include(:body)
+      expect(described_class::COMMENT_FIELDS).to include(:updated_at)
+      expect(described_class::COMMENT_FIELDS).not_to include(:body)
+      expect(described_class::ATTACHMENT_FIELDS).to include(:hexdigest)
+      expect(described_class::RAW_EMAIL_FIELDS).to include(:message_checksum)
+      expect(described_class::CENSOR_RULE_FIELDS).
+        to include(:text, :replacement, :updated_at)
+    end
+
+    it 'keeps repeated snapshot queries bounded and does not read bodies' do
+      request = FactoryBot.create(:info_request_with_pdf_attachment)
+      sql = []
+      callback = ->(_name, _start, _finish, _id, payload) do
+        sql << payload[:sql] unless payload[:name] == 'SCHEMA'
+      end
+      expect_any_instance_of(ActiveStorage::Blob).not_to receive(:download)
+
+      subscription = ActiveSupport::Notifications.subscribe(
+        'sql.active_record', &callback
+      )
+      2.times { RequestZipCacheVersion.new(request).hexdigest }
+      ActiveSupport::Notifications.unsubscribe(subscription)
+
+      expect(sql.length).to be <= 28
+      expect(sql.join(' ')).not_to match(/cached_(attachment|main_body)_text/)
+      expect(sql.join(' ')).not_to match(/MD5\(.+\.(body|text)/i)
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscription) if subscription
+    end
   end
 end

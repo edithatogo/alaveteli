@@ -32,6 +32,15 @@
   - Replace thread scheduling coverage with fork/pipe publication and abnormal
     writer-exit recovery tests where `fork` is available.
 
+- [x] **Task: Address cache-version and coordination re-review**
+  - Replace whole-record hashing with bounded narrow projections, persisted
+    subsecond revision metadata, and existing attachment/raw-email checksums.
+  - Exclude cached text and message bodies from cache-hit reads; enforce a
+    fixed query bound across repeated digest construction.
+  - Canonically sort every source entry by record type and stable identity.
+  - Replace scheduler-delay assertions with an explicit signal immediately
+    before the competing process attempts the blocking lock.
+
 - [ ] Run focused model, service, controller, and integration specs on the
   repository-supported Ruby toolchain.
 - [ ] Run RuboCop, Brakeman without new suppressions, Bearer, dependency audit,
@@ -55,3 +64,15 @@
 > are implemented. Final local syntax, lint, Brakeman, deterministic digest,
 > symlink, and cross-process harness evidence must be recorded in the follow-up
 > commit note; hosted Rails RSpec remains required before merge.
+
+> RE-REVIEW CHECKPOINT (2026-07-20): Whole-record cache-version hashing is
+> replaced by narrow projections and persisted checksums/revisions; all source
+> entries are globally canonical-sorted. Cross-process coordination now uses a
+> deterministic pre-`flock` pipe barrier with no timing inference.
+
+> RE-REVIEW LOCAL EVIDENCE (2026-07-20): Ruby 4.0 syntax and focused RuboCop
+> pass; the standalone digest/order/fork/crash/symlink harness passes; Brakeman
+> 8.0.5 reports exactly the 13 approved fingerprints; and its verifier tests
+> pass (5 runs, 18 assertions). Focused Rails specs cannot boot locally because
+> this checkout has no `config/database.yml`; hosted PostgreSQL CI remains
+> required before merge.

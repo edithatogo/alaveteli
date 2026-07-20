@@ -122,7 +122,7 @@ RSpec.describe RequestZipCachePath do
 
         writer_started_reader, writer_started_writer = IO.pipe
         release_reader, release_writer = IO.pipe
-        reader_started_reader, reader_started_writer = IO.pipe
+        reader_before_lock_reader, reader_before_lock_writer = IO.pipe
         reader_done_reader, reader_done_writer = IO.pipe
 
         writer_pid = fork do
@@ -148,12 +148,18 @@ RSpec.describe RequestZipCachePath do
         expect(File.stat(temporary_files.first).mode & 0o777).to eq(0o600)
 
         reader_pid = fork do
-          reader_started_reader.close
+          reader_before_lock_reader.close
           reader_done_reader.close
-          reader_started_writer.write('S')
-          reader_started_writer.close
+          competing_path = described_class.new(
+            info_request: info_request,
+            user: user,
+            before_lock: -> do
+              reader_before_lock_writer.write('L')
+              reader_before_lock_writer.close
+            end
+          )
           generated = false
-          result = cache_path.write_if_missing do |file|
+          result = competing_path.write_if_missing do |file|
             generated = true
             file.write('second-publication')
           end
@@ -161,11 +167,12 @@ RSpec.describe RequestZipCachePath do
           reader_done_writer.close
           exit!(0)
         end
-        reader_started_writer.close
+        reader_before_lock_writer.close
         reader_done_writer.close
 
-        Timeout.timeout(5) { expect(reader_started_reader.read(1)).to eq('S') }
-        expect(IO.select([reader_done_reader], nil, nil, 0.25)).to be_nil
+        Timeout.timeout(5) do
+          expect(reader_before_lock_reader.read(1)).to eq('L')
+        end
         expect(File.exist?(cache_path.path)).to be(false)
 
         release_writer.write('R')
@@ -181,7 +188,7 @@ RSpec.describe RequestZipCachePath do
         expect(File.stat("#{cache_path.path}.lock").mode & 0o777).to eq(0o600)
         expect(Dir.glob("#{cache_path.path}.*.part")).to be_empty
       ensure
-        [writer_started_reader, release_writer, reader_started_reader,
+        [writer_started_reader, release_writer, reader_before_lock_reader,
          reader_done_reader].compact.each do |io|
           io.close unless io.closed?
         end

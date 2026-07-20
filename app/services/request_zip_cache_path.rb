@@ -12,9 +12,10 @@ class RequestZipCachePath
 
   attr_reader :info_request, :user
 
-  def initialize(info_request:, user:)
+  def initialize(info_request:, user:, before_lock: nil)
     @info_request = info_request
     @user = user
+    @before_lock = before_lock
 
     validate!
   end
@@ -131,6 +132,7 @@ class RequestZipCachePath
     validate_directory_chain!
     File.open(lock_path, lock_open_flags, 0o600) do |lock|
       lock.chmod(0o600)
+      @before_lock&.call
       unless lock.flock(File::LOCK_EX)
         raise IOError, 'could not lock ZIP cache path'
       end
