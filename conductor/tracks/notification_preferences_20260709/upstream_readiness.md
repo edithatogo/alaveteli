@@ -5,18 +5,19 @@
 - Parent issue: `#20` Prepare notification preferences for upstream review.
 - Focused subissue: `#21` Build and verify isolated notification-preferences
   candidate.
-- Draft PR: `#22` Add user notification preferences.
-- Baseline branch: `upstream-develop-baseline`, pinned from
-  `mysociety/develop` at `328711a01`.
-- Candidate branch: `notification-preferences-upstream-ready`.
+- Original draft PR: `#22` Add user notification preferences.
+- Reconstruction baseline: fork `origin/develop` at `c76820871`.
+- Reconstruction branch: `codex/pr22-notification-corrections`.
+- The original PR branch must not be merged wholesale because its first four
+  commits are already patch-equivalent to changes on `develop`.
 - No upstream issue or PR has been created.
 
 ## Candidate Scope
 
-The candidate contains only notification-preference migration, model,
-controller, route, profile navigation, settings view, mailer behavior,
-changelog, and focused tests. It excludes Conductor, bot resilience, bulk
-export, dependency modernization, and unrelated CI changes.
+The reconstructed candidate contains only the remaining controller ownership
+and partial-update corrections, profile navigation, mailer eager loading, and
+focused tests. It does not replay the existing migration, model, route, form,
+or original mail-suppression behavior, and it excludes unrelated changes.
 
 ## Findings Resolved
 
@@ -30,13 +31,13 @@ export, dependency modernization, and unrelated CI changes.
 
 ## Verification Evidence
 
-- `git diff --check upstream/develop...HEAD`: pass.
-- Changelog PR gate: pass.
-- RuboCop PR gate: pass.
-- Brakeman baseline-delta harness: pass, zero new candidate fingerprints.
-- Dependency manifest delta: pass, `Gemfile` and `Gemfile.lock` unchanged.
-- Supported Ruby 3.4 full suite: in progress.
-- Local Ruby, Bundler, and Docker remain unavailable on this workstation.
+- `git diff --check`: pass for the reconstructed candidate.
+- Ruby syntax checks: pass for touched Ruby files.
+- Dependency manifest delta: none; `Gemfile` and `Gemfile.lock` are unchanged.
+- Focused specs, RuboCop, security checks, and the supported Ruby 3.4/4.0 full
+  suites remain pending in hosted CI.
+- Local execution is unavailable because the workstation Ruby 2.6 environment
+  does not provide the lockfile-required Bundler 2.7.2.
 
 The track remains in progress until supported CI is green and the final risk
 review confirms that no known risk remains.

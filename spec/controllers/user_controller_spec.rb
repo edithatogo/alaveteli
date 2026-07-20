@@ -145,6 +145,7 @@ RSpec.describe UserController do
           not_to match(/Freedom of Information requests made by you/)
         expect(assigns[:show_batches]).to be false
         expect(response.body).to include('Change your password')
+        expect(response.body).to include('Notification preferences')
       end
     end
 

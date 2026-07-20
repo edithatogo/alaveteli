@@ -3,7 +3,9 @@
 require 'dry-validation'
 
 class RateLimitContract < Dry::Validation::Contract
+  config.validate_keys = true
+
   params do
-    optional(:ip).filled(:string)
+    # Status is always scoped to the current request's enforced throttle.
   end
 end

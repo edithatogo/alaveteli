@@ -1100,6 +1100,27 @@ RSpec.describe NotificationMailer do
       expect(ActionMailer::Base.deliveries.first.to).to eq([notification_2.user.email])
     end
 
+    it 'loads users in one query when processing immediate notifications' do
+      user_queries = []
+      subscriber = ActiveSupport::Notifications.subscribe(
+        'sql.active_record'
+      ) do |_name, _start, _finish, _id, payload|
+        user_queries << payload[:sql] if payload[:sql].include?('FROM "users"')
+      end
+
+      begin
+        NotificationMailer.send_instant_notifications
+      ensure
+        ActiveSupport::Notifications.unsubscribe(subscriber)
+      end
+
+      preload_queries = user_queries.select do |sql|
+        sql.match?(/WHERE "users"\."id" IN \(/)
+      end
+
+      expect(preload_queries.size).to eq(1)
+    end
+
     it 'sets seen_at on the notifications' do
       expect(notification_1.seen_at).to be nil
       expect(notification_2.seen_at).to be nil

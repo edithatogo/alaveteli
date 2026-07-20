@@ -62,3 +62,26 @@
     - [x] Add Redis service health-check script in Docker Compose startup sequence
     - [x] Add `simulate-attack` script task to `conductor.json`
 - [x] Task: Conductor - User Manual Verification 'Phase 6: Orchestration Updates' (Protocol in workflow.md) [b97b9f3]
+
+## Phase 7: Current-Develop Rate-Limit Reconstruction
+
+Issue: [#39](https://github.com/edithatogo/alaveteli/issues/39)
+
+Pull request: [#40](https://github.com/edithatogo/alaveteli/pull/40)
+
+- [x] Reconstruct the endpoint from the current Rack::Attack enforcement contract.
+- [x] Remove the unused caller-supplied `ip` parameter and reject all query input.
+- [x] Derive the versioned body and `RateLimit-*` headers from one read-only
+      middleware snapshot while preserving `tier` and `advisory_status`.
+- [x] Fail closed with sanitized degraded output only when enforcement evidence
+      is unavailable or malformed; do not rescue unrelated failures.
+- [x] Add focused anonymous, verified, degraded, header/body, no-mutation, and
+      strict-parameter tests.
+- [x] Pass locally available syntax, metadata, and whitespace checks.
+- [ ] Obtain green hosted Ruby 3.4/4.0, RuboCop, security, and changelog checks.
+- [ ] Merge PR #40 and archive the immutable hosted qualification evidence.
+
+The reconstruction is based on the clean PR #33 head
+`8295e2a9b693b6e32553abe02fc7f365d4692e26`. It does not alter the bulk-export
+implementation. See `rate_limit_status_reconstruction.md` for scope and local
+verification limits.

@@ -27,6 +27,14 @@
 
 ## Phase 3: Verification and Closeout
 
+- [x] Task: Reconstruct private bulk-export HTTP validators
+    - [x] Replace the superseded PR #33 validator proposal with a clean implementation
+      from current `origin/develop`
+    - [x] Bind the ETag to the exact bytes of one immutable, permission-restricted
+      NDJSON snapshot covering request, deletion, translation, and status changes
+    - [x] Keep authenticated exports private, stream the hashed snapshot bytes, and
+      unlink snapshots after `304`, successful delivery, failure, or abandoned bodies
+    - [x] Add focused validator and controller regression coverage
 - [~] Task: Run regression and security gate
     - [~] Run scoped RSpec, RuboCop, Brakeman, and benchmark command where available
     - [~] Document unavailable local gates and CI follow-up without accepting risk
