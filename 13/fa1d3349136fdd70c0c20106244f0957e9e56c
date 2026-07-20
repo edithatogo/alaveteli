@@ -1,0 +1,19 @@
+Task: Reconstruct PR #22 notification preference corrections
+
+Summary:
+- Preserve omitted notification settings by updating through strong parameters.
+- Bind preference ownership explicitly to authenticated_user.
+- Add profile navigation to notification preferences.
+- Eager-load users for immediate notification processing.
+- Add focused partial-update, parameter-boundary, navigation, and eager-loading regressions.
+- Refresh the existing Conductor readiness record for the clean origin/develop reconstruction.
+
+Why:
+The original PR branch contains four commits already patch-equivalent to develop and cannot be merged wholesale. This commit ports only the remaining corrective behavior onto the current hardened baseline without replaying migrations, routes, or unrelated changes.
+
+Verification:
+- ruby -c on all touched Ruby files: pass
+- ERB compilation: pass
+- git diff --check: pass
+- no Gemfile, lockfile, route, or migration changes
+- focused/full RSpec and RuboCop pending hosted CI because local Ruby 2.6 lacks Bundler 2.7.2
