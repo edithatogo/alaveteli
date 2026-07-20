@@ -369,13 +369,14 @@ class RequestController < ApplicationController
         # Test for whole request being hidden or requester-only
         return render_hidden if cannot?(:read, @info_request)
 
-        cache_file_path = @info_request.make_zip_cache_path(@user)
-        unless File.exist?(cache_file_path)
-          FileUtils.mkdir_p(File.dirname(cache_file_path))
-          make_request_zip(@info_request, cache_file_path)
-          File.chmod(0644, cache_file_path)
+        cache_path = RequestZipCachePath.new(info_request: @info_request,
+                                             user: @user)
+        cache_path.write_if_missing do |file|
+          make_request_zip(@info_request, file)
         end
-        send_file(cache_file_path, filename: "#{@info_request.url_title}.zip")
+        send_file_headers!(filename: RequestZipCachePath::DOWNLOAD_FILENAME)
+        self.status = :ok
+        cache_path.send_to(response)
       end
     end
   end
@@ -481,10 +482,11 @@ class RequestController < ApplicationController
       transitions[:other].empty?
   end
 
-  def make_request_zip(info_request, file_path)
-    Zip::File.open(file_path, create: true) do |zipfile|
+  def make_request_zip(info_request, file)
+    Zip::OutputStream.write_buffer(file) do |zipfile|
       file_info = make_request_summary_file(info_request)
-      zipfile.get_output_stream(file_info[:filename]) { |f| f.write(file_info[:data]) }
+      zipfile.put_next_entry(file_info[:filename])
+      zipfile.write(file_info[:data])
       message_index = 0
       info_request.incoming_messages.each do |message|
         next unless can?(:read, message)
@@ -494,10 +496,9 @@ class RequestController < ApplicationController
           next unless can?(:read, attachment)
 
           filename = "#{message_index}_#{attachment.url_part_number}_#{attachment.display_filename}"
-          zipfile.get_output_stream(filename) do |f|
-            body = message.apply_masks(attachment.default_body, attachment.content_type)
-            f.write(body)
-          end
+          zipfile.put_next_entry(filename)
+          body = message.apply_masks(attachment.default_body, attachment.content_type)
+          zipfile.write(body)
         end
       end
     end

@@ -35,7 +35,6 @@
 #  prominence_reason                     :text
 #
 
-require 'digest/sha1'
 require 'fileutils'
 
 class InfoRequest < ApplicationRecord
@@ -1311,8 +1310,8 @@ class InfoRequest < ApplicationRecord
     info_request_events.last
   end
 
-  def last_update_hash
-    Digest::SHA1.hexdigest(info_request_events.last.created_at.to_i.to_s + updated_at.to_i.to_s)
+  def zip_cache_version
+    RequestZipCacheVersion.new(self).hexdigest
   end
 
   # Get previous email sent to
@@ -1400,16 +1399,7 @@ class InfoRequest < ApplicationRecord
   end
 
   def make_zip_cache_path(user)
-    # The zip file varies depending on user because it can include different
-    # messages depending on whether the user can access hidden or
-    # requester_only messages. We name it appropriately, so that every user
-    # with the right permissions gets a file with only the right things in.
-    cache_file_dir = File.join(InfoRequest.download_zip_dir,
-                               "download",
-                               request_dirs,
-                               last_update_hash)
-    cache_file_suffix = zip_cache_file_suffix(user)
-    File.join(cache_file_dir, "#{url_title}#{cache_file_suffix}.zip")
+    RequestZipCachePath.new(info_request: self, user: user).path
   end
 
   def zip_cache_file_suffix(user)

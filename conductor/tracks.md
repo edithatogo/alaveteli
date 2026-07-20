@@ -4,6 +4,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
+- [~] **Track: Harden request ZIP paths and delivery**
+  *Link: [./tracks/request_zip_hardening_20260720/](./tracks/request_zip_hardening_20260720/)*
+  *GitHub issues: [#49](https://github.com/edithatogo/alaveteli/issues/49), [#51](https://github.com/edithatogo/alaveteli/issues/51), and [#53](https://github.com/edithatogo/alaveteli/issues/53).*
+  *Description: Deliver bounded numeric-ID cache paths and coordinated atomic ZIP publication as one merge-safe change superseding PRs #50/#52.*
 - [ ] **Track: Stage Rack and asset-pipeline modernization**
   *Link: [./tracks/rack_asset_modernization_20260720/index.md](./tracks/rack_asset_modernization_20260720/index.md)*
   *GitHub parent issue: [#74](https://github.com/edithatogo/alaveteli/issues/74)*
