@@ -1,0 +1,1 @@
+Synchronized ZIP-hardening branch with origin/develop cdd800efd after PR #41 merged. The only conflict was conductor/tracks.md; resolution retains both request ZIP hardening and manual-validation dispatch tracks. Application/test changes merged without conflict. No push performed.
