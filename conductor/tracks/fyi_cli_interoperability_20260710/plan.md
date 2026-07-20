@@ -2,10 +2,17 @@
 
 ## Phase 1: Contract evidence
 
-- [ ] Issue #24: Audit and publish the exact server/client contract.
-- [ ] Record the paired fyi-cli issue and contract version in this plan.
-- [ ] Add a drift sensor for every documented header and endpoint behavior.
+- [x] Issue #24: Audit and publish the exact server/client contract in PR #46.
+- [x] Record the paired fyi-cli issue #142 and contract version 0.1 in this plan.
+- [x] Add focused streamed-response sensors for the private, ETag-only bulk
+  export contract.
 - [ ] Verify no live network is required by the contract suite.
+
+> Provenance (2026-07-20): PR #46 was reconstructed from the clean PR #33 head
+> `8295e2a9b693b6e32553abe02fc7f365d4692e26`. The stale branch was not replayed;
+> runtime code, `scripts/profile_runner.rb`, and workflows are outside this
+> task. Issue #47 concerns HEAD cache-control semantics and is not provenance
+> for this contract publication.
 
 ## Phase 2: Server conformance fixtures
 

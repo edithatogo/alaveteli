@@ -61,6 +61,10 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         expect(response.headers['Content-Type']).to eq('application/x-ndjson')
         expect_private_revalidation_cache_control
         expect(response.headers['ETag']).to be_present
+        expect(response.headers['Last-Modified']).to be_blank
+        expect(response.headers['Content-Disposition']).to eq(
+          'attachment; filename="requests_export.ndjson"'
+        )
         lines = consume_response_body.split("\n")
         expect(lines.size).to eq(1)
         json = JSON.parse(lines.first)
@@ -88,6 +92,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         expect(response.status).to eq(304)
         expect(response.body).to be_empty
         expect_private_revalidation_cache_control
+        expect(response.headers['Last-Modified']).to be_blank
       end
 
       it 'hashes the exact response body bytes' do
