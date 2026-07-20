@@ -13,12 +13,13 @@
 
 ## Phase 2: Atomic delivery
 
-- [ ] **Task: Add locking and atomic ZIP publication**
+- [x] **Task: Add locking and atomic ZIP publication**
   - Generate into a mode-`0600` temporary file inside the bounded cache
     directory.
   - Coordinate concurrent writers and atomically rename a complete ZIP.
   - Clean failed temporary files and prove readers cannot observe partial ZIPs.
-  - Keep this work in a separate PR after Phase 1 has passed hosted CI.
+  - Consolidate stale PR #52 requirements into the same merge-safe successor
+    change without replaying its branch history.
 
 ## Verification
 
@@ -26,9 +27,16 @@
   repository-supported Ruby toolchain.
 - [ ] Run RuboCop, Brakeman without new suppressions, Bearer, dependency audit,
   and the full Ruby 3.4/4.0 hosted CI matrix.
-- [ ] Record immutable hosted evidence before closing issues #49/#51/#53.
+- [ ] Record immutable hosted evidence before closing issues #49/#51/#53 and
+  superseding PRs #50/#52.
 
-> CHECKPOINT (2026-07-20): Phase 1 is implemented from current `origin/develop`.
-> Local syntax and structural checks are required before commit; hosted Ruby
-> verification remains required because the workstation Ruby cannot install the
-> lockfile-required Bundler version.
+> CHECKPOINT (2026-07-20): Phases 1 and 2 are implemented together from current
+> `origin/develop`. The final cache pathname is published only by same-filesystem
+> atomic rename after private staging-file flush, fsync, and close. Hosted RSpec
+> verification remains required because PostgreSQL is unavailable locally.
+
+> LOCAL EVIDENCE (2026-07-20): Ruby 4.0 syntax, focused RuboCop, metadata and
+> ledger JSON parsing, `git diff --check`, paused-writer and ten-writer
+> concurrency harnesses, failure cleanup, Brakeman 8.0.5, and the exact
+> fingerprint verifier pass. The Rails-focused RSpec file cannot boot locally
+> without PostgreSQL; hosted CI remains the authoritative RSpec gate.

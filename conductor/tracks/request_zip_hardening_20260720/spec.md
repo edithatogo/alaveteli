@@ -15,6 +15,11 @@ and public/requester/admin visibility variants.
 - The only filename variants are the existing trusted visibility suffixes.
 - The response filename is the fixed `request-correspondence.zip`.
 - New ZIP artifacts are created with owner-only mode `0600`.
+- Writers coordinate on a mode-`0600` lock scoped to the final cache path.
+- ZIPs are generated in mode-`0600` same-directory staging files, flushed,
+  fsynced, closed, and atomically renamed before the final path is visible.
+- Waiting callers reuse only the complete artifact observed after acquiring the
+  lock; they never treat an in-progress staging file as a cache hit.
 - `url_title`, request titles, authority names, and route text must not reach the
   filesystem path or response filename.
 
@@ -24,14 +29,12 @@ and public/requester/admin visibility variants.
 user context, derives bounded components internally, and rejects malformed
 versions. Callers do not supply path fragments.
 
-## Non-scope for the first PR
+## Non-scope
 
-- Inter-process locking.
-- Temporary-file generation and atomic rename.
 - Changing ZIP contents or visibility policy.
 - Replaying stale PR #50 or #52 branch history.
 - Altering the external URL, SQL, cookie, traffic-control, or dependency
   protections merged in PR #71.
 
-Those delivery concerns remain a second reviewable PR after this path boundary
-is green.
+This track consolidates the path and atomic-delivery requirements into one
+merge-safe successor change.

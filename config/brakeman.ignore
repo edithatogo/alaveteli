@@ -111,28 +111,6 @@
       "note": "Reviewed citation URL model flow; see baseline_hardening SECURITY_BASELINE.md."
     },
     {
-      "fingerprint": "cde6c1c05ef400b9b0a205de54f9a2407034a4da20ae7cc0749b81434cc3deb6",
-      "warning_type": "File Access",
-      "warning_code": 16,
-      "check_name": "FileAccess",
-      "message": "Model attribute used in file name",
-      "file": "app/controllers/request_controller.rb",
-      "line": 374,
-      "confidence": "Weak",
-      "note": "Reviewed model-derived ZIP cache path; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
-      "fingerprint": "f6ea20546b7f2d11055be93930c4ed81a6e3c8f1a62d39acb5d12b658356f3e0",
-      "warning_type": "File Access",
-      "warning_code": 16,
-      "check_name": "SendFile",
-      "message": "Model attribute used in file name",
-      "file": "app/controllers/request_controller.rb",
-      "line": 378,
-      "confidence": "Medium",
-      "note": "Reviewed model-derived ZIP download path; see baseline_hardening SECURITY_BASELINE.md."
-    },
-    {
       "fingerprint": "fe5d8b96d41b27697390845268c2813d488ea933e59b09be29034d7693d04be6",
       "warning_type": "SQL Injection",
       "warning_code": 0,

@@ -374,8 +374,9 @@ class RequestController < ApplicationController
         cache_path.write_if_missing do |file|
           make_request_zip(@info_request, file)
         end
-        send_file(cache_path.path,
-                  filename: RequestZipCachePath::DOWNLOAD_FILENAME)
+        send_file_headers!(filename: RequestZipCachePath::DOWNLOAD_FILENAME)
+        self.status = :ok
+        cache_path.send_to(response)
       end
     end
   end

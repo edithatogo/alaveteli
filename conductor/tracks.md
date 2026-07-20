@@ -7,7 +7,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [~] **Track: Harden request ZIP paths and delivery**
   *Link: [./tracks/request_zip_hardening_20260720/](./tracks/request_zip_hardening_20260720/)*
   *GitHub issues: [#49](https://github.com/edithatogo/alaveteli/issues/49), [#51](https://github.com/edithatogo/alaveteli/issues/51), and [#53](https://github.com/edithatogo/alaveteli/issues/53).*
-  *Description: Deliver a bounded numeric-ID cache path first, followed by a separate locking and atomic-publication change.*
+  *Description: Deliver bounded numeric-ID cache paths and coordinated atomic ZIP publication as one merge-safe change superseding PRs #50/#52.*
 
 ---
 
