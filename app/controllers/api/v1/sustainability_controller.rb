@@ -74,11 +74,11 @@ class Api::V1::SustainabilityController < ApplicationController
       since: export_since
     )
     response.headers['ETag'] = %Q("#{snapshot.etag}")
-    response.headers['Cache-Control'] = 'private, no-cache'
 
     if request.fresh?(response)
       snapshot.close!
       head :not_modified
+      apply_private_revalidation_cache_control
       return
     end
 
@@ -86,9 +86,17 @@ class Api::V1::SustainabilityController < ApplicationController
     response.headers['Content-Disposition'] = 'attachment; filename="requests_export.ndjson"'
 
     self.response_body = snapshot
+    apply_private_revalidation_cache_control
   end
 
   private
+
+  def apply_private_revalidation_cache_control
+    response.cache_control[:private] = true
+    response.cache_control[:no_cache] = true
+    response.cache_control[:extras] =
+      Array(response.cache_control[:extras]) | ['private']
+  end
 
   def parsed_since(value)
     return if value.blank?

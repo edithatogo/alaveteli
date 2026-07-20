@@ -1,6 +1,24 @@
 require 'spec_helper'
 
 RSpec.describe Api::V1::SustainabilityController, type: :controller do
+  def consume_response_body
+    body = response.body
+    return body if body.is_a?(String)
+
+    body.each.to_a.join
+  end
+
+  def cache_control_directives
+    response.headers.fetch('Cache-Control').split(',').map(&:strip)
+  end
+
+  def expect_private_revalidation_cache_control
+    directives = cache_control_directives
+
+    expect(directives.tally).to include('private' => 1, 'no-cache' => 1)
+    expect(directives).not_to include('public')
+  end
+
   describe 'GET rate_limit' do
     it 'returns the rate-limiting information' do
       get :rate_limit
@@ -41,10 +59,9 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
 
         expect(response.status).to eq(200)
         expect(response.headers['Content-Type']).to eq('application/x-ndjson')
-        expect(response.headers['Cache-Control']).to include('private')
-        expect(response.headers['Cache-Control']).not_to include('public')
+        expect_private_revalidation_cache_control
         expect(response.headers['ETag']).to be_present
-        lines = response.body.each.to_a.join.split("\n")
+        lines = consume_response_body.split("\n")
         expect(lines.size).to eq(1)
         json = JSON.parse(lines.first)
         expect(json['title']).to eq(info_request.title)
@@ -62,7 +79,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
 
       it 'returns 304 when the private export ETag matches' do
         get :bulk_export, params: { limit: 1 }
-        response.body.each.to_a
+        consume_response_body
         etag = response.headers['ETag']
         request.headers['If-None-Match'] = etag
 
@@ -70,12 +87,12 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
 
         expect(response.status).to eq(304)
         expect(response.body).to be_empty
-        expect(response.headers['Cache-Control']).to include('private')
+        expect_private_revalidation_cache_control
       end
 
       it 'hashes the exact response body bytes' do
         get :bulk_export, params: { limit: 1 }
-        body = response.body.each.to_a.join
+        body = consume_response_body
         digest = Digest::SHA256.hexdigest(body)
 
         expect(response.headers['ETag']).to eq(%Q("#{digest}"))
@@ -99,13 +116,13 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
 
       it 'returns a new representation after request mutation and deletion' do
         get :bulk_export, params: { limit: 1 }
-        response.body.each.to_a
+        consume_response_body
         original_etag = response.headers['ETag']
         request.headers['If-None-Match'] = original_etag
         info_request.update!(title: 'Changed request')
 
         get :bulk_export, params: { limit: 1 }
-        response.body.each.to_a
+        consume_response_body
         changed_etag = response.headers['ETag']
 
         expect(response.status).to eq(200)
@@ -114,7 +131,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         request.headers['If-None-Match'] = changed_etag
         info_request.delete
         get :bulk_export, params: { limit: 1 }
-        response.body.each.to_a
+        consume_response_body
 
         expect(response.status).to eq(200)
         expect(response.headers['ETag']).not_to eq(changed_etag)
@@ -122,15 +139,18 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
 
       it 'returns a new representation after authority translation mutation' do
         get :bulk_export, params: { limit: 1 }
-        response.body.each.to_a
+        consume_response_body
         original_etag = response.headers['ETag']
         request.headers['If-None-Match'] = original_etag
-        info_request.public_body.translations.first.update!(
+        selected_translation = info_request.public_body.translations.find_by(
+          locale: AlaveteliLocalization.locale
+        ) || info_request.public_body.translations.first
+        selected_translation.update!(
           name: 'Changed authority'
         )
 
         get :bulk_export, params: { limit: 1 }
-        response.body.each.to_a
+        consume_response_body
 
         expect(response.status).to eq(200)
         expect(response.headers['ETag']).not_to eq(original_etag)
@@ -143,13 +163,13 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         end
 
         get :bulk_export, params: { limit: 1 }
-        response.body.each.to_a
+        consume_response_body
         original_etag = response.headers['ETag']
         request.headers['If-None-Match'] = original_etag
         current_status = 'waiting_response_overdue'
 
         get :bulk_export, params: { limit: 1 }
-        response.body.each.to_a
+        consume_response_body
 
         expect(response.status).to eq(200)
         expect(response.headers['ETag']).not_to eq(original_etag)
