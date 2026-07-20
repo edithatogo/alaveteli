@@ -4,6 +4,13 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
+- [ ] **Track: Stage Rack and asset-pipeline modernization**
+  *Link: [./tracks/rack_asset_modernization_20260720/index.md](./tracks/rack_asset_modernization_20260720/index.md)*
+  *GitHub parent issue: [#74](https://github.com/edithatogo/alaveteli/issues/74)*
+  *Delivery posture: Non-release-blocking; maintained Sass, asset-pipeline, and Rack migrations remain independently reversible.*
+
+---
+
 - [x] **Track: Add fork-controlled manual validation dispatch**
   *Link: [./archive/manual_validation_dispatch_20260720/index.md](./archive/manual_validation_dispatch_20260720/index.md)*
   *GitHub issue: [#73](https://github.com/edithatogo/alaveteli/issues/73)*
