@@ -110,11 +110,14 @@ RSpec.describe RequestZipCachePath do
     end
 
     context 'with a real temporary cache directory' do
-      around do |example|
-        Dir.mktmpdir('request-zip-cache') do |root|
-          allow(InfoRequest).to receive(:download_zip_dir).and_return(root)
-          example.run
-        end
+      before do
+        @request_zip_cache_root = Dir.mktmpdir('request-zip-cache')
+        allow(InfoRequest).to receive(:download_zip_dir).
+          and_return(@request_zip_cache_root)
+      end
+
+      after do
+        FileUtils.rm_rf(@request_zip_cache_root)
       end
 
       it 'coordinates cross-process publication without exposing partial data' do
@@ -316,6 +319,7 @@ RSpec.describe RequestZipCachePath do
 
     it 'rejects delivery before publication' do
       response = double('response')
+      FileUtils.mkdir_p(InfoRequest.download_zip_dir)
 
       expect { cache_path.send_to(response) }.
         to raise_error(IOError, 'ZIP cache artifact is unavailable')
