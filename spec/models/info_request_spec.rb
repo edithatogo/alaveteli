@@ -3878,9 +3878,11 @@ RSpec.describe InfoRequest do
       File.join(Rails.root, "cache", "zips", "test", "download", "123",
                 "123456", "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3")
     end
-    let(:path) { File.join(base_path, "test.zip") }
-    let(:hidden_path) { File.join(base_path, "test_hidden.zip") }
-    let(:requester_only_path) { File.join(base_path, "test_requester_only.zip") }
+    let(:path) { File.join(base_path, "correspondence.zip") }
+    let(:hidden_path) { File.join(base_path, "correspondence_hidden.zip") }
+    let(:requester_only_path) do
+      File.join(base_path, "correspondence_requester_only.zip")
+    end
 
     # Slightly confusing - this runs *after* the let(:request) in each context
     # below, so it's ok

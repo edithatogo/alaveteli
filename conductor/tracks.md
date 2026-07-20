@@ -4,6 +4,13 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
+- [~] **Track: Harden request ZIP paths and delivery**
+  *Link: [./tracks/request_zip_hardening_20260720/](./tracks/request_zip_hardening_20260720/)*
+  *GitHub issues: [#49](https://github.com/edithatogo/alaveteli/issues/49), [#51](https://github.com/edithatogo/alaveteli/issues/51), and [#53](https://github.com/edithatogo/alaveteli/issues/53).*
+  *Description: Deliver a bounded numeric-ID cache path first, followed by a separate locking and atomic-publication change.*
+
+---
+
 - [x] **Track: Baseline CI and security hardening**
   *Link: [./archive/baseline_hardening_20260719/index.md](./archive/baseline_hardening_20260719/index.md)*
   *GitHub issues: [#56](https://github.com/edithatogo/alaveteli/issues/56), [#57](https://github.com/edithatogo/alaveteli/issues/57), [#58](https://github.com/edithatogo/alaveteli/issues/58), [#59](https://github.com/edithatogo/alaveteli/issues/59), [#62](https://github.com/edithatogo/alaveteli/issues/62), [#63](https://github.com/edithatogo/alaveteli/issues/63), [#64](https://github.com/edithatogo/alaveteli/issues/64), and [#65](https://github.com/edithatogo/alaveteli/issues/65).*
