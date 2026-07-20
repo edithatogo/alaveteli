@@ -1,0 +1,1 @@
+Fixes hosted Ruby 3.4 core failure by asserting the notification-user batch preload query rather than unrelated mail-rendering user queries. Product eager loading remains unchanged.
