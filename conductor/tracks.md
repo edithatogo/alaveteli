@@ -11,6 +11,13 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
+- [~] **Track: Add fork-controlled manual validation dispatch**
+  *Link: [./tracks/manual_validation_dispatch_20260720/index.md](./tracks/manual_validation_dispatch_20260720/index.md)*
+  *GitHub issue: [#73](https://github.com/edithatogo/alaveteli/issues/73)*
+  *Pull request: [#41](https://github.com/edithatogo/alaveteli/pull/41)*
+
+---
+
 - [x] **Track: Baseline CI and security hardening**
   *Link: [./archive/baseline_hardening_20260719/index.md](./archive/baseline_hardening_20260719/index.md)*
   *GitHub issues: [#56](https://github.com/edithatogo/alaveteli/issues/56), [#57](https://github.com/edithatogo/alaveteli/issues/57), [#58](https://github.com/edithatogo/alaveteli/issues/58), [#59](https://github.com/edithatogo/alaveteli/issues/59), [#62](https://github.com/edithatogo/alaveteli/issues/62), [#63](https://github.com/edithatogo/alaveteli/issues/63), [#64](https://github.com/edithatogo/alaveteli/issues/64), and [#65](https://github.com/edithatogo/alaveteli/issues/65).*
