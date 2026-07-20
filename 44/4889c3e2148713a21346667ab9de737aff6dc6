@@ -1,0 +1,11 @@
+Issue: https://github.com/edithatogo/alaveteli/issues/39
+PR to reconstruct: https://github.com/edithatogo/alaveteli/pull/40
+Base: 8295e2a9b693b6e32553abe02fc7f365d4692e26
+Scope: read-only Rack::Attack status snapshot, strict zero-query contract, versioned JSON, matching RateLimit headers, sanitized expected-unavailable response, focused tests, Conductor provenance.
+P1 numeric fix: validate limit >= 0, count >= 0, period > 0, and epoch_time >= 0 before arithmetic; malformed evidence returns sanitized degraded 503.
+Hosted-test fix: no-mutation coverage now asserts RackAttackRateLimitStatus never accesses Rack::Attack.cache while requiring the real BotTrafficMetrics.increment call; shared Rails.cache metrics and cleanup are not stubbed.
+Bulk-export representation-test fix: request mutation/deletion and authority translation tests now mutate the exact serialized row hashes consumed by BulkExportSnapshot, proving changed bytes produce 200/new ETags while unchanged bytes retain 304 behavior.
+Shared bulk-export implementation: unchanged and owned by PR #33.
+Local verification: Ruby syntax passed for touched Ruby files; metadata JSON parsed; git diff --check passed.
+Local limitation: bundled tests and RuboCop cannot run under Apple Ruby 2.6.10 because the lockfile requires Bundler 2.7.2 and a supported Ruby; hosted qualification remains required.
+Push status: not pushed.
