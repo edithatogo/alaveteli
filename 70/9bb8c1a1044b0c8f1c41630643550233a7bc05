@@ -1,0 +1,1 @@
+Rebased PR #46 contract documentation onto corrected PR #33 head d9570a3d6. Preserves issue #24 provenance; excludes runtime, workflow, profile runner, and Last-Modified claims. Local Ruby syntax, metadata JSON, and diff checks passed; hosted gates required.
