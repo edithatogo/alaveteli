@@ -4,10 +4,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Add fork-controlled manual validation dispatch**
-  *Link: [./tracks/manual_validation_dispatch_20260720/index.md](./tracks/manual_validation_dispatch_20260720/index.md)*
+- [x] **Track: Add fork-controlled manual validation dispatch**
+  *Link: [./archive/manual_validation_dispatch_20260720/index.md](./archive/manual_validation_dispatch_20260720/index.md)*
   *GitHub issue: [#73](https://github.com/edithatogo/alaveteli/issues/73)*
-  *Pull request: [#41](https://github.com/edithatogo/alaveteli/pull/41)*
+  *Merged PR: [#41](https://github.com/edithatogo/alaveteli/pull/41)*
 
 ---
 

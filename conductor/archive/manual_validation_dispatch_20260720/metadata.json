@@ -1,0 +1,17 @@
+{
+  "track_id": "manual_validation_dispatch_20260720",
+  "type": "chore",
+  "status": "completed",
+  "created_at": "2026-07-20T00:00:00Z",
+  "updated_at": "2026-07-20T00:49:17Z",
+  "description": "Add fork-controlled manual dispatch without weakening existing validation gates.",
+  "evidence_schema": "1.0",
+  "gates": [
+    {
+      "id": "pr-41-full-qualification",
+      "kind": "hosted-checks",
+      "status": "satisfied",
+      "evidence": "evidence.md"
+    }
+  ]
+}
