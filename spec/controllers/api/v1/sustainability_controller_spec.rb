@@ -130,7 +130,7 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         expect(changed_etag).not_to eq(original_etag)
 
         request.headers['If-None-Match'] = changed_etag
-        info_request.delete
+        info_request.destroy!
         get :bulk_export, params: export_params
         consume_response_body
 
