@@ -47,4 +47,10 @@
     - [ ] Confirm no known security, privacy, accessibility, data-integrity,
       availability, correctness, quality, or operator risk remains
 - [ ] Task: Conductor - User Manual Verification 'Phase 5: Upstream Readiness'
-    - [ ] Upstream Readiness protocol in `workflow.md`
+    - [ ] Upstream Readiness protocol in `workflow.md` (deferred beyond fork-local implementation)
+
+## Completion Evidence
+
+- [x] Current-base PR #22 hosted matrix passed on Ruby 3.4 and Ruby 4.0.
+- [x] PR #22 merged; immutable evidence is recorded in `evidence.md`.
+- [x] Track archived; broader upstream adoption remains a separate follow-up.
