@@ -1,0 +1,38 @@
+# Offline contract cases for fyi-cli interoperability sensors.
+# Values describe observable responses; no credentials or network endpoints.
+
+- name: rate-limit-nominal
+  endpoint: /api/v1/rate_limit
+  request: { method: GET, params: {} }
+  response: { status: 200, advisory_status: nominal }
+  required_headers: [RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset]
+
+- name: rate-limit-degraded
+  endpoint: /api/v1/rate_limit
+  request: { method: GET, params: {} }
+  response: { status: 503, advisory_status: degraded }
+  required_headers: [Cache-Control]
+
+- name: bulk-export-unauthorized
+  endpoint: /api/v1/bulk_export
+  request: { method: GET, params: {} }
+  response: { status: 401 }
+  required_headers: []
+
+- name: bulk-export-invalid-limit
+  endpoint: /api/v1/bulk_export
+  request: { method: GET, params: { limit: 0 } }
+  response: { status: 422 }
+  required_headers: []
+
+- name: bulk-export-conditional
+  endpoint: /api/v1/bulk_export
+  request: { method: GET, params: { limit: 1 } }
+  response: { status: 304 }
+  required_headers: [ETag, Cache-Control]
+
+- name: bulk-export-bounded-ndjson
+  endpoint: /api/v1/bulk_export
+  request: { method: GET, params: { limit: 1 } }
+  response: { status: 200, content_type: application/x-ndjson }
+  required_headers: [ETag, Cache-Control]

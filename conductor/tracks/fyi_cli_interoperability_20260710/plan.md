@@ -6,7 +6,15 @@
 - [x] Record the paired fyi-cli issue #142 and contract version 0.1 in this plan.
 - [x] Add focused streamed-response sensors for the private, ETag-only bulk
   export contract.
-- [ ] Verify no live network is required by the contract suite.
+- [x] Verify no live network is required by the contract suite.
+
+> CHECKPOINT (2026-07-24): The server contract suite uses controller/request
+> doubles, factories, and the offline `spec/fixtures/fyi_cli_contract_cases.yml`
+> manifest; it contains no HTTP client, VCR cassette, or live endpoint call.
+> Hosted CI run `29832274405` passed the controller, request, and full Ruby
+> matrices on `develop` at `6b516f5a`. Local replay was attempted with the
+> pinned `commonlib` submodule initialized, but this checkout lacks generated
+> `config/database.yml`; hosted setup remains the authoritative runtime evidence.
 
 > Provenance (2026-07-20): PR #46 was reconstructed from the clean PR #33 head
 > `8295e2a9b693b6e32553abe02fc7f365d4692e26`. The stale branch was not replayed;
