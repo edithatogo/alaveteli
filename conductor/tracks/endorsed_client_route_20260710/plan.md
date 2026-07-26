@@ -4,8 +4,13 @@
 
 - [x] Create fork issue #28 and cross-reference fyi-cli #148.
 - [x] Record the shared no-known-risk and upstream-disabled evidence gate.
-- [ ] Reconcile this proposal with the existing contract issues #23-#27.
-- [ ] Produce a server-side threat model and abuse-case matrix.
+- [x] Reconcile this proposal with the existing contract issues #23-#27.
+- [x] Produce a server-side threat model and abuse-case matrix.
+
+> CHECKPOINT (2026-07-26): Phase 0 reconciliation is recorded in
+> `contract_reconciliation.md`; the threat and abuse-case matrix is in
+> `threat_model.md`. The proposal remains disabled by default and upstream
+> submission remains disabled. No production route or MCP exposure was added.
 
 ## Phase 1: Server contract and controls
 
@@ -37,4 +42,3 @@
 
 Do not close while any known security, privacy, availability, correctness, or
 quality risk lacks a fix, deterministic sensor, or explicit disabled follow-up.
-
