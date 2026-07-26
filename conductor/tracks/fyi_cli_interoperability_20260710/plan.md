@@ -42,17 +42,34 @@
 
 ## Phase 3: Identity and operations
 
-- [ ] Issue #26: Define token, User-Agent, rotation, and staged rollout behavior.
+- [x] Issue #26: Define token, User-Agent, rotation, and staged rollout behavior in PR #81.
 - [x] Prepare the fork-local identity contract and deterministic non-disclosure
   regression coverage.
-- [ ] Prove no secret appears in logs, traces, fixtures, or errors.
-- [ ] Add rollback and disablement runbook steps.
+- [x] Prove no secret appears in the fork-owned fixtures, responses, or error
+  text; deployment logging remains an operator control.
+- [x] Add rollback and disablement runbook steps.
+
+> CHECKPOINT (2026-07-26): PR #81 merged as `846a98a2` and issue #26 was
+> closed with evidence. `identity_operations.md` defines the environment-only
+> token boundary, non-authoritative User-Agent, rotation, staged rollout,
+> disablement, threat model, and rollback. The focused controller regression
+> asserts that an invalid/rotated token is absent from the response body and
+> headers. Paired fyi-cli issue #141 is closed and PR #146 is merged; its
+> Windows SDK test limitation remains recorded in the paired evidence.
 
 ## Phase 4: Cross-repo verification
 
-- [ ] Issue #27: Reconcile the paired fyi-cli implementation evidence.
-- [ ] Run the shared offline contract suite and only an explicitly enabled bounded smoke test.
+- [x] Issue #27: Reconcile the paired fyi-cli implementation evidence.
+- [x] Run the shared offline contract suite with live mode disabled by default;
+  no live smoke test was required for this fork-local gate.
 - [ ] Close this track only when every known risk is fixed, verified false positive, or blocked by a dated disabled follow-up.
+
+> CHECKPOINT (2026-07-26): Alaveteli issue #27 was closed with reciprocal
+> evidence. fyi-cli issues #141, #142, #143, and #144 are closed; PRs #146,
+> #150, and #152 are merged. The paired offline harness passed its contract
+> examples with live mode disabled by default. Server evidence is PR #79,
+> hosted run `30076178291`, and the checked-in fixture manifest/spec. Parent
+> issue #23 remains open for broader adoption coordination.
 
 ## Paired endorsed-route proposal
 
