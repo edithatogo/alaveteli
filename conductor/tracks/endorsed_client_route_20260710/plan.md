@@ -14,7 +14,8 @@
 
 ## Phase 1: Server contract and controls
 
-- [ ] Define versioned capability discovery and negotiation.
+- [x] Define versioned capability discovery and negotiation in
+  `capability_contract.md`.
 - [ ] Define disabled-default configuration, allowlists, quotas, maintenance
   windows, revocation, and emergency disablement.
 - [ ] Define authentication, identity, token rotation, audit, metrics, and
@@ -22,6 +23,11 @@
 - [ ] Define bounded export authorization and privacy constraints.
 - [ ] Add offline fixtures/specs for enabled, disabled, unauthorized,
   throttled, degraded, revoked, and over-budget behavior.
+
+> CHECKPOINT (2026-07-26): The capability contract is a planning artifact only.
+> It defines exact-version negotiation, finite instance-controlled limits,
+> fail-closed disabled/unauthorized/revoked behavior, and remote MCP disabled
+> by default. Implementation remains gated on the listed offline sensors.
 
 ## Phase 2: Fork implementation slices
 
