@@ -3,7 +3,7 @@
   "type": "paired-upstream-engagement-preparation",
   "status": "planned",
   "created_at": "2026-07-10T06:30:00Z",
-  "updated_at": "2026-07-26T14:30:00Z",
+  "updated_at": "2026-07-26T15:30:00Z",
   "github_issue": 28,
   "paired_fyi_cli_issue": "https://github.com/edithatogo/fyi-cli/issues/148",
   "parent_contract_issue": 23,
