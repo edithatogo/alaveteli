@@ -181,6 +181,16 @@ RSpec.describe Api::V1::SustainabilityController, type: :controller do
         get :bulk_export
         expect(response.status).to eq(401)
       end
+
+      it 'does not disclose the supplied invalid or rotated token' do
+        request.env['HTTP_X_FYI_BOT_TOKEN'] = 'old_rotated_token'
+
+        get :bulk_export
+
+        expect(response.status).to eq(401)
+        expect(response.body).not_to include('old_rotated_token')
+        expect(response.headers.values.join).not_to include('old_rotated_token')
+      end
     end
 
     context 'with a valid verified bot token' do

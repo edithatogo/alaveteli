@@ -43,6 +43,8 @@
 ## Phase 3: Identity and operations
 
 - [ ] Issue #26: Define token, User-Agent, rotation, and staged rollout behavior.
+- [x] Prepare the fork-local identity contract and deterministic non-disclosure
+  regression coverage.
 - [ ] Prove no secret appears in logs, traces, fixtures, or errors.
 - [ ] Add rollback and disablement runbook steps.
 
