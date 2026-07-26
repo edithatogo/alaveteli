@@ -11,8 +11,8 @@
 > CHECKPOINT (2026-07-24): The server contract suite uses controller/request
 > doubles, factories, and the offline `spec/fixtures/fyi_cli_contract_cases.yml`
 > manifest; it contains no HTTP client, VCR cassette, or live endpoint call.
-> Hosted CI run `29832274405` passed the controller, request, and full Ruby
-> matrices on `develop` at `6b516f5a`. Local replay was attempted with the
+> Hosted CI run `30076178291` passed the controller, request, and full Ruby
+> matrices on PR #79 before merge `1126461c`. Local replay was attempted with the
 > pinned `commonlib` submodule initialized, but this checkout lacks generated
 > `config/database.yml`; hosted setup remains the authoritative runtime evidence.
 
@@ -24,13 +24,21 @@
 
 ## Phase 2: Server conformance fixtures
 
-- [ ] Issue #25: Add focused fixtures/specs for back-pressure, 304, and bulk export.
+- [x] Issue #25: Add focused fixtures/specs for back-pressure, 304, and bulk export in PR #79.
 - Paired fyi-cli issue: https://github.com/edithatogo/fyi-cli/issues/142
 - Paired fyi-cli draft PR: https://github.com/edithatogo/fyi-cli/pull/150
-- [ ] Test absent, malformed, degraded, throttled, conditional, and bounded cases.
+- [x] Test absent, malformed, degraded, throttled, conditional, and bounded cases.
 - Paired fyi-cli cache/bulk issue: https://github.com/edithatogo/fyi-cli/issues/143
 - Paired fyi-cli bounded bulk draft PR: https://github.com/edithatogo/fyi-cli/pull/152
-- [ ] Run RuboCop, Brakeman, dependency audit, and focused tests with zero untriaged findings.
+- [x] Run RuboCop, Brakeman, dependency audit, and focused tests with zero untriaged findings.
+
+> CHECKPOINT (2026-07-25): PR #79 merged as `1126461c`. It added
+> `spec/fixtures/fyi_cli_contract_cases.yml` and its deterministic manifest
+> spec, while the existing controller/request specs cover the observable
+> rate-limit, degraded, authorization, validation, ETag/304, and bounded
+> NDJSON cases. Hosted CI run `30076178291` passed Ruby 3.4 and 4.0 core and
+> gem suites; RuboCop, Brakeman, dependency audit, build, and changelog checks
+> also passed. No live network or secret is used.
 
 ## Phase 3: Identity and operations
 
