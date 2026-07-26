@@ -3,7 +3,7 @@
   "type": "chore",
   "status": "new",
   "created_at": "2026-07-20T00:15:05Z",
-  "updated_at": "2026-07-20T00:15:05Z",
+  "updated_at": "2026-07-26T16:00:00Z",
   "description": "Stage Rack and asset-pipeline modernization behind deterministic compatibility, security, performance, and rollback evidence.",
   "github_parent_issue": 74,
   "github_parent_url": "https://github.com/edithatogo/alaveteli/issues/74",
@@ -15,7 +15,7 @@
   "risk_policy": "no-known-risk-accepted",
   "delivery_model": "one-child-issue-one-focused-pr",
   "base_ref": "origin/develop",
-  "base_revision": "c768208716864c72fdb8301c8f3286a212084d98",
+  "base_revision": "1da7ad55e81d9671b3c7a3455eed78c3d2430c30",
   "evidence_schema": "1.0",
   "external_gates": []
 }

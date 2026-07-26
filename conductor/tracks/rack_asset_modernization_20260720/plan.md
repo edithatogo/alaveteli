@@ -7,13 +7,15 @@ independently reversible implementation slice.
 
 ## Phase 0: Refresh and Decomposition
 
-- [ ] **Task 0.1: Pin the starting baseline and superseded assessment**
+- [x] **Task 0.1: Pin the starting baseline and superseded assessment**
   - Record the exact `origin/develop` revision, relevant lockfile entries,
     current scanner status, Ruby 3.4/4.0 CI matrix, and the disposition of PR
     #32 and issues #30/#31.
   - Produce a machine-readable inventory of direct and transitive dependencies
     in scope.
   - Trace to R1 and acceptance criteria 1 and 7.
+  - Evidence: `baseline.md` and `dependency_inventory.json` at baseline revision
+    `1da7ad55e81d9671b3c7a3455eed78c3d2430c30`.
 - [ ] **Task 0.2: Create child issues and migration ownership boundaries**
   - Create separate child issues for resolver discovery, Sass replacement,
     asset sensors, asset-pipeline migration, Rack middleware sensors, Rack
