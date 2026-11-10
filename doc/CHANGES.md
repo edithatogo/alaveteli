@@ -2,6 +2,8 @@
 
 ## Highlighted Features
 
+* Add Presidio and Gitleaks repository CI checks for pull requests,
+  default-branch pushes and scheduled full scans, without logging detected values.
 * Validate and normalize batch public-body identifiers before persistence
   (Dylan Mordaunt)
 * Isolate Rack::Attack and bot-traffic metrics state between tests
