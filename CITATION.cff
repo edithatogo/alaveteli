@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: If you use this fork, please cite it using these metadata and identify the
+  commit or release used. Upstream attribution is recorded in references.
+title: Alaveteli
+authors:
+- name: mySociety
+- name: Alaveteli contributors
+repository-code: https://github.com/edithatogo/alaveteli
+url: https://github.com/edithatogo/alaveteli
+references:
+- type: software
+  title: Alaveteli
+  authors:
+  - name: mySociety
+  - name: Alaveteli contributors
+  repository-code: https://github.com/mysociety/alaveteli
+  url: https://github.com/mysociety/alaveteli
