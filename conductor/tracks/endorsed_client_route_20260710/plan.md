@@ -15,11 +15,12 @@
 ## Phase 1: Server contract and controls
 
 - [ ] Define versioned capability discovery and negotiation.
-- [ ] Define disabled-default configuration, allowlists, quotas, maintenance
-  windows, revocation, and emergency disablement.
-- [ ] Define authentication, identity, token rotation, audit, metrics, and
-  secret-redaction requirements.
-- [ ] Define bounded export authorization and privacy constraints.
+- [x] Define disabled-default configuration, allowlists, quotas, maintenance
+  windows, revocation, and emergency disablement in `control_contract.md`.
+- [x] Define authentication, identity, token rotation, audit, metrics, and
+  secret-redaction requirements in `control_contract.md`.
+- [x] Define bounded export authorization and privacy constraints in
+  `control_contract.md`.
 - [ ] Add offline fixtures/specs for enabled, disabled, unauthorized,
   throttled, degraded, revoked, and over-budget behavior.
 
