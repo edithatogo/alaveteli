@@ -1,0 +1,29 @@
+{
+  "schema": "1.0",
+  "baseline_revision": "1da7ad55e81d9671b3c7a3455eed78c3d2430c30",
+  "source": "Gemfile.lock",
+  "ruby_ci": ["3.4", "4.0"],
+  "dependencies": [
+    {"name": "rails", "version": "8.0.5", "role": "direct framework"},
+    {"name": "rack", "version": "2.2.23", "role": "transitive framework constraint"},
+    {"name": "rack-attack", "version": "6.7.0", "role": "direct traffic control"},
+    {"name": "rack-session", "version": "1.0.2", "role": "transitive Rack 2 constraint"},
+    {"name": "rackup", "version": "1.0.1", "role": "transitive Rack 2 constraint/server"},
+    {"name": "sidekiq", "version": "6.5.12", "role": "direct job processing/Rack constraint"},
+    {"name": "sidekiq-limit_fetch", "version": "4.4.1", "role": "direct job adapter"},
+    {"name": "sprockets", "version": "3.7.5", "role": "asset pipeline"},
+    {"name": "sprockets-rails", "version": "3.4.2", "role": "Rails asset integration"},
+    {"name": "sass-rails", "version": "5.0.8", "role": "legacy Sass integration"},
+    {"name": "webrick", "version": "1.9.2", "role": "transitive rackup development/server dependency"}
+  ],
+  "constraints": [
+    "sass-rails 5.0.8 constrains Sprockets below 4",
+    "rack-session 1.0.2, rackup 1.0.1, Sidekiq 6.5.12, and Sprockets 3.7.5 retain Rack 2 compatibility constraints",
+    "WEBrick is present transitively and is not treated as a vulnerability without a current primary advisory"
+  ],
+  "not_claimed": [
+    "No Rack 3 compatibility conclusion",
+    "No current WEBrick vulnerability conclusion",
+    "No replacement version selection before resolver evidence"
+  ]
+}
